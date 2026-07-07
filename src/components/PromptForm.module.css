@@ -1,0 +1,38 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    margin-bottom: 1.5rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.form input,
+.form textarea,
+.form select {
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.form textarea {
+    min-height: 6rem;
+    resize: vertical;
+}
+
+.row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.row select {
+    flex: 1;
+}

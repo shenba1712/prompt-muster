@@ -1,0 +1,60 @@
+.card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    background: #e8e8e8;
+}
+
+.content {
+    font-size: 0.875rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.tags {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.tag {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.favorite {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0;
+}
