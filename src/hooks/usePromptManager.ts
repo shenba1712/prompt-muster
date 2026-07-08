@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CreatePromptInput, Prompt } from '@/types/prompt';
+import { CreatePromptInput, Prompt, FilterState } from '@/types/prompt';
 import { createPrompt } from '@/utils/prompt';
 
 export interface UsePromptManagerReturn {
@@ -11,11 +11,19 @@ export interface UsePromptManagerReturn {
     deletePrompt: (id: string) => void;
     copyToClipboard: (content: string) => Promise<void>;
     toggleFavorite: (id: string) => void;
+    filterState: FilterState;
+    setFilter: (updates: Partial<FilterState>) => void;
 }
 
 export function usePromptManager(): UsePromptManagerReturn {
     const [prompts, setPrompts] = useState<Prompt[]>([]);
     const [copyError, setCopyError] = useState<string | null>(null);
+    const [filterState, setFilterState] = useState<FilterState>({
+        model: 'all',
+        category: 'all',
+        search: '',
+        showFavorites: false,
+    });
 
     const addPrompt = (input: CreatePromptInput) => {
         const newPrompt = createPrompt(input);
@@ -40,6 +48,10 @@ export function usePromptManager(): UsePromptManagerReturn {
         setPrompts(prev => prev.map(p => p.id === id ? { ...p, isFavorite: !p.isFavorite } : p));
     };
 
+    const setFilter = (updates: Partial<FilterState>) => {
+        setFilterState(prev => ({ ...prev, ...updates }));
+    };
+
     const promptCount = prompts.length;
     const favoriteCount = prompts.filter(p => p.isFavorite).length;
 
@@ -52,5 +64,7 @@ export function usePromptManager(): UsePromptManagerReturn {
         deletePrompt,
         copyToClipboard,
         toggleFavorite,
+        filterState,
+        setFilter
     };
 }
