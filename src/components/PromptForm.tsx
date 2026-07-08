@@ -2,17 +2,11 @@
 
 import { useState } from 'react';
 import { Model, Category } from '@/types/prompt';
-import { MODEL_OPTIONS, CATEGORY_OPTIONS } from '@/utils/prompt';
+import { CreatePromptInput, MODEL_OPTIONS, CATEGORY_OPTIONS } from '@/utils/prompt';
 import styles from './PromptForm.module.css';
 
 interface PromptFormProps {
-    onAddPrompt: (
-        title: string,
-        content: string,
-        model: Model,
-        category: Category,
-        tags: string[]
-    ) => void;
+    onAddPrompt: (input: CreatePromptInput) => void;
 }
 
 export default function PromptForm({ onAddPrompt }: PromptFormProps) {
@@ -25,13 +19,13 @@ export default function PromptForm({ onAddPrompt }: PromptFormProps) {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!title.trim() || !content.trim()) return;
-        onAddPrompt(
-            title.trim(),
-            content.trim(),
+        onAddPrompt({
+            title: title.trim(),
+            content: content.trim(),
             model,
             category,
-            tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-        );
+            tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
+        });
         setTitle('');
         setContent('');
         setModel(MODEL_OPTIONS[0]);

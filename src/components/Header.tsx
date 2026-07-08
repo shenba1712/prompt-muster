@@ -1,13 +1,9 @@
 import styles from "@/components/Header.module.css";
-import {Category, Model} from "@/types/prompt";
+import { CreatePromptInput } from "@/utils/prompt";
 
 interface HeaderProps {
     promptCount: number;
-    onAddPrompt: (title: string,
-                  content: string,
-                  model: Model,
-                  category: Category,
-                  tags: string[]) => void;
+    onAddPrompt: (input: CreatePromptInput) => void;
 }
 
 export default function Header({ promptCount, onAddPrompt }: HeaderProps) {
@@ -19,7 +15,13 @@ export default function Header({ promptCount, onAddPrompt }: HeaderProps) {
 
                 {/*For now, just hard coded values. Ideally, the PromptForm is connected to this button*/}
                 <div className={styles.actions}>
-                    <button onClick={() => onAddPrompt('new title' + (promptCount + 1), 'new prompt' + (promptCount + 1), 'claude-haiku', 'code-generation', ['test', 'prompt'])}>Add Prompt</button>
+                    <button onClick={() => onAddPrompt({
+                        title: 'new title' + (promptCount + 1),
+                        content: 'new prompt' + (promptCount + 1),
+                        model: 'claude-haiku',
+                        category: 'code-generation',
+                        tags: ['test', 'prompt'],
+                    })}>Add Prompt</button>
                 </div>
             </div>
         </header>

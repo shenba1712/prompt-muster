@@ -1,18 +1,13 @@
 import { useState } from 'react';
-import { Prompt, Model, Category } from '@/types/prompt';
+import { Prompt } from '@/types/prompt';
+import { CreatePromptInput, createPrompt } from '@/utils/prompt';
 
 export interface UsePromptManagerReturn {
     prompts: Prompt[];
     promptCount: number;
     favoriteCount: number;
     copyError: string | null;
-    addPrompt: (
-        title: string,
-        content: string,
-        model: Model,
-        category: Category,
-        tags: string[]
-    ) => void;
+    addPrompt: (input: CreatePromptInput) => void;
     deletePrompt: (id: string) => void;
     copyToClipboard: (content: string) => Promise<void>;
     toggleFavorite: (id: string) => void;
@@ -22,23 +17,8 @@ export function usePromptManager(): UsePromptManagerReturn {
     const [prompts, setPrompts] = useState<Prompt[]>([]);
     const [copyError, setCopyError] = useState<string | null>(null);
 
-    const addPrompt = (
-        title: string,
-        content: string,
-        model: Model,
-        category: Category,
-        tags: string[]
-    ) => {
-        const newPrompt: Prompt = {
-            id: crypto.randomUUID(),
-            title,
-            content,
-            model,
-            category,
-            tags,
-            isFavorite: false,
-            createdAt: new Date(),
-        };
+    const addPrompt = (input: CreatePromptInput) => {
+        const newPrompt = createPrompt(input);
         setPrompts(prev => [newPrompt, ...prev]);
     };
 

@@ -1,4 +1,15 @@
-import { Category, Model } from '@/types/prompt';
+import { Category, Model, Prompt } from '@/types/prompt';
+
+export type CreatePromptInput = Omit<Prompt, 'id' | 'createdAt' | 'isFavorite'>;
+
+export function createPrompt(input: CreatePromptInput): Prompt {
+    return {
+        ...input,
+        id: crypto.randomUUID(),
+        isFavorite: false,
+        createdAt: new Date(),
+    };
+}
 
 export const MODEL_OPTIONS: readonly Model[] = [
     'gpt-4o',
