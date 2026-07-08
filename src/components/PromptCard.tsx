@@ -2,6 +2,7 @@
 
 import type { JSX } from 'react';
 import { Prompt } from '@/types/prompt';
+import FavoriteButton from '@/components/FavoriteButton';
 import styles from './PromptCard.module.css';
 
 interface PromptCardProps {
@@ -21,9 +22,10 @@ export default function PromptCard({
         <div className={styles.card}>
             <div className={styles.header}>
                 <h3>{prompt.title}</h3>
-                <button className={styles.favorite} onClick={() => onToggleFavorite(prompt.id)}>
-                    {prompt.isFavorite ? '★' : '☆'}
-                </button>
+                <FavoriteButton
+                    isFavorite={prompt.isFavorite}
+                    onToggle={() => onToggleFavorite(prompt.id)}
+                />
             </div>
             <div className={styles.badges}>
                 <span className={styles.badge}>{prompt.model}</span>
