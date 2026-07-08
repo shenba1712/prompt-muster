@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Prompt } from '@/types/prompt';
-import { CreatePromptInput, createPrompt } from '@/utils/prompt';
+import { CreatePromptInput, Prompt } from '@/types/prompt';
+import { createPrompt } from '@/utils/prompt';
 
 export interface UsePromptManagerReturn {
     prompts: Prompt[];

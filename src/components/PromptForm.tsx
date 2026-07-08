@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { Model, Category } from '@/types/prompt';
-import { CreatePromptInput, MODEL_OPTIONS, CATEGORY_OPTIONS } from '@/utils/prompt';
+import { useState, type JSX } from 'react';
+import { Model, Category, MODEL_OPTIONS, CATEGORY_OPTIONS, CreatePromptInput } from '@/types/prompt';
+import { isModel, isCategory } from '@/utils/prompt';
 import styles from './PromptForm.module.css';
 
 interface PromptFormProps {
     onAddPrompt: (input: CreatePromptInput) => void;
 }
 
-export default function PromptForm({ onAddPrompt }: PromptFormProps) {
+export default function PromptForm({ onAddPrompt }: PromptFormProps): JSX.Element {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [model, setModel] = useState<Model>(MODEL_OPTIONS[0]);
@@ -24,7 +24,7 @@ export default function PromptForm({ onAddPrompt }: PromptFormProps) {
             content: content.trim(),
             model,
             category,
-            tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
+            tags: [...new Set(tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0))],
         });
         setTitle('');
         setContent('');
@@ -53,9 +53,10 @@ export default function PromptForm({ onAddPrompt }: PromptFormProps) {
             <div className={styles.row}>
                 <select
                     value={model}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        setModel(e.target.value as Model)
-                    }
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        const value = e.target.value;
+                        if (isModel(value)) setModel(value);
+                    }}
                 >
                     {MODEL_OPTIONS.map(option => (
                         <option key={option} value={option}>{option}</option>
@@ -63,9 +64,10 @@ export default function PromptForm({ onAddPrompt }: PromptFormProps) {
                 </select>
                 <select
                     value={category}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        setCategory(e.target.value as Category)
-                    }
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        const value = e.target.value;
+                        if (isCategory(value)) setCategory(value);
+                    }}
                 >
                     {CATEGORY_OPTIONS.map(option => (
                         <option key={option} value={option}>{option}</option>

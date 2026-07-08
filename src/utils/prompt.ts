@@ -1,6 +1,4 @@
-import { Category, Model, Prompt } from '@/types/prompt';
-
-export type CreatePromptInput = Omit<Prompt, 'id' | 'createdAt' | 'isFavorite'>;
+import { Category, CATEGORY_OPTIONS, CreatePromptInput, Model, MODEL_OPTIONS, Prompt } from '@/types/prompt';
 
 export function createPrompt(input: CreatePromptInput): Prompt {
     return {
@@ -11,25 +9,10 @@ export function createPrompt(input: CreatePromptInput): Prompt {
     };
 }
 
-export const MODEL_OPTIONS: readonly Model[] = [
-    'gpt-4o',
-    'gpt-4o-mini',
-    'claude-sonnet',
-    'claude-haiku',
-    'gemini-pro',
-    'gemini-flash',
-];
+export function isModel(value: string): value is Model {
+    return (MODEL_OPTIONS as readonly string[]).includes(value);
+}
 
-export const CATEGORY_OPTIONS: readonly Category[] = [
-    'code-generation',
-    'debugging',
-    'code-review',
-    'documentation',
-    'refactoring',
-    'testing',
-    'architecture',
-    'data-modeling',
-    'devops',
-    'learning',
-    'communication',
-];
+export function isCategory(value: string): value is Category {
+    return (CATEGORY_OPTIONS as readonly string[]).includes(value);
+}

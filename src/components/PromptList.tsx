@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Prompt } from '@/types/prompt';
 import PromptCard from './PromptCard';
 import EmptyState from './EmptyState';
@@ -14,7 +15,7 @@ export default function PromptList({
                                         onDelete,
                                         onCopy,
                                         onToggleFavorite,
-                                    }: PromptListProps) {
+                                    }: PromptListProps): JSX.Element {
     if (prompts.length === 0) {
         return <EmptyState />;
     }

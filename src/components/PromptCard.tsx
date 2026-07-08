@@ -1,5 +1,6 @@
 'use client';
 
+import type { JSX } from 'react';
 import { Prompt } from '@/types/prompt';
 import styles from './PromptCard.module.css';
 
@@ -15,7 +16,7 @@ export default function PromptCard({
                                        onDelete,
                                        onCopy,
                                        onToggleFavorite,
-                                   }: PromptCardProps) {
+                                   }: PromptCardProps): JSX.Element {
     return (
         <div className={styles.card}>
             <div className={styles.header}>

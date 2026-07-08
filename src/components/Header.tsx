@@ -1,12 +1,13 @@
+import type { JSX } from 'react';
 import styles from "@/components/Header.module.css";
-import { CreatePromptInput } from "@/utils/prompt";
+import { CreatePromptInput } from "@/types/prompt";
 
 interface HeaderProps {
     promptCount: number;
     onAddPrompt: (input: CreatePromptInput) => void;
 }
 
-export default function Header({ promptCount, onAddPrompt }: HeaderProps) {
+export default function Header({ promptCount, onAddPrompt }: HeaderProps): JSX.Element {
     return (
         <header className={styles.header}>
             <h1>PromptLab</h1>
