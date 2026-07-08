@@ -64,6 +64,19 @@ Do not make drive-by changes. If you notice an improvement
 opportunity in a file you're editing for another reason, mention
 it but don't apply it unless asked.
 
+### Suggest Improvements
+
+After finishing a task, call out any adjustments that would make
+the app cleaner or better — even ones outside the scope of what
+was asked. For each one, state:
+
+- What the adjustment is
+- Why it would help (the justification)
+- The files it would touch
+
+Do not apply these automatically. I'll review and tell you which
+ones, if any, to implement.
+
 ### Learn and Capture Mistakes
 
 If something you generated doesn't compile, doesn't work, or gets
