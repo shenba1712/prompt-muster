@@ -192,7 +192,7 @@ A Prompt represents a reusable AI prompt template:
 - model: Model (gpt-4o | gpt-4o-mini | claude-sonnet | claude-haiku | gemini-pro | gemini-flash)
 - category: Category (code-generation | debugging | code-review | documentation | refactoring | testing | architecture | data-modeling | devops | learning | communication)
 - tags: string[]
-- isFavorited: boolean
+- isFavorite: boolean
 - createdAt: Date
 
 
@@ -203,7 +203,7 @@ A Prompt represents a reusable AI prompt template:
 - String literal union types, not enums
 - Use interface for component props and object shapes
 - Use type for unions, intersections, and utility type derivations
-- Derive types with utility types rather than duplicating: type CreatePromptInput = Omit<Prompt, 'id' | 'createdAt' | 'isFavorited'>
+- Derive types with utility types rather than duplicating: type CreatePromptInput = Omit<Prompt, 'id' | 'createdAt' | 'isFavorite'>
 - Exported functions must have explicit return types
 - Use readonly on props and parameters that should not be mutated
 
@@ -298,7 +298,7 @@ Hooks must:
 - Props interfaces: ComponentNameProps — PromptCardProps
 - Hook returns: UseHookNameReturn — UsePromptManagerReturn
 - Callback props: onAction — onDelete, onCopy, onFilterChange
-- Boolean props: is/has/should prefix — isFavorited, hasError
+- Boolean props: is/has/should prefix — isFavorite, hasError
 
 ## CSS Conventions
 
@@ -338,7 +338,7 @@ Array — remove item:
 setPrompts(prev => prev.filter(p => p.id !== id))
 
 Array — update one item:
-setPrompts(prev => prev.map(p => p.id === id ? { ...p, isFavorited: !p.isFavorited } : p))
+setPrompts(prev => prev.map(p => p.id === id ? { ...p, isFavorite: !p.isFavorite } : p))
 
 Object — partial update (for filter state):
 setFilterState(prev => ({ ...prev, ...updates }))
