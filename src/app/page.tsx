@@ -9,11 +9,10 @@ import { usePromptManager } from '@/hooks/usePromptManager';
 
 export default function Home() {
   const {
-    prompts,
     filteredPrompts,
     promptCount,
     filteredPromptCount,
-    copyError,
+    error,
     addPrompt,
     deletePrompt,
     copyToClipboard,
@@ -25,9 +24,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Header onAddPrompt={addPrompt} promptCount={promptCount} filteredPromptCount={filteredPromptCount} />
-        {copyError && <p role="alert" className={styles.error}>{copyError}</p>}
-        <br/>
+        {error && <p role="alert" className={styles.error}>{error}</p>}
 
         {/*For now, the form is directly pasted here. Ideally, should be connected to a button */}
         <PromptFilters

@@ -8,7 +8,7 @@ export interface UsePromptManagerReturn {
     promptCount: number;
     filteredPromptCount: number;
     favoriteCount: number;
-    copyError: string | null;
+    error: string | null;
     addPrompt: (input: CreatePromptInput) => void;
     deletePrompt: (id: string) => void;
     copyToClipboard: (content: string) => Promise<void>;
@@ -19,7 +19,7 @@ export interface UsePromptManagerReturn {
 
 export function usePromptManager(): UsePromptManagerReturn {
     const [prompts, setPrompts] = useState<Prompt[]>([]);
-    const [copyError, setCopyError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [filterState, setFilterState] = useState<FilterState>({
         model: 'all',
         category: 'all',
@@ -39,10 +39,10 @@ export function usePromptManager(): UsePromptManagerReturn {
     const copyToClipboard = async (content: string) => {
         try {
             await navigator.clipboard.writeText(content);
-            setCopyError(null);
-        } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Failed to copy prompt to clipboard.';
-            setCopyError(message);
+            setError(null);
+        } catch (caughtError: unknown) {
+            const message = caughtError instanceof Error ? caughtError.message : 'Failed to copy prompt to clipboard.';
+            setError(message);
         }
     };
 
@@ -82,7 +82,7 @@ export function usePromptManager(): UsePromptManagerReturn {
         promptCount,
         filteredPromptCount,
         favoriteCount,
-        copyError,
+        error,
         addPrompt,
         deletePrompt,
         copyToClipboard,
