@@ -9,9 +9,6 @@ body {
   background: #fafafa;
   color: #1a1a1a;
   line-height: 1.6;
-  padding: 2rem;
-  max-width: 900px;
-  margin: 0 auto;
 }
 
 h1 {
@@ -43,6 +40,11 @@ input, textarea, select {
   border-radius: 4px;
   font-size: 0.875rem;
   width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
 }
 
 textarea {

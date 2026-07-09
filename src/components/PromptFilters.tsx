@@ -18,6 +18,15 @@ export default function PromptFilters({
                                            totalCount,
                                            filteredCount,
                                        }: PromptFiltersProps): JSX.Element {
+    const hasActiveFilters = filterState.model !== 'all'
+        || filterState.category !== 'all'
+        || filterState.search.trim() !== ''
+        || filterState.showFavorites;
+
+    const clearFilters = () => {
+        onFilterChange({ model: 'all', category: 'all', search: '', showFavorites: false });
+    };
+
     return (
         <div className={styles.filters}>
             <div className={styles.row}>
@@ -27,6 +36,7 @@ export default function PromptFilters({
                         const value = e.target.value;
                         if (value === 'all' || isModel(value)) onFilterChange({ model: value });
                     }}
+                    aria-label="Filter by model"
                 >
                     <option value="all">All models</option>
                     {MODEL_OPTIONS.map(option => (
@@ -39,20 +49,13 @@ export default function PromptFilters({
                         const value = e.target.value;
                         if (value === 'all' || isCategory(value)) onFilterChange({ category: value });
                     }}
+                    aria-label="Filter by category"
                 >
                     <option value="all">All categories</option>
                     {CATEGORY_OPTIONS.map(option => (
                         <option key={option} value={option}>{option}</option>
                     ))}
                 </select>
-                <input
-                    type="text"
-                    value={filterState.search}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        onFilterChange({ search: e.target.value })
-                    }
-                    placeholder="Search prompts"
-                />
                 <button
                     type="button"
                     className={styles.favoriteToggle}
@@ -62,7 +65,24 @@ export default function PromptFilters({
                     {filterState.showFavorites ? '★ Favorites' : '☆ Favorites'}
                 </button>
             </div>
-            <p className={styles.count}>Showing {filteredCount} of {totalCount} prompts.</p>
+            <input
+                type="text"
+                className={styles.search}
+                value={filterState.search}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    onFilterChange({ search: e.target.value })
+                }
+                placeholder="Search prompts"
+                aria-label="Search prompts"
+            />
+            <div className={styles.footer}>
+                {hasActiveFilters && (
+                    <button type="button" className={styles.clearButton} onClick={clearFilters}>
+                        Clear filters
+                    </button>
+                )}
+                <p className={styles.count}>Showing {filteredCount} of {totalCount} prompts.</p>
+            </div>
         </div>
     );
 }

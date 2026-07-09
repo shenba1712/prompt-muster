@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import styles from "./page.module.css";
 import Header from "@/components/Header";
 import PromptList from "@/components/PromptList";
@@ -8,6 +9,7 @@ import PromptFilters from '@/components/PromptFilters';
 import { usePromptManager } from '@/hooks/usePromptManager';
 
 export default function Home() {
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const {
     filteredPrompts,
     promptCount,
@@ -23,10 +25,10 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
+      <Header onOpenForm={() => setIsFormOpen(true)} />
       <main className={styles.main}>
         {error && <p role="alert" className={styles.error}>{error}</p>}
 
-        {/*For now, the form is directly pasted here. Ideally, should be connected to a button */}
         <PromptFilters
             filterState={filterState}
             onFilterChange={setFilter}
@@ -34,11 +36,12 @@ export default function Home() {
             filteredCount={filteredPromptCount}
         />
 
-        {/*For now, the form is directly pasted here. Ideally, should be connected to the button in the header*/}
-        <div>
-          <PromptForm onAddPrompt={addPrompt} />
-        </div>
-        <br/>
+        {isFormOpen && (
+          <PromptForm
+            onAddPrompt={addPrompt}
+            onCancel={() => setIsFormOpen(false)}
+          />
+        )}
 
         <PromptList
           prompts={filteredPrompts}

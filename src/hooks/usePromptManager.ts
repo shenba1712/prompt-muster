@@ -54,6 +54,8 @@ export function usePromptManager(): UsePromptManagerReturn {
         setFilterState(prev => ({ ...prev, ...updates }));
     };
 
+    const searchTerm = filterState.search.trim().toLowerCase();
+
     const filteredPrompts = prompts
         .filter(p =>
             filterState.model === 'all' || p.model === filterState.model
@@ -63,13 +65,9 @@ export function usePromptManager(): UsePromptManagerReturn {
         )
         .filter(p => !filterState.showFavorites || p.isFavorite)
         .filter(p =>
-            filterState.search === '' ||
-            p.title.toLowerCase().includes(
-                filterState.search.toLowerCase()
-            ) ||
-            p.content.toLowerCase().includes(
-                filterState.search.toLowerCase()
-            )
+            searchTerm === '' ||
+            p.title.toLowerCase().includes(searchTerm) ||
+            p.content.toLowerCase().includes(searchTerm)
         );
 
     const promptCount = prompts.length;

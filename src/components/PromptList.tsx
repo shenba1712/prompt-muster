@@ -2,6 +2,7 @@ import type { JSX } from 'react';
 import { Prompt } from '@/types/prompt';
 import PromptCard from './PromptCard';
 import EmptyState from './EmptyState';
+import styles from './PromptList.module.css';
 
 interface PromptListProps {
     prompts: Prompt[];
@@ -25,7 +26,7 @@ export default function PromptList({
     }
 
     return (
-        <div>
+        <div className={styles.list}>
             {prompts.map(prompt => (
                 <PromptCard
                     key={prompt.id}
