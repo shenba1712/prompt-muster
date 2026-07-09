@@ -4,15 +4,16 @@ import { CreatePromptInput } from "@/types/prompt";
 
 interface HeaderProps {
     promptCount: number;
+    filteredPromptCount: number;
     onAddPrompt: (input: CreatePromptInput) => void;
 }
 
-export default function Header({ promptCount, onAddPrompt }: HeaderProps): JSX.Element {
+export default function Header({ promptCount, filteredPromptCount, onAddPrompt }: HeaderProps): JSX.Element {
     return (
         <header className={styles.header}>
             <h1>PromptLab</h1>
             <div className={styles.subheader}>
-                <span>{promptCount} {promptCount === 1 ? 'prompt' : 'prompts'}</span>
+                <span>Displaying {filteredPromptCount}/{promptCount} {promptCount === 1 ? 'prompt' : 'prompts'}</span>
 
                 {/*For now, just hard coded values. Ideally, the PromptForm is connected to this button*/}
                 <div className={styles.actions}>

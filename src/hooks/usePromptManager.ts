@@ -4,7 +4,9 @@ import { createPrompt } from '@/utils/prompt';
 
 export interface UsePromptManagerReturn {
     prompts: Prompt[];
+    filteredPrompts: Prompt[];
     promptCount: number;
+    filteredPromptCount: number;
     favoriteCount: number;
     copyError: string | null;
     addPrompt: (input: CreatePromptInput) => void;
@@ -52,12 +54,33 @@ export function usePromptManager(): UsePromptManagerReturn {
         setFilterState(prev => ({ ...prev, ...updates }));
     };
 
+    const filteredPrompts = prompts
+        .filter(p =>
+            filterState.model === 'all' || p.model === filterState.model
+        )
+        .filter(p =>
+            filterState.category === 'all' || p.category === filterState.category
+        )
+        .filter(p => !filterState.showFavorites || p.isFavorite)
+        .filter(p =>
+            filterState.search === '' ||
+            p.title.toLowerCase().includes(
+                filterState.search.toLowerCase()
+            ) ||
+            p.content.toLowerCase().includes(
+                filterState.search.toLowerCase()
+            )
+        );
+
     const promptCount = prompts.length;
+    const filteredPromptCount = filteredPrompts.length;
     const favoriteCount = prompts.filter(p => p.isFavorite).length;
 
     return {
         prompts,
+        filteredPrompts,
         promptCount,
+        filteredPromptCount,
         favoriteCount,
         copyError,
         addPrompt,

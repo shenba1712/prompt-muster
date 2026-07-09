@@ -9,7 +9,9 @@ import { usePromptManager } from '@/hooks/usePromptManager';
 export default function Home() {
   const {
     prompts,
+    filteredPrompts,
     promptCount,
+    filteredPromptCount,
     copyError,
     addPrompt,
     deletePrompt,
@@ -20,7 +22,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Header onAddPrompt={addPrompt} promptCount={promptCount} />
+        <Header onAddPrompt={addPrompt} promptCount={promptCount} filteredPromptCount={filteredPromptCount} />
         {copyError && <p role="alert" className={styles.error}>{copyError}</p>}
         <br/>
 
@@ -31,7 +33,7 @@ export default function Home() {
         <br/>
 
         <PromptList
-          prompts={prompts}
+          prompts={filteredPrompts}
           onDelete={deletePrompt}
           onCopy={copyToClipboard}
           onToggleFavorite={toggleFavorite}
