@@ -1,0 +1,48 @@
+.filters {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.row select,
+.row input {
+    flex: 1 1 140px;
+    min-width: 140px;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.favoriteToggle {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font: inherit;
+}
+
+.favoriteToggle[aria-pressed="true"] {
+    background: #fff3cd;
+    border-color: #e0c46c;
+}
+
+.count {
+    font-size: 0.875rem;
+    color: #555;
+    margin-left: auto;
+}

@@ -5,6 +5,7 @@ import EmptyState from './EmptyState';
 
 interface PromptListProps {
     prompts: Prompt[];
+    totalCount: number;
     onDelete: (id: string) => void;
     onCopy: (content: string) => void;
     onToggleFavorite: (id: string) => void;
@@ -12,12 +13,15 @@ interface PromptListProps {
 
 export default function PromptList({
                                         prompts,
+                                        totalCount,
                                         onDelete,
                                         onCopy,
                                         onToggleFavorite,
                                     }: PromptListProps): JSX.Element {
     if (prompts.length === 0) {
-        return <EmptyState />;
+        return totalCount === 0
+            ? <EmptyState />
+            : <EmptyState message="No prompts match your filters." />;
     }
 
     return (

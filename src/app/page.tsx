@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import Header from "@/components/Header";
 import PromptList from "@/components/PromptList";
 import PromptForm from '@/components/PromptForm';
+import PromptFilters from '@/components/PromptFilters';
 import { usePromptManager } from '@/hooks/usePromptManager';
 
 export default function Home() {
@@ -17,6 +18,8 @@ export default function Home() {
     deletePrompt,
     copyToClipboard,
     toggleFavorite,
+    filterState,
+    setFilter
   } = usePromptManager();
 
   return (
@@ -26,6 +29,14 @@ export default function Home() {
         {copyError && <p role="alert" className={styles.error}>{copyError}</p>}
         <br/>
 
+        {/*For now, the form is directly pasted here. Ideally, should be connected to a button */}
+        <PromptFilters
+            filterState={filterState}
+            onFilterChange={setFilter}
+            totalCount={promptCount}
+            filteredCount={filteredPromptCount}
+        />
+
         {/*For now, the form is directly pasted here. Ideally, should be connected to the button in the header*/}
         <div>
           <PromptForm onAddPrompt={addPrompt} />
@@ -34,6 +45,7 @@ export default function Home() {
 
         <PromptList
           prompts={filteredPrompts}
+          totalCount={promptCount}
           onDelete={deletePrompt}
           onCopy={copyToClipboard}
           onToggleFavorite={toggleFavorite}
