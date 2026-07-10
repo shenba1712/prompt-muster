@@ -20,7 +20,8 @@ export default function Home() {
     copyToClipboard,
     toggleFavorite,
     filterState,
-    setFilter
+    setFilter,
+    seedPrompts
   } = usePromptManager();
 
   return (
@@ -28,6 +29,8 @@ export default function Home() {
       <Header onOpenForm={() => setIsFormOpen(true)} />
       <main className={styles.main}>
         {error && <p role="alert" className={styles.error}>{error}</p>}
+        {/*test data. should be removed when persistence is added*/}
+        <button onClick={seedPrompts}>Load Sample Data</button>
 
         <PromptFilters
             filterState={filterState}

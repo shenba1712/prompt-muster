@@ -15,6 +15,7 @@ export interface UsePromptManagerReturn {
     toggleFavorite: (id: string) => void;
     filterState: FilterState;
     setFilter: (updates: Partial<FilterState>) => void;
+    seedPrompts: () => void; // test data
 }
 
 export function usePromptManager(): UsePromptManagerReturn {
@@ -74,6 +75,54 @@ export function usePromptManager(): UsePromptManagerReturn {
     const filteredPromptCount = filteredPrompts.length;
     const favoriteCount = prompts.filter(p => p.isFavorite).length;
 
+    // test data
+    const seedPrompts = () => {
+        const seeds: Prompt[] = [
+            {
+                ...createPrompt({
+                    title: 'Code Review',
+                    content: 'Review this code for bugs, security issues, and performance problems. Focus on error handling and edge cases.',
+                    model: 'claude-sonnet',
+                    category: 'code-review',
+                    tags: ['review', 'quality'],
+                }),
+                isFavorite: true,
+            },
+            {
+                ...createPrompt({
+                    title: 'Write Unit Tests',
+                    content: 'Generate unit tests for the following function. Cover happy path, edge cases, and error scenarios.',
+                    model: 'gpt-4o',
+                    category: 'testing',
+                    tags: ['testing', 'automation'],
+                }),
+                isFavorite: true,
+            },
+            createPrompt({
+                title: 'Debug Error',
+                content: 'Help me debug this error. Explain the root cause and suggest a fix with code examples.',
+                model: 'gpt-4o-mini',
+                category: 'debugging',
+                tags: ['debug'],
+            }),
+            createPrompt({
+                title: 'Architecture Review',
+                content: 'Review this architecture for scalability, maintainability, and operational concerns.',
+                model: 'claude-sonnet',
+                category: 'architecture',
+                tags: ['architecture', 'design'],
+            }),
+            createPrompt({
+                title: 'Generate API Docs',
+                content: 'Write API documentation for this endpoint including request/response examples and error codes.',
+                model: 'gemini-pro',
+                category: 'documentation',
+                tags: ['docs', 'api'],
+            }),
+        ];
+        setPrompts(seeds);
+    };
+
     return {
         prompts,
         filteredPrompts,
@@ -86,6 +135,7 @@ export function usePromptManager(): UsePromptManagerReturn {
         copyToClipboard,
         toggleFavorite,
         filterState,
-        setFilter
+        setFilter,
+        seedPrompts
     };
 }
