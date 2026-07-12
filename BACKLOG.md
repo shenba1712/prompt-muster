@@ -655,6 +655,37 @@ After Tier 6, you can demonstrate:
 Interview level: Staff — "I understand distributed
 systems, data infrastructure, and advanced AI patterns"
 
+---
+
+## Tier 7 — Local Model Integration (Decision Deferred to Week 13+)
+
+> **Status:** Exploratory. May extend PromptLab or become a separate project.  
+> **Prerequisites:** Weeks 8-10 local model intro complete, core PromptLab stable.  
+> **Hardware:** M1 16GB (7B models now), M4/M5 24GB (13B models later).
+
+### Candidate Features (not committed)
+
+| # | Feature | Concept | Notes |
+|---|---------|---------|-------|
+| 42 | Ollama integration | Local model serving | Run prompts against local models from the app |
+| 43 | Prompt testing workbench | Inference comparison | Same prompt → different models/temperatures → side-by-side results |
+| 44 | Response history | Prompt-response pairs | Save outputs for iteration and comparison |
+| 45 | Model comparison dashboard | Evaluation | Quality, speed, token usage across models |
+| 46 | RAG pipeline prototype | Retrieval-augmented generation | Embeddings → vector store → retrieval → generation |
+| 47 | Agent playground | Tool use, chains | Experimental — depends on scope decision |
+
+### Scope Decision (Week 13+)
+- **If PromptLab extension:** Features 42-45 integrate into existing app. Story: "Full-stack prompt engineering workbench with local LLM backend."
+- **If new project:** All features above become the foundation. Story: "AI engineering toolkit for model evaluation, RAG, and agent prototyping."
+- **Decision criteria:** Which framing is stronger for interviews? Which architecture is cleaner? Does PromptLab's codebase support it without forcing it?
+
+### Engineering Concepts Unlocked
+- Model serving (Ollama API, streaming responses)
+- Tokenization and context window management
+- Embedding generation and vector similarity
+- Quantization awareness (GGUF, 4-bit vs 8-bit tradeoffs)
+- Agent orchestration patterns
+
 
 ═══════════════════════════════════════════════════════
 RULES

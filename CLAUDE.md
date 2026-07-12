@@ -6,11 +6,18 @@ on AI prompts. Built with Next.js, React, and TypeScript.
 
 ## Current State
 
-Week 1 — frontend only, no backend, no database.
-All data is in-memory using React useState.
-No tests yet.
-No styling library yet (shadcn/ui planned for Week 2+).
+Week 1 complete — frontend only, no backend, no database.
+All data is in-memory using React useState (lost on refresh).
+Seed data function exists for development testing.
+No tests yet (planned for Week 2).
+No styling library yet (shadcn/ui planned for Week 2).
 No routing yet — single page application.
+No data persistence yet (IndexedDB planned for Week 5).
+
+Components: Header, PromptForm, PromptList, PromptCard, PromptFilters, EmptyState, FavoriteButton (8 files + CSS modules)
+Hooks: usePromptManager (CRUD, filtering, derived state)
+Types: prompt.ts
+Utils: prompt.ts
 
 
 ## How to Work
@@ -395,4 +402,8 @@ setFilterState(prev => ({ ...prev, ...updates }))
 
 ## Lessons Learned
 
-(Add entries here as mistakes are discovered during development)
+- Disclosing an unrequested change after making it is not the same
+  as checking before making it. Even small, seemingly-obvious tweaks
+  (a margin, a border-radius, a spacing adjustment) made while fixing
+  something else should be proposed as a question first, not
+  implemented and then flagged in the summary.
