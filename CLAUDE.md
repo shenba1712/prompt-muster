@@ -214,6 +214,7 @@ A Prompt represents a reusable AI prompt template:
 - tags: string[]
 - isFavorite: boolean
 - createdAt: Date
+- updatedAt: Date
 
 
 ## TypeScript Conventions
@@ -407,3 +408,4 @@ setFilterState(prev => ({ ...prev, ...updates }))
   (a margin, a border-radius, a spacing adjustment) made while fixing
   something else should be proposed as a question first, not
   implemented and then flagged in the summary.
+- Output only the modified or requested code blocks. Do not provide line by line explanations, setup guides, introductory or concluding remarks. Adopt a concise, high density communication, without compromising on quality. Provide and lay down all the information needed as efficiently as possible.

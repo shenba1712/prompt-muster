@@ -7,6 +7,7 @@ import styles from './PromptCard.module.css';
 
 interface PromptCardProps {
     prompt: Prompt;
+    onEdit: (prompt: Prompt) => void;
     onDelete: (id: string) => void;
     onCopy: (content: string) => void;
     onToggleFavorite: (id: string) => void;
@@ -16,6 +17,7 @@ const CONTENT_PREVIEW_LIMIT = 120;
 
 export default function PromptCard({
                                        prompt,
+                                       onEdit,
                                        onDelete,
                                        onCopy,
                                        onToggleFavorite,
@@ -51,6 +53,7 @@ export default function PromptCard({
                 {prompt.tags.map(tag => <span key={tag} className={styles.tag}>{tag}</span>)}
             </div>
             <div className={styles.actions}>
+                <button onClick={() => onEdit(prompt)}>Edit</button>
                 <button onClick={handleCopy}>{copied ? 'Copied!' : 'Copy'}</button>
                 <button onClick={() => onDelete(prompt.id)}>Delete</button>
             </div>

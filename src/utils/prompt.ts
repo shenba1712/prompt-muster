@@ -1,4 +1,11 @@
-import { Category, CATEGORY_OPTIONS, CreatePromptInput, Model, MODEL_OPTIONS, Prompt } from '@/types/prompt';
+import {
+    Category,
+    CATEGORY_OPTIONS,
+    CreatePromptInput,
+    Model,
+    MODEL_OPTIONS,
+    Prompt,
+} from '@/types/prompt';
 
 export function createPrompt(input: CreatePromptInput): Prompt {
     return {
@@ -6,6 +13,7 @@ export function createPrompt(input: CreatePromptInput): Prompt {
         id: crypto.randomUUID(),
         isFavorite: false,
         createdAt: new Date(),
+        updatedAt: new Date(),
     };
 }
 

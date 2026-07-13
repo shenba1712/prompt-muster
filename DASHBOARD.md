@@ -59,6 +59,8 @@ Scale: 1 (unfamiliar) to 5 (confident). **Self-assessed only** — Claude can't 
 - Delete confirmation / undo pattern — deferred pending design thinking on where this goes.
 - Prompt CRUD is missing "update" — add/delete/favorite exist, editing an existing prompt doesn't yet.
 - Button/UI-primitive consistency — deliberately deferred to the shadcn/ui migration (Week 2+) rather than building throwaway variants now.
+- **Silent no-op bug (confirmed live):** deleting the prompt you're currently editing, then clicking "Save changes," closes the form as if it succeeded with no error shown — the update silently matches nothing. Deferred pending the app-wide error-handling design pass. Likely resolved by inline editing *if* the card being edited is replaced by the form (removing its own Delete button from the equation) — verify this is actually true when inline editing is built, don't assume it for free.
+- **Unsaved-input loss (confirmed by design, not yet tested live):** switching the edit target to a different prompt — or starting a create, then clicking Edit — remounts the form (by design, via its `key`) and silently discards whatever was typed, no confirmation. Likely resolved by inline editing *if* it supports multiple open forms at once — verify, don't assume.
 
 ## Weekly Reviews
 

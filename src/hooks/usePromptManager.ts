@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CreatePromptInput, Prompt, FilterState } from '@/types/prompt';
+import { CreatePromptInput, UpdatePromptInput, Prompt, FilterState } from '@/types/prompt';
 import { createPrompt } from '@/utils/prompt';
 
 export interface UsePromptManagerReturn {
@@ -10,6 +10,7 @@ export interface UsePromptManagerReturn {
     favoriteCount: number;
     error: string | null;
     addPrompt: (input: CreatePromptInput) => void;
+    updatePrompt: (id: string, updates: UpdatePromptInput) => void;
     deletePrompt: (id: string) => void;
     copyToClipboard: (content: string) => Promise<void>;
     toggleFavorite: (id: string) => void;
@@ -31,6 +32,11 @@ export function usePromptManager(): UsePromptManagerReturn {
     const addPrompt = (input: CreatePromptInput) => {
         const newPrompt = createPrompt(input);
         setPrompts(prev => [newPrompt, ...prev]);
+    };
+
+    const updatePrompt = (id: string, updates: UpdatePromptInput): void => {
+        // updatedAt is set after the spread so it always wins over any stale value.
+        setPrompts(prev => prev.map(p => p.id === id ? { ...p, ...updates, updatedAt: new Date() } : p));
     };
 
     const deletePrompt = (id: string) => {
@@ -131,6 +137,7 @@ export function usePromptManager(): UsePromptManagerReturn {
         favoriteCount,
         error,
         addPrompt,
+        updatePrompt,
         deletePrompt,
         copyToClipboard,
         toggleFavorite,

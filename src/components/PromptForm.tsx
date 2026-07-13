@@ -1,26 +1,44 @@
 'use client';
 
-import { useState, useRef, type JSX } from 'react';
-import { Model, Category, MODEL_OPTIONS, CATEGORY_OPTIONS, CreatePromptInput } from '@/types/prompt';
+import { useState, useRef, useEffect, type JSX } from 'react';
+import { Model, Category, MODEL_OPTIONS, CATEGORY_OPTIONS, CreatePromptInput, Prompt } from '@/types/prompt';
 import { isModel, isCategory } from '@/utils/prompt';
 import styles from './PromptForm.module.css';
 
 interface PromptFormProps {
-    onAddPrompt: (input: CreatePromptInput) => void;
+    prompt?: Prompt;
+    onSave: (input: CreatePromptInput) => void;
     onCancel: () => void;
 }
 
-export default function PromptForm({ onAddPrompt, onCancel }: PromptFormProps): JSX.Element {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [model, setModel] = useState<Model>(MODEL_OPTIONS[0]);
-    const [category, setCategory] = useState<Category>(CATEGORY_OPTIONS[0]);
-    const [tags, setTags] = useState('');
+export default function PromptForm({ prompt, onSave, onCancel }: PromptFormProps): JSX.Element {
+    const isEditing = prompt !== undefined;
+    const [title, setTitle] = useState(prompt?.title ?? '');
+    const [content, setContent] = useState(prompt?.content ?? '');
+    const [model, setModel] = useState<Model>(prompt?.model ?? MODEL_OPTIONS[0]);
+    const [category, setCategory] = useState<Category>(prompt?.category ?? CATEGORY_OPTIONS[0]);
+    const [tags, setTags] = useState(prompt?.tags.join(', ') ?? '');
     const titleInputRef = useRef<HTMLInputElement>(null);
+    const formRef = useRef<HTMLFormElement>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    // On open, bring the form into view and focus the title so it's obvious the
+    // form opened — the Edit button can be far below the form's position.
+    // block: 'nearest' scrolls the minimum needed (and not at all if the form is
+    // already visible), so it's not a jarring jump to the top. Instant (not
+    // smooth) so it isn't defeated by the browser's scroll-anchoring shift.
+    useEffect(() => {
+        formRef.current?.scrollIntoView({ block: 'nearest' });
+        titleInputRef.current?.focus({ preventScroll: true });
+    }, []);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!title.trim() || !content.trim()) return;
+        if (title.trim() === '' || content.trim() === '') {
+            setError('Title and content are required.');
+            return;
+        }
+        setError(null);
         const seenTags = new Set<string>();
         const uniqueTags = tags
             .split(',')
@@ -32,23 +50,27 @@ export default function PromptForm({ onAddPrompt, onCancel }: PromptFormProps): 
                 seenTags.add(key);
                 return true;
             });
-        onAddPrompt({
+        onSave({
             title: title.trim(),
             content: content.trim(),
             model,
             category,
             tags: uniqueTags,
         });
-        setTitle('');
-        setContent('');
-        setModel(MODEL_OPTIONS[0]);
-        setCategory(CATEGORY_OPTIONS[0]);
-        setTags('');
-        titleInputRef.current?.focus();
+        // In edit mode the parent closes (unmounts) the form on save.
+        // In create mode, reset for the next entry and refocus the title.
+        if (!isEditing) {
+            setTitle('');
+            setContent('');
+            setModel(MODEL_OPTIONS[0]);
+            setCategory(CATEGORY_OPTIONS[0]);
+            setTags('');
+            titleInputRef.current?.focus();
+        }
     };
 
     return (
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
             <input
                 ref={titleInputRef}
                 type="text"
@@ -102,9 +124,12 @@ export default function PromptForm({ onAddPrompt, onCancel }: PromptFormProps): 
                 placeholder="Tags (comma-separated)"
                 aria-label="Tags (comma-separated)"
             />
+            <div>
+                {error && <p role="alert" className={styles.error}>{error}</p>}
+            </div>
             <div className={styles.actions}>
                 <button type="button" onClick={onCancel}>Cancel</button>
-                <button type="submit">Add Prompt</button>
+                <button type="submit">{isEditing ? 'Save changes' : 'Add Prompt'}</button>
             </div>
         </form>
     );

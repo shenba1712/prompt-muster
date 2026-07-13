@@ -34,9 +34,12 @@ export interface Prompt {
     tags: string[];
     isFavorite: boolean;
     createdAt: Date;
+    updatedAt: Date;
 }
 
-export type CreatePromptInput = Omit<Prompt, 'id' | 'createdAt' | 'isFavorite'>;
+export type CreatePromptInput = Omit<Prompt, 'id' | 'createdAt' | 'isFavorite' | 'updatedAt'>;
+
+export type UpdatePromptInput = Partial<Omit<Prompt, 'id' | 'createdAt' | 'updatedAt'>>;
 
 export interface FilterState {
     model: Model | 'all';
