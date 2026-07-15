@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CreatePromptInput, UpdatePromptInput, Prompt, FilterState } from '@/types/prompt';
 import { createPrompt } from '@/utils/prompt';
+import { filterPrompts } from '@/utils/filter-prompts'
 
 export interface UsePromptManagerReturn {
     prompts: Prompt[];
@@ -63,19 +64,7 @@ export function usePromptManager(): UsePromptManagerReturn {
 
     const searchTerm = filterState.search.trim().toLowerCase();
 
-    const filteredPrompts = prompts
-        .filter(p =>
-            filterState.model === 'all' || p.model === filterState.model
-        )
-        .filter(p =>
-            filterState.category === 'all' || p.category === filterState.category
-        )
-        .filter(p => !filterState.showFavorites || p.isFavorite)
-        .filter(p =>
-            searchTerm === '' ||
-            p.title.toLowerCase().includes(searchTerm) ||
-            p.content.toLowerCase().includes(searchTerm)
-        );
+    const filteredPrompts = filterPrompts(prompts, filterState);
 
     const promptCount = prompts.length;
     const filteredPromptCount = filteredPrompts.length;
