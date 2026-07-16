@@ -1,4 +1,4 @@
-# PromptLab Dashboard
+# PromptMuster Dashboard
 
 ## Current Week
 
@@ -31,7 +31,7 @@
 | 5   | State management (CRUD + favorite)      | In progress — add/delete/favorite done, update/edit missing                                      |
 | 6   | Custom usePromptManager hook            | Complete                                                                                         |
 | 7   | Multi-dimensional filtering             | Complete                                                                                         |
-| 8   | Coding challenge                        | Not started                                                                                      |
+| 8   | Coding challenge                        | Complete                                                                                         |
 | 9   | GitHub repo with daily commits          | Complete                                                                                         |
 
 ## Confidence Levels

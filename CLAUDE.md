@@ -1,4 +1,4 @@
-# PromptLab
+# PromptMuster
 
 AI prompt engineering workbench for managing, organizing, and iterating
 on AI prompts. Built with Next.js, React, and TypeScript.
@@ -6,18 +6,35 @@ on AI prompts. Built with Next.js, React, and TypeScript.
 
 ## Current State
 
-Week 1 complete — frontend only, no backend, no database.
+Week 1 complete; Week 2 in progress — frontend only, no backend, no database.
 All data is in-memory using React useState (lost on refresh).
 Seed data function exists for development testing.
-No tests yet (planned for Week 2).
+CRUD is complete including the update/edit flow (Week 2).
+Tests: Vitest + React Testing Library set up; usePromptManager and utility tests exist (Week 2).
 No styling library yet (shadcn/ui planned for Week 2).
 No routing yet — single page application.
-No data persistence yet (IndexedDB planned for Week 5).
+No data persistence yet (prompt files on disk + SQLite planned for Week 5 — supersedes the earlier IndexedDB plan; see project-files/trd.md §4 and ADR-002).
 
 Components: Header, PromptForm, PromptList, PromptCard, PromptFilters, EmptyState, FavoriteButton (8 files + CSS modules)
 Hooks: usePromptManager (CRUD, filtering, derived state)
 Types: prompt.ts
 Utils: prompt.ts
+
+
+## Scheduled Direction Changes (planned — do not apply early)
+
+Decided 2026-07-15 in project-files/prd.md + trd.md; each lands on its
+scheduled date as part of that day's work, not before:
+
+- **Week 2 Friday (shadcn/ui, backlog #07):** the CSS Conventions section
+  below flips — shadcn brings Tailwind. Until that migration starts, keep
+  using CSS Modules; update the CSS section as part of the migration.
+- **Week 3–4 (before any execution features):** domain model rewrite —
+  `content: string` becomes a role-tagged messages array plus typed
+  variables and model params (trd.md §3). The Domain section below
+  describes the current code and changes then.
+- **Week 5:** persistence = prompt files on disk + SQLite for runs
+  (ADR-002/ADR-003) — NOT IndexedDB.
 
 
 ## How to Work
@@ -214,7 +231,6 @@ A Prompt represents a reusable AI prompt template:
 - tags: string[]
 - isFavorite: boolean
 - createdAt: Date
-- updatedAt: Date
 
 
 ## TypeScript Conventions
@@ -268,7 +284,7 @@ Every component file follows this order:
 3. Props interface
 4. Component function (export default)
 
- Example:
+Example:
 
 ```typescript
 
@@ -288,7 +304,6 @@ export default function PromptCard({prompt, onDelete,}: PromptCardProps) {
 );
       }
 ```
-   
 
 
 ## Hook File Structure
@@ -330,6 +345,8 @@ Hooks must:
 - Global styles go in app/globals.css only
 - Do not use inline styles except for truly dynamic values
 - Do not use styled-components, Tailwind, or CSS-in-JS
+  (NOTE 2026-07-15: scheduled to flip when shadcn/ui lands — Week 2
+  Friday, backlog #07. See "Scheduled Direction Changes" above.)
 - Keep class names descriptive: .card, .header, .badge not .c1, .h, .b
 
 
@@ -408,4 +425,3 @@ setFilterState(prev => ({ ...prev, ...updates }))
   (a margin, a border-radius, a spacing adjustment) made while fixing
   something else should be proposed as a question first, not
   implemented and then flagged in the summary.
-- Output only the modified or requested code blocks. Do not provide line by line explanations, setup guides, introductory or concluding remarks. Adopt a concise, high density communication, without compromising on quality. Provide and lay down all the information needed as efficiently as possible.

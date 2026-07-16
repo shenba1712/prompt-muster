@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PromptLab",
+  title: "PromptMuster",
   description: "Your Github for Prompts",
 };
 
