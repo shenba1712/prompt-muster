@@ -26,9 +26,10 @@ Utils: prompt.ts
 Decided 2026-07-15 in project-files/prd.md + trd.md; each lands on its
 scheduled date as part of that day's work, not before:
 
-- **Week 2 Friday (shadcn/ui, backlog #07):** the CSS Conventions section
-  below flips — shadcn brings Tailwind. Until that migration starts, keep
-  using CSS Modules; update the CSS section as part of the migration.
+- **Week 2 (shadcn/ui, backlog #07) — ✅ LANDED:** Tailwind + shadcn/ui
+  installed; the CSS Conventions section below now carries the
+  coexistence rule (new `ui/` components = Tailwind, existing = CSS
+  Modules until individually migrated).
 - **Week 3–4 (before any execution features):** domain model rewrite —
   `content: string` becomes a role-tagged messages array plus typed
   variables and model params (trd.md §3). The Domain section below
@@ -208,6 +209,7 @@ I'll decide whether to add it. Don't modify this file yourself.
 - React 18+
 - TypeScript 5+ (strict mode)
 - Node.js 18+
+- Tailwind CSS v4 + shadcn/ui (Radix primitives; component source lives in src/components/ui/)
 
 
 ## Project Structure
@@ -338,15 +340,17 @@ Hooks must:
 
 ## CSS Conventions
 
-- Use CSS Modules for component-specific styles
+- Use CSS Modules for existing (non-shadcn) components' styles — see the Tailwind coexistence rule below
 - File name matches component: PromptCard.module.css
 - Import as: import styles from './PromptCard.module.css'
 - Apply as: className={styles.card}
 - Global styles go in app/globals.css only
 - Do not use inline styles except for truly dynamic values
-- Do not use styled-components, Tailwind, or CSS-in-JS
-  (NOTE 2026-07-15: scheduled to flip when shadcn/ui lands — Week 2
-  Friday, backlog #07. See "Scheduled Direction Changes" above.)
+- Tailwind + shadcn/ui are in use as of the Week 2 migration (backlog
+  #07). Coexistence rule: new components in `src/components/ui/` use
+  Tailwind; existing components keep their CSS Modules until each is
+  individually migrated; write no new CSS Modules for new work.
+- No styled-components or other CSS-in-JS.
 - Keep class names descriptive: .card, .header, .badge not .c1, .h, .b
 
 
@@ -425,3 +429,9 @@ setFilterState(prev => ({ ...prev, ...updates }))
   (a margin, a border-radius, a spacing adjustment) made while fixing
   something else should be proposed as a question first, not
   implemented and then flagged in the summary.
+
+- Tool and library behavior is often version-dependent — don't state
+  it as fact from memory. Check the installed version or the project's
+  actual config before asserting what a command will do. (Example:
+  claimed `shadcn init` auto-installs Tailwind; the installed CLI (4.x)
+  required Tailwind set up first.)
