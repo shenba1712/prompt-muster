@@ -1,10 +1,10 @@
 # PromptMuster — DevOps & CI/CD Pipeline Docs
 
-| | |
-|---|---|
-| **Status** | 📝 Draft v0.1 — companion to [trd.md §10, §13](trd.md), [ADR-001](adr/ADR-001-framework-free-core-library.md), [ADR-002](adr/ADR-002-prompts-as-files-runs-in-database.md) |
-| **Owner** | Shenbaga Srinivasan |
-| **Created** | 2026-07-15 |
+|             |                                                                                                                                                                            |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**  | 📝 Draft v0.1 — companion to [trd.md §10, §13](trd.md), [ADR-001](adr/ADR-001-framework-free-core-library.md), [ADR-002](adr/ADR-002-prompts-as-files-runs-in-database.md) |
+| **Owner**   | Shenbaga Srinivasan                                                                                                                                                        |
+| **Created** | 2026-07-15                                                                                                                                                                 |
 
 ---
 
@@ -21,12 +21,12 @@ What "shipping" actually means here splits into **four distinct pipelines**, eac
 different trigger, a different audience, and — critically — different secrets. Conflating
 them is the most likely mistake, so each gets its own section:
 
-| Pipeline | Ships what | To whom | Runs where |
-|---|---|---|---|
-| **[§1](#1-pipeline-a--repo-ci-keeps-this-codebase-healthy) A — Repo CI** | Nothing — verifies the codebase | Nobody; internal quality gate | This repo's own GitHub Actions |
-| **[§2](#2-pipeline-b--package-publish-the-real-shipping-mechanism) B — Package publish** | `@promptmuster/core`, `cli`, `mcp` | Anyone running `npm install` | This repo's own GitHub Actions, on a version tag |
-| **[§3](#3-pipeline-c--demo-site-deploy-corrected-from-the-old-plan) C — Demo site deploy** | A read-only sample instance | Hiring managers, résumé link | Vercel |
-| **[§4](#4-pipeline-d--the-ci-action-a-shipped-product-feature-not-internal-tooling) D — The CI Action** | A GitHub Action *product* | Other people's repos | Whichever repo installs it |
+| Pipeline                                                                                                | Ships what                         | To whom                       | Runs where                                       |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------- | ----------------------------- | ------------------------------------------------ |
+| **[§1](#1-pipeline-a--repo-ci-keeps-this-codebase-healthy) A — Repo CI**                                | Nothing — verifies the codebase    | Nobody; internal quality gate | This repo's own GitHub Actions                   |
+| **[§2](#2-pipeline-b--package-publish-the-real-shipping-mechanism) B — Package publish**                | `@promptmuster/core`, `cli`, `mcp` | Anyone running `npm install`  | This repo's own GitHub Actions, on a version tag |
+| **[§3](#3-pipeline-c--demo-site-deploy-corrected-from-the-old-plan) C — Demo site deploy**              | A read-only sample instance        | Hiring managers, résumé link  | Vercel                                           |
+| **[§4](#4-pipeline-d--the-ci-action-a-shipped-product-feature-not-internal-tooling) D — The CI Action** | A GitHub Action _product_          | Other people's repos          | Whichever repo installs it                       |
 
 Phase 4's team backend is the **one** place a conventional "build → test → deploy to a
 running server" pipeline actually exists — that gets its own light section
@@ -60,7 +60,7 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm run lint
-      - run: npm test          # vitest run — see §1.1 for what this actually covers
+      - run: npm test # vitest run — see §1.1 for what this actually covers
       - run: npm run build
 ```
 
@@ -78,8 +78,8 @@ provider. This is a deliberate constraint, not a gap:
 
 This is worth stating explicitly because it's the opposite of Pipeline D
 ([§4](#4-pipeline-d--the-ci-action-a-shipped-product-feature-not-internal-tooling)), where
-making real provider calls is the *entire point*. Conflating the two — e.g. assuming
-"PromptMuster has an eval-on-PR Action" means *this* repo's CI burns real API spend on every
+making real provider calls is the _entire point_. Conflating the two — e.g. assuming
+"PromptMuster has an eval-on-PR Action" means _this_ repo's CI burns real API spend on every
 commit — is the specific mistake this split is meant to prevent.
 
 ### 1.2 Branch protection
@@ -179,7 +179,7 @@ here rather than left describing an architecture that no longer exists.
 
 This is the one pipeline that's actually a **product PromptMuster ships to other people's
 repos** — [trd.md §10](trd.md), demoed in [ux-flows.md Flow 7](ux-flows.md). It has two
-parts: the Action's own definition, and what a PromptMuster user puts in *their* repo to
+parts: the Action's own definition, and what a PromptMuster user puts in _their_ repo to
 consume it.
 
 ### 4.1 The Action itself (`action.yml`, maintained in this repo)
@@ -209,7 +209,7 @@ The Action's implementation is a thin wrapper calling `promptmuster eval --chang
 committed `*.baseline.json`, and posting the PR comment shown in
 [ux-flows.md Flow 7](ux-flows.md).
 
-### 4.2 What a PromptMuster user puts in *their* repo to use it
+### 4.2 What a PromptMuster user puts in _their_ repo to use it
 
 ```yaml
 # a PromptMuster user's own .github/workflows/promptmuster-eval.yml
@@ -227,7 +227,7 @@ jobs:
 ```
 
 **This is the one pipeline that makes real provider calls on purpose** — that's its entire
-job. The API key is the *consuming repo's own* secret, configured by that repo's owner —
+job. The API key is the _consuming repo's own_ secret, configured by that repo's owner —
 never something PromptMuster's own infrastructure holds or sees, the same "keys never touch
 PromptMuster's infra" principle from [trd.md §12](trd.md), just extended to a new context.
 
@@ -243,9 +243,10 @@ would ship as `@v2`, leaving existing `@v1` consumers untouched.
 ## 5. Pipeline E — Team tier deploy (Phase 4 only)
 
 Sketched lightly, matching this doc series' convention for anything two phases out. NestJS
-+ Postgres ([ADR-001](adr/ADR-001-framework-free-core-library.md),
-[ADR-003](adr/ADR-003-sqlite-local-postgres-team.md)) need an actual running server —
-the one legitimate "deploy to production" pipeline in this whole system.
+
+- Postgres ([ADR-001](adr/ADR-001-framework-free-core-library.md),
+  [ADR-003](adr/ADR-003-sqlite-local-postgres-team.md)) need an actual running server —
+  the one legitimate "deploy to production" pipeline in this whole system.
 
 ```
 docker-compose.yml (sketch only)
@@ -264,13 +265,13 @@ with [prd.md §7.6](prd.md).
 The question "who holds which secret" is exactly where conflating the four pipelines would
 cause real harm, so it gets one table instead of being scattered across four sections:
 
-| Secret | Lives in | Used by | Never appears in |
-|---|---|---|---|
-| `NPM_TOKEN` | This repo's GitHub secrets | Pipeline B only | Pipelines A, C, D |
-| `VERCEL_TOKEN` | This repo's GitHub secrets (or Vercel's own git integration) | Pipeline C's deploy step only | Anywhere a provider key could leak from |
-| Anthropic/OpenAI/Google keys (demo) | The **visitor's browser**, entered client-side | Pipeline C's Execute/Compare feature | PromptMuster's servers, ever |
-| Anthropic/OpenAI/Google keys (eval Action) | The **consuming repo's own** GitHub secrets | Pipeline D only | This repo, or any other consumer's repo |
-| Anthropic/OpenAI/Google keys (repo CI) | **Nowhere — Pipeline A never holds one** | — | Pipeline A, by design ([§1.1](#11-what-test-covers-here--and-what-it-deliberately-never-does)) |
+| Secret                                     | Lives in                                                     | Used by                              | Never appears in                                                                               |
+| ------------------------------------------ | ------------------------------------------------------------ | ------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `NPM_TOKEN`                                | This repo's GitHub secrets                                   | Pipeline B only                      | Pipelines A, C, D                                                                              |
+| `VERCEL_TOKEN`                             | This repo's GitHub secrets (or Vercel's own git integration) | Pipeline C's deploy step only        | Anywhere a provider key could leak from                                                        |
+| Anthropic/OpenAI/Google keys (demo)        | The **visitor's browser**, entered client-side               | Pipeline C's Execute/Compare feature | PromptMuster's servers, ever                                                                   |
+| Anthropic/OpenAI/Google keys (eval Action) | The **consuming repo's own** GitHub secrets                  | Pipeline D only                      | This repo, or any other consumer's repo                                                        |
+| Anthropic/OpenAI/Google keys (repo CI)     | **Nowhere — Pipeline A never holds one**                     | —                                    | Pipeline A, by design ([§1.1](#11-what-test-covers-here--and-what-it-deliberately-never-does)) |
 
 ---
 
@@ -284,7 +285,7 @@ cause real harm, so it gets one table instead of being scattered across four sec
    Flagged with its own trigger condition rather than left as a vague "someday."
 3. **Should Pipeline A eventually dogfood the eval engine against a fixture prompt
    library** — using the product to test the product, distinct from Pipeline D which
-   serves *other* repos — as a deeper regression check on the eval engine's own
+   serves _other_ repos — as a deeper regression check on the eval engine's own
    correctness? A real idea, not committed to here.
 
 ---

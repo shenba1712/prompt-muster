@@ -1,63 +1,63 @@
 .form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  width: 100%;
 }
 
 .actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
-.actions button[type="submit"] {
-    background: var(--brand);
-    color: var(--brand-contrast);
-    border: none;
-    font-weight: 600;
+.actions button[type='submit'] {
+  background: var(--brand);
+  color: var(--brand-contrast);
+  border: none;
+  font-weight: 600;
 }
 
-.actions button[type="submit"]:hover {
-    background: var(--brand-dark);
+.actions button[type='submit']:hover {
+  background: var(--brand-dark);
 }
 
 .form input,
 .form textarea,
 .form select {
-    padding: 0.5rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font: inherit;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font: inherit;
 }
 
 .form textarea {
-    min-height: 6rem;
-    resize: vertical;
+  min-height: 6rem;
+  resize: vertical;
 }
 
 .row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .row select {
-    flex: 1 1 140px;
-    min-width: 140px;
+  flex: 1 1 140px;
+  min-width: 140px;
 }
 
 .error {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #f5b5b5;
-    border-radius: 6px;
-    background: #fdecec;
-    color: #b42318;
-    font-size: 0.875rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #f5b5b5;
+  border-radius: 6px;
+  background: #fdecec;
+  color: #b42318;
+  font-size: 0.875rem;
 }

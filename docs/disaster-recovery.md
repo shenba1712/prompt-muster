@@ -1,35 +1,35 @@
 # PromptMuster — Disaster Recovery & Runbooks
 
-| | |
-|---|---|
-| **Status** | 📝 Draft v0.1 — companion to [database-schema.md](database-schema.md), [ADR-002](adr/ADR-002-prompts-as-files-runs-in-database.md), [devops-cicd.md](devops-cicd.md), [threat-model.md](threat-model.md) |
-| **Owner** | Shenbaga Srinivasan |
-| **Created** | 2026-07-15 |
+|             |                                                                                                                                                                                                          |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**  | 📝 Draft v0.1 — companion to [database-schema.md](database-schema.md), [ADR-002](adr/ADR-002-prompts-as-files-runs-in-database.md), [devops-cicd.md](devops-cicd.md), [threat-model.md](threat-model.md) |
+| **Owner**   | Shenbaga Srinivasan                                                                                                                                                                                      |
+| **Created** | 2026-07-15                                                                                                                                                                                               |
 
 ---
 
 ## 0. Read this first — there is no server to crash
 
 "Server crashes or data corruption" assumes a production server whose failure is an
-*incident* — paged on-call, many users affected, a status page. [ADR-001](adr/ADR-001-framework-free-core-library.md)
+_incident_ — paged on-call, many users affected, a status page. [ADR-001](adr/ADR-001-framework-free-core-library.md)
 means that server mostly doesn't exist for this product. The process that could crash is
 the user's **own local dashboard, on their own machine** — and if it does, there's no
 incident, no on-call, no other users affected. It's one person's tool needing a restart.
 
 That doesn't make disaster recovery irrelevant — it **inverts what the disasters are.**
-Precisely *because* this is local-first, there's no ops team and no automated backup
+Precisely _because_ this is local-first, there's no ops team and no automated backup
 running behind the scenes unless the user set one up. A corrupted local file isn't a
 service-wide outage, but for that one person it can be a permanent, total loss with nobody
-else holding a copy — arguably a *worse* personal outcome than a SaaS outage, even though
+else holding a copy — arguably a _worse_ personal outcome than a SaaS outage, even though
 its blast radius is one person wide instead of thousands.
 
 So this document is organized by **blast radius**, not by "server vs. not":
 
-| Tier | Blast radius | What's actually at risk |
-|---|---|---|
-| **[§1](#1-tier-1--single-user-local-incidents) Tier 1** | One user, their machine | Run history, cost data, eval cache — **not** prompts (see [§1.0](#10-the-asymmetry-that-matters-here)) |
-| **[§2](#2-tier-2--multi-user-affecting-incidents) Tier 2** | Everyone who installed a bad release | A published npm version, the CI Action, the demo site |
-| **[§3](#3-tier-3--phase-4-team-tier-not-built) Tier 3** | Team tier, once it exists | Where classic server DR finally applies — not built yet |
+| Tier                                                       | Blast radius                         | What's actually at risk                                                                                |
+| ---------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| **[§1](#1-tier-1--single-user-local-incidents) Tier 1**    | One user, their machine              | Run history, cost data, eval cache — **not** prompts (see [§1.0](#10-the-asymmetry-that-matters-here)) |
+| **[§2](#2-tier-2--multi-user-affecting-incidents) Tier 2** | Everyone who installed a bad release | A published npm version, the CI Action, the demo site                                                  |
+| **[§3](#3-tier-3--phase-4-team-tier-not-built) Tier 3**    | Team tier, once it exists            | Where classic server DR finally applies — not built yet                                                |
 
 ### 1.0 The asymmetry that matters here
 
@@ -38,7 +38,7 @@ and baselines in git — the most important data in the system is **already disa
 resistant by design**, inheriting git's own durability and (if a remote exists) off-machine
 replication for free. The one thing that lives only in local SQLite —
 `execution_runs`/`eval_runs`/`eval_results` — is real to lose, but losing it costs you
-*history and cost tracking*, never your actual prompt library. Every Tier 1 runbook below
+_history and cost tracking_, never your actual prompt library. Every Tier 1 runbook below
 should be read with that asymmetry in mind: it changes what "how bad is this" actually
 means for this product specifically.
 
@@ -52,9 +52,11 @@ means for this product specifically.
 `file is not a database`.
 
 **Diagnose:**
+
 ```sh
 sqlite3 promptmuster.db "PRAGMA integrity_check;"
 ```
+
 Lists corrupted pages/tables, if any.
 
 **Impact assessment — say this plainly to the user:** run history, cost data, and the eval
@@ -62,6 +64,7 @@ cache are affected. **Your prompts, eval suites, and baselines are untouched** �
 git files ([§1.0](#10-the-asymmetry-that-matters-here)), not in this database at all.
 
 **Recovery, in order:**
+
 ```sh
 # 1. SQLite's own recovery tool — salvages what it can into a fresh file
 sqlite3 promptmuster.db ".recover" | sqlite3 promptmuster-recovered.db
@@ -83,12 +86,14 @@ data directory. Reinventing that would be solving a problem the OS already solve
 this can genuinely mean losing the actual product, not just its history.
 
 **Diagnose:**
+
 ```sh
 git -C ~/.promptmuster/prompts fsck --full
 git -C ~/.promptmuster/prompts remote -v   # is there anywhere else a copy exists?
 ```
 
 **Recovery — if a remote exists:** full recovery, zero loss beyond anything not yet pushed.
+
 ```sh
 git clone <remote-url> prompts-recovered
 ```
@@ -118,11 +123,13 @@ phantom row "still running" forever.
 **Symptom:** a run visibly stuck in-progress after the app has been restarted.
 
 **Diagnose:**
+
 ```sql
 SELECT * FROM execution_runs
 WHERE status IN ('streaming', 'running')
   AND created_at < datetime('now', '-1 hour');
 ```
+
 Any match is almost certainly orphaned — a genuinely in-flight request wouldn't still be
 `streaming` an hour later in normal operation.
 
@@ -141,10 +148,10 @@ reusing an `execution_run` when its `cache_key` matches — has a failure mode n
 addressed: if the hash function backing `cache_key` doesn't cover every input that actually
 affects the output (say a future change adds a new model parameter but the hash isn't
 updated to include it), two genuinely different requests can collide onto the same cached
-row, and a *wrong* result gets served with total confidence.
+row, and a _wrong_ result gets served with total confidence.
 
 **Diagnose:** compare the cached row's `resolved_messages_json` against what the current
-request *should* have produced — if they differ but `cache_key` matched, that's the bug,
+request _should_ have produced — if they differ but `cache_key` matched, that's the bug,
 not user error.
 
 **Fix — a new design requirement, feeding back to [trd.md §6.4](trd.md) and
@@ -155,9 +162,11 @@ silent, lingering collision. Without this, a cache bugfix has no way to invalida
 stale entries the bug already created.
 
 **Recovery in the interim:**
+
 ```sh
 PromptMuster cache clear   # new CLI command this runbook is proposing
 ```
+
 Forces every subsequent eval run to bypass the cache and create fresh `execution_runs`.
 
 ### 1.5 Migration failure on startup
@@ -195,6 +204,7 @@ Ties directly to [threat-model.md T6](threat-model.md) and [devops-cicd.md §2](
 
 **Immediate mitigation** — `npm unpublish` is time-limited (72 hours) and discouraged once
 a version has real installs; `deprecate` is the honest, always-available tool:
+
 ```sh
 npm deprecate @promptmuster/core@1.4.2 "Broken — upgrade to 1.4.3 immediately, do not install this version"
 ```
@@ -210,9 +220,9 @@ Ties to [threat-model.md T8](threat-model.md).
 **Detection:** a consumer reports unexpected cost.
 
 **Diagnose:** check whether this is the known fork-PR gap ([threat-model.md §6.2](threat-model.md) —
-currently an *open question*, not yet built) or a genuine bug where `budget-cap-usd` wasn't
+currently an _open question_, not yet built) or a genuine bug where `budget-cap-usd` wasn't
 respected. **This runbook existing is itself an argument for building fork-PR estimate-only
-mode sooner** — without it, this incident is a *when*, not an *if*.
+mode sooner** — without it, this incident is a _when_, not an _if_.
 
 **Mitigation:** in the interim, tell the affected user to lower `budget-cap-usd` or disable
 the Action on their repo; ship a patched Action release under the existing `v1` tag once

@@ -165,7 +165,7 @@ Did I optimise for today's problems or hypothetical future problems?
 
 ☐ Today's　☑ Future　☐ Balanced — this is explicitly a bet on which sequencing best serves
 the project's long-term survival (daily use), even though the eval engine would be the
-more impressive thing to demo *today*.
+more impressive thing to demo _today_.
 
 ---
 

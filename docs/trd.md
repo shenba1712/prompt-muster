@@ -1,21 +1,21 @@
 # PromptMuster — Technical Requirements / Design Document
 
-| | |
-|---|---|
-| **Status** | 📝 Draft v0.2 — companion to [prd.md](prd.md) v0.2 |
-| **Owner** | Shenbaga Srinivasan |
-| **Created** | 2026-07-15 |
-| **Last updated** | 2026-07-15 |
-| **Relationship** | Implements the direction in [prd.md](prd.md). Where this doc and the PRD disagree, the PRD wins on *what/why*; this doc owns *how*. |
+|                  |                                                                                                                                     |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**       | 📝 Draft v0.2 — companion to [prd.md](prd.md) v0.2                                                                                  |
+| **Owner**        | Shenbaga Srinivasan                                                                                                                 |
+| **Created**      | 2026-07-15                                                                                                                          |
+| **Last updated** | 2026-07-15                                                                                                                          |
+| **Relationship** | Implements the direction in [prd.md](prd.md). Where this doc and the PRD disagree, the PRD wins on _what/why_; this doc owns _how_. |
 
 ---
 
 ## 0. Reader's note
 
 This is a design doc, not an implementation spec. Per the project's own philosophy
-(from the original project template, since removed from `templates/`): *"A project should never become
+(from the original project template, since removed from `templates/`): _"A project should never become
 blocked because every architectural decision hasn't already been made. The document grows
-alongside the implementation."* So this fixes the **load-bearing contracts** — the ones
+alongside the implementation."_ So this fixes the **load-bearing contracts** — the ones
 that are expensive to change later (the prompt file format, the storage boundary, the
 provider-adapter interface) — and leaves the rest to be decided when the code is written.
 
@@ -57,8 +57,8 @@ SQLite — **no daemon, no server required** for the developer-local case. That 
 "local-first" true rather than aspirational, and it's why the old plan's "NestJS + Postgres
 CRUD API for a local-first app" was incoherent. NestJS earns its place at the **team tier**
 (Phase 4), wrapping the same core over HTTP for multi-user/hosted mode — a more honest home
-for it than the local path, and it still delivers the NestJS learning goal. *(Trade-off and
-the alternative in [§14](#14-open-technical-questions).)*
+for it than the local path, and it still delivers the NestJS learning goal. _(Trade-off and
+the alternative in [§14](#14-open-technical-questions).)_
 
 ---
 
@@ -66,19 +66,19 @@ the alternative in [§14](#14-open-technical-questions).)*
 
 Decisions with real trade-offs. Each has become an ADR — see [../adr/](adr/README.md) (A1→ADR-001, A2→ADR-002, A3→ADR-003, A4→ADR-004, A5→ADR-005, A6→ADR-006, A7→ADR-007).
 
-| # | Decision | Why | Trade-off accepted |
-|---|---|---|---|
-| A1 | Core as a framework-free TS library | Local-first needs in-process access from CLI/MCP with no server | Must design clean module boundaries by hand |
-| A2 | Prompts + eval baselines as **files**; runs/logs in **SQLite** | Version history/diff/sharing = git for free; runs are relational & high-volume | Two storage models to reason about |
-| A3 | **SQLite** local, **Postgres** team — behind one repository interface | A "runs on your machine" tool can't require a DB server | Repository abstraction has a cost; keep it thin |
-| A4 | Hand-built provider adapters (raw `fetch` first, official SDKs allowed after) | Learning goal: see the wire, SSE, retries; then productionize | Slower first adapter than reaching for an SDK |
-| A5 | Adopt/extend an existing prompt-file convention (**OPEN**, [§14](#14-open-technical-questions)) | Interop + credibility; format is a one-way door | Less freedom than a bespoke format |
-| A6 | Models & pricing are **data**, not code (union types) | Model IDs and prices drift monthly; snapshots must be pinnable | Migration from Week-1 union types (a planned, good lesson) |
-| A7 | MCP server is **read + run**, ships before the eval runner | Smallest pillar, starts the daily-use flywheel, timing window | Eval-in-IDE waits for a later phase |
+| #   | Decision                                                                                        | Why                                                                            | Trade-off accepted                                         |
+| --- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| A1  | Core as a framework-free TS library                                                             | Local-first needs in-process access from CLI/MCP with no server                | Must design clean module boundaries by hand                |
+| A2  | Prompts + eval baselines as **files**; runs/logs in **SQLite**                                  | Version history/diff/sharing = git for free; runs are relational & high-volume | Two storage models to reason about                         |
+| A3  | **SQLite** local, **Postgres** team — behind one repository interface                           | A "runs on your machine" tool can't require a DB server                        | Repository abstraction has a cost; keep it thin            |
+| A4  | Hand-built provider adapters (raw `fetch` first, official SDKs allowed after)                   | Learning goal: see the wire, SSE, retries; then productionize                  | Slower first adapter than reaching for an SDK              |
+| A5  | Adopt/extend an existing prompt-file convention (**OPEN**, [§14](#14-open-technical-questions)) | Interop + credibility; format is a one-way door                                | Less freedom than a bespoke format                         |
+| A6  | Models & pricing are **data**, not code (union types)                                           | Model IDs and prices drift monthly; snapshots must be pinnable                 | Migration from Week-1 union types (a planned, good lesson) |
+| A7  | MCP server is **read + run**, ships before the eval runner                                      | Smallest pillar, starts the daily-use flywheel, timing window                  | Eval-in-IDE waits for a later phase                        |
 
 ---
 
-## 3. Prompt file format *(the load-bearing contract)*
+## 3. Prompt file format _(the load-bearing contract)_
 
 Most care goes here — once another tool or a teammate's repo depends on the shape, it can't
 change freely. **Decided: adopt and extend Google's dotprompt**
@@ -91,17 +91,17 @@ the shape below is in that family, with PromptMuster's own additions namespaced 
 
 ```yaml
 ---
-schemaVersion: 1                 # one-way door — present from day one
+schemaVersion: 1 # one-way door — present from day one
 name: code-review-thorough
 description: Strict review focused on correctness bugs
 model:
   provider: anthropic
-  id: claude-opus-4-8            # exact snapshot string, pinned (see §5.4)
+  id: claude-opus-4-8 # exact snapshot string, pinned (see §5.4)
   params: { temperature: 0.2, max_tokens: 2000 }
-variables:                       # typed template variables (a.k.a. context slots)
+variables: # typed template variables (a.k.a. context slots)
   - { name: language, type: select, options: [typescript, python, go] }
-  - { name: diff,     type: file }
-outputSchema:                    # OPTIONAL — JSON Schema; powers validation + rendering
+  - { name: diff, type: file }
+outputSchema: # OPTIONAL — JSON Schema; powers validation + rendering
   type: object
   properties: { issues: { type: array, items: { type: string } } }
   required: [issues]
@@ -115,12 +115,13 @@ user: |
 ```
 
 **Design rules:**
+
 - **Messages, not a string.** Body is a role-tagged array (`system`/`user`/`assistant`) —
   corrects the Week-1 `content: string` model. This must land **before** execution is built
   (cheapest moment; after execution it's a migration).
 - **Templating is minimal `{{var}}` interpolation** for v1 — no conditionals/loops. Keeps
   the parser tiny and the format portable; escalate to a real templating lib only if a real
-  need appears. *(OPEN-ish; lean minimal.)*
+  need appears. _(OPEN-ish; lean minimal.)_
 - **`outputSchema` is JSON Schema**, and it's the connective tissue: it drives structured-
   output requests, result validation/rendering, the eval "schema" assertion ([§6.2](#62-assertion-types)),
   and the linter's one mechanical check. Note provider JSON-Schema limits (no recursion, no
@@ -141,15 +142,15 @@ code-review.baseline.json      # committable last-known-good results (for CI dif
 
 ## 4. Data & persistence
 
-| Data | Store | Rationale |
-|---|---|---|
-| Prompts | Files (git) | Version history/diff/rollback/share = git |
-| Eval test cases + baselines | Files (git) | Committable; CI compares against baseline |
-| Execution runs / logs | **SQLite** local | Relational, high-volume, queried by cost dashboard |
-| Cache of eval results | SQLite (or content-addressed files) | Skip re-running unchanged cells ([§6.4](#64-cost-controls--caching)) |
-| Config | `.promptmuster/config.*` | Non-secret settings |
-| **API keys** | OS keychain / env — **never the repo** | Security ([§12](#12-security)) |
-| Team mode | **Postgres** (Phase 4) | Multi-user; same schema via the repository interface |
+| Data                        | Store                                  | Rationale                                                            |
+| --------------------------- | -------------------------------------- | -------------------------------------------------------------------- |
+| Prompts                     | Files (git)                            | Version history/diff/rollback/share = git                            |
+| Eval test cases + baselines | Files (git)                            | Committable; CI compares against baseline                            |
+| Execution runs / logs       | **SQLite** local                       | Relational, high-volume, queried by cost dashboard                   |
+| Cache of eval results       | SQLite (or content-addressed files)    | Skip re-running unchanged cells ([§6.4](#64-cost-controls--caching)) |
+| Config                      | `.promptmuster/config.*`               | Non-secret settings                                                  |
+| **API keys**                | OS keychain / env — **never the repo** | Security ([§12](#12-security))                                       |
+| Team mode                   | **Postgres** (Phase 4)                 | Multi-user; same schema via the repository interface                 |
 
 **Repository interface (A3).** One storage interface; a SQLite implementation for local, a
 Postgres implementation for team. This is both the learning artifact (Repository Pattern)
@@ -162,8 +163,8 @@ meaningful ([§5.4](#54-token-counting--cost)).
 
 **File-watching / git-branch behavior.** The dashboard/MCP index reacts to prompt files
 changing on disk — including when a **git branch switch** swaps the library out. Initially
-this is correctness (don't serve a stale index); by design it's also a feature — *a branch
-is a prompt experiment*. Build the watcher knowing that's first-class, not a corner case.
+this is correctness (don't serve a stale index); by design it's also a feature — _a branch
+is a prompt experiment_. Build the watcher knowing that's first-class, not a corner case.
 
 ---
 
@@ -177,22 +178,24 @@ raw `fetch` for the first adapter to learn the wire + SSE (A4); official SDKs
 
 ```ts
 interface ProviderAdapter {
-  execute(req: ResolvedRequest): AsyncIterable<Chunk>;   // streaming-first
+  execute(req: ResolvedRequest): AsyncIterable<Chunk>; // streaming-first
   countTokens(req: ResolvedRequest): Promise<TokenCount>; // see §5.4
-  price(usage: Usage, model: ModelSnapshot): number;      // from the models table (A6)
+  price(usage: Usage, model: ModelSnapshot): number; // from the models table (A6)
 }
 ```
 
 ### 5.2 Streaming
+
 Async iterables internally; Server-Sent Events to the dashboard. All three providers stream
 token-by-token; normalize their event shapes into one internal `Chunk`.
 
 ### 5.3 Reliability
+
 Retry transient errors (429, 503) with **jittered exponential backoff**; fail fast on
 400/401. (This is exactly the `retry`/backoff exercise already parked in
 [../reference/idea-bank.md](https://github.com/shenba1712/engineeros-roadmap/blob/main/reference/idea-bank.md) — now load-bearing.)
 
-### 5.4 Token counting & cost *(corrects an earlier imprecision)*
+### 5.4 Token counting & cost _(corrects an earlier imprecision)_
 
 Accurate token counts are **per-provider**, and there is a real footgun:
 
@@ -203,7 +206,7 @@ Accurate token counts are **per-provider**, and there is a real footgun:
 - **Google (Gemini)** — a `countTokens` call; accurate, network.
 
 **Design consequence for cost preflight (PRD §6.4):** show an **instant local heuristic
-estimate** while the user types (labeled *estimate*), and offer an **exact count on demand /
+estimate** while the user types (labeled _estimate_), and offer an **exact count on demand /
 before run** via each provider's native method. Never present a heuristic as exact — the UI
 labels it. Pricing comes from the models-as-data table (A6), keyed by exact snapshot.
 
@@ -216,37 +219,42 @@ snapshot** on every run, or replay/regression is meaningless.
 
 ---
 
-## 6. Eval engine *(the differentiator)*
+## 6. Eval engine _(the differentiator)_
 
 Attach test cases to a prompt → run across models → see pass/fail, cost, and **regression vs
 a prior version**. See PRD §6.2.
 
 ### 6.1 Model
+
 `TestCase = { variables, assertions[] }`. A run expands to a matrix of
 `prompt-version × model × test-case → result`.
 
 ### 6.2 Assertion types
+
 Pure functions where possible; the judge is the one async/LLM case.
 
-| Type | Impl |
-|---|---|
-| exact | string compare (constrained outputs only) |
-| contains / regex | substring / `RegExp` |
-| schema | validate against the prompt's `outputSchema` (JSON Schema via `ajv`) |
-| property | length / language / format / must-not-contain |
-| **llm-judge** | cheap model (e.g. `claude-haiku-4-5`) scores against a rubric |
+| Type             | Impl                                                                 |
+| ---------------- | -------------------------------------------------------------------- |
+| exact            | string compare (constrained outputs only)                            |
+| contains / regex | substring / `RegExp`                                                 |
+| schema           | validate against the prompt's `outputSchema` (JSON Schema via `ajv`) |
+| property         | length / language / format / must-not-contain                        |
+| **llm-judge**    | cheap model (e.g. `claude-haiku-4-5`) scores against a rubric        |
 
 ### 6.3 Determinism handling
+
 LLM output is non-deterministic, so exact-match alone is useless and single-run "regressions"
 may be noise. Support **repeat runs / pass@k** and **score thresholds** rather than exact
 deltas. The **judge is itself a versioned prompt**, validated against a small human-labeled
 **golden set**; document its known biases (verbosity, position, self-preference). Framing
-stays honest: *evals are guidance, not proof.*
+stays honest: _evals are guidance, not proof._
 
 ### 6.4 Cost controls & caching
+
 Evals spend real money every run — cost control is core, not polish.
+
 - **Cache** keyed on `hash(CACHE_SCHEMA_VERSION + resolved messages + model + params +
-  input)`; re-run only changed cells. The version constant (added v0.2) lets any future
+input)`; re-run only changed cells. The version constant (added v0.2) lets any future
   change to what affects caching invalidate stale entries wholesale, instead of leaving
   silent collisions behind ([disaster-recovery.md §1.4](disaster-recovery.md)).
 - **Budget cap** per run; estimate suite cost up front and **confirm** if over. Enforced
@@ -256,17 +264,19 @@ Evals spend real money every run — cost control is core, not polish.
   backoff. (New learning surface that replaces the dropped IndexedDB/offline-sync lessons.)
 
 ### 6.5 Regression view
+
 Diff two versions' results per model with a **cost delta**. This is what turns version
 history from "what changed" into "did it get better" — evals + version history are one
 feature.
 
 ### 6.6 Explicit v1 non-goal
-**Single-turn only** (multi-message *context* is fine). Evaluating multi-turn / agentic /
+
+**Single-turn only** (multi-message _context_ is fine). Evaluating multi-turn / agentic /
 tool-calling flows is deferred in writing — it's a research-grade problem and a scope sink.
 
 ---
 
-## 7. MCP server *(ships first — flywheel)*
+## 7. MCP server _(ships first — flywheel)_
 
 - Built on the **MCP TypeScript SDK**; runs as a local **stdio** server, registered in
   Claude Code / Cursor / Claude Desktop config.
@@ -279,19 +289,26 @@ tool-calling flows is deferred in writing — it's a research-grade problem and 
   ([§12](#12-security)).
 
 Config the user adds (illustrative):
+
 ```json
-{ "mcpServers": { "PromptMuster": { "command": "PromptMuster", "args": ["mcp"] } } }
+{
+  "mcpServers": {
+    "PromptMuster": { "command": "PromptMuster", "args": ["mcp"] }
+  }
+}
 ```
 
 ---
 
 ## 8. CLI
+
 Node bin over core. Commands: `promptmuster run <name> --model … --var k=v`, `list`, `search`,
 `eval <name>`, `export`, `import`, `mcp` (starts the stdio server). Arg parsing via
 `commander` (or a build-your-own parser as a learning exercise). npm-publishable (`npx
 PromptMuster`).
 
 ## 9. Web dashboard
+
 Next.js App Router (the Week 1–3 work). **Route handlers / server actions import core
 directly** for local mode — no separate API tier until Phase 4. shadcn/ui + Tailwind for UI;
 variable forms generated from the prompt's `variables` via **React Hook Form + Zod** (the
@@ -302,11 +319,12 @@ polish ([threat-model.md T4](threat-model.md); NFR-09; added v0.2). In Phase 4 t
 dashboard is also the surface non-technical teammates use (PRD Ring 2).
 
 > **Convention conflict to resolve:** [../core/CLAUDE.md](../CLAUDE.md) currently
-> mandates *CSS Modules, no Tailwind*. shadcn/ui brings Tailwind, so that rule is superseded
+> mandates _CSS Modules, no Tailwind_. shadcn/ui brings Tailwind, so that rule is superseded
 > the moment shadcn lands (Week 2 Friday). Update CLAUDE.md then, or the guidance contradicts
 > the stack.
 
 ## 10. CI GitHub Action
+
 A JS/composite Action that runs `promptmuster eval` on changed prompts, compares to the
 committed `*.baseline.json`, comments results on the PR, and fails on regressions beyond a
 threshold. Reuses the CLI/core. **This replaces the old auto-PR-reviewer webhook** (#32–34) —
@@ -320,7 +338,7 @@ same webhook/CI learning, on-thesis, and not a second crowded product.
   Repo scaffold ships a `.gitignore` excluding keys, run logs, and eval fixtures by default.
 - **Error model:** typed results over thrown exceptions at provider boundaries (the `Result<T,E>`
   exercise in the idea bank is the natural fit); redact secrets from all logs/errors.
-- **Observability:** structured run logs are a *product feature* (the cost dashboard reads
+- **Observability:** structured run logs are a _product feature_ (the cost dashboard reads
   them), so this comes largely for free.
 - **Run lifecycle (added v0.2):** on startup, core reconciles orphaned rows — any run still
   `streaming`/`running` from a dead process transitions to **`interrupted`** (distinct from
@@ -335,7 +353,7 @@ same webhook/CI learning, on-thesis, and not a second crowded product.
   public repo's prompt file is **untrusted input** that an IDE agent would execute with the
   user's keys. Mitigation: prompts originating outside the user's own library are
   flagged; executing one (via MCP `run_prompt`, CLI, or dashboard) requires **explicit
-  confirmation**. Silver lining — *"review prompts in PRs like code"* becomes a selling point
+  confirmation**. Silver lining — _"review prompts in PRs like code"_ becomes a selling point
   of the file model.
 - **API keys:** keychain/env only, never in the repo, redacted from logs.
 - **Secret capture (added v0.2):** variable values are scanned against credential patterns
@@ -348,24 +366,24 @@ same webhook/CI learning, on-thesis, and not a second crowded product.
 
 ## 13. Tech stack & dependencies
 
-| Layer | Choice | Justification / learning tension |
-|---|---|---|
-| Language/runtime | TypeScript (strict), Node 18+ | Company stack; matches CLAUDE.md conventions |
-| Core | Framework-free TS lib | A1 |
-| Parsing | `gray-matter` + `yaml`; JSON Schema via `ajv` | Standard, small |
-| Templating | minimal `{{var}}` (build-your-own) | Learning + portability; escalate only if needed |
-| Local store | `better-sqlite3` (sync API suits CLI) | Zero-daemon; simple. ✅ Decided 2026-07-16 ([ADR-008](adr/ADR-008-better-sqlite3-thin-repository.md)) |
-| Team store | Postgres (Prisma or TypeORM) | Phase 4; company stack |
-| Providers | raw `fetch` first, then `@anthropic-ai/sdk` / `openai` / `@google/genai` | A4 — learn the wire, then productionize |
-| MCP | MCP TypeScript SDK | Standard for building an MCP server |
-| Validation | Zod | Week-2 plan; RHF integration for forms |
-| CLI | `commander` (or hand-rolled) | Small; hand-rolled optional exercise |
-| Web | Next.js, React, shadcn/ui, Tailwind, RHF+Zod | Company stack + Week 1–3 work |
-| Test | Vitest | Week-2 choice |
-| Package/deploy | npm (core+CLI+MCP), Docker (team), Vercel (demo) | PRD phases |
+| Layer            | Choice                                                                   | Justification / learning tension                                                                      |
+| ---------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| Language/runtime | TypeScript (strict), Node 18+                                            | Company stack; matches CLAUDE.md conventions                                                          |
+| Core             | Framework-free TS lib                                                    | A1                                                                                                    |
+| Parsing          | `gray-matter` + `yaml`; JSON Schema via `ajv`                            | Standard, small                                                                                       |
+| Templating       | minimal `{{var}}` (build-your-own)                                       | Learning + portability; escalate only if needed                                                       |
+| Local store      | `better-sqlite3` (sync API suits CLI)                                    | Zero-daemon; simple. ✅ Decided 2026-07-16 ([ADR-008](adr/ADR-008-better-sqlite3-thin-repository.md)) |
+| Team store       | Postgres (Prisma or TypeORM)                                             | Phase 4; company stack                                                                                |
+| Providers        | raw `fetch` first, then `@anthropic-ai/sdk` / `openai` / `@google/genai` | A4 — learn the wire, then productionize                                                               |
+| MCP              | MCP TypeScript SDK                                                       | Standard for building an MCP server                                                                   |
+| Validation       | Zod                                                                      | Week-2 plan; RHF integration for forms                                                                |
+| CLI              | `commander` (or hand-rolled)                                             | Small; hand-rolled optional exercise                                                                  |
+| Web              | Next.js, React, shadcn/ui, Tailwind, RHF+Zod                             | Company stack + Week 1–3 work                                                                         |
+| Test             | Vitest                                                                   | Week-2 choice                                                                                         |
+| Package/deploy   | npm (core+CLI+MCP), Docker (team), Vercel (demo)                         | PRD phases                                                                                            |
 
-Dependency rule stays aligned with CLAUDE.md: *don't add libraries not justified by the
-current phase.* Each new dep gets a one-line reason in the PR.
+Dependency rule stays aligned with CLAUDE.md: _don't add libraries not justified by the
+current phase._ Each new dep gets a one-line reason in the PR.
 
 ## 14. Open technical questions
 
@@ -387,12 +405,13 @@ Teed up for decisions/ADRs; none block Phase 1 coding.
 4. **Templating power** — minimal interpolation (recommended) vs. a real templating engine.
    Defer until a prompt actually needs logic.
 5. **Eval result cache location** — SQLite rows vs. content-addressed files (committable).
-   Committable baselines are already files (§3); decide whether the *cache* is too.
+   Committable baselines are already files (§3); decide whether the _cache_ is too.
 
 ## 15. Sequencing
 
 Phase mapping is the PRD's ([prd.md §9](prd.md)); week-level detail is the backlog's. The
 only near-term, order-sensitive technical items:
+
 1. **Fix the domain model** (messages array + typed vars + params + `schemaVersion`) **before
    execution** — Week 3–4.
 2. **Week 5 fork:** files-on-disk (this direction) vs. the old plan's IndexedDB — the first
@@ -401,6 +420,7 @@ only near-term, order-sensitive technical items:
 ---
 
 ## Changelog
+
 - **v0.5 (2026-07-16)** — PromptLab→PromptMuster rename propagated: prose, the
   `@promptmuster/*` npm scope, CLI verbs, `.promptmuster/` config dir, and the
   `promptmuster:` frontmatter namespace all lowercased/updated. No design changes.
@@ -416,6 +436,6 @@ only near-term, order-sensitive technical items:
   §1.3). §12: secret-capture warn-before-run (threat-model T3). §2: A1–A7 now map to
   written ADRs; broken `templates/` links fixed (directory was deleted).
 - **v0.1 (2026-07-15)** — Initial draft. Core-library-first architecture; file-based prompts
-  + SQLite runs; provider-adapter, eval-engine, and MCP designs; corrected token-counting
-  approach (per-provider; `tiktoken` is OpenAI-only and wrong for Claude). Not yet reconciled
-  with CLAUDE.md (CSS-Modules-vs-Tailwind) or the Week-1 model-union domain type.
+  - SQLite runs; provider-adapter, eval-engine, and MCP designs; corrected token-counting
+    approach (per-provider; `tiktoken` is OpenAI-only and wrong for Claude). Not yet reconciled
+    with CLAUDE.md (CSS-Modules-vs-Tailwind) or the Week-1 model-union domain type.

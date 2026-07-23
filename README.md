@@ -35,7 +35,7 @@ PromptMuster plays.
   LLM-judge) attached to each prompt; run the suite across models; see regressions against
   a committed baseline, with cost deltas.
 - **MCP server** — your prompt library as native tools inside Claude Code, Cursor, and
-  Claude Desktop: *"run my code-review prompt on this file."*
+  Claude Desktop: _"run my code-review prompt on this file."_
 - **Cost intelligence** — token/cost preflight before you press run (exact where a
   provider exposes counting; honestly-labeled estimates where it doesn't), execution
   logging, and budget caps enforced in core.
@@ -59,12 +59,12 @@ PromptMuster plays.
 
 ### Roadmap (phase-based, not a flat feature list)
 
-| Phase | Theme | What lands |
-|---|---|---|
-| 1 | Useful-to-me | Prompts as dotprompt files, domain-model rewrite, multi-provider streaming execution, cost preflight, **MCP server** |
-| 2 | Trustworthy | The **eval runner** — assertions, LLM-as-judge, caching + budget caps, regression-vs-baseline |
-| 3 | Shareable | CLI, CI eval GitHub Action, side-by-side + cost dashboards, OSS launch + read-only demo |
-| 4 | Team | Shared prompt repos, and a NestJS + PostgreSQL hosted tier (team-only, by design) |
+| Phase | Theme        | What lands                                                                                                           |
+| ----- | ------------ | -------------------------------------------------------------------------------------------------------------------- |
+| 1     | Useful-to-me | Prompts as dotprompt files, domain-model rewrite, multi-provider streaming execution, cost preflight, **MCP server** |
+| 2     | Trustworthy  | The **eval runner** — assertions, LLM-as-judge, caching + budget caps, regression-vs-baseline                        |
+| 3     | Shareable    | CLI, CI eval GitHub Action, side-by-side + cost dashboards, OSS launch + read-only demo                              |
+| 4     | Team         | Shared prompt repos, and a NestJS + PostgreSQL hosted tier (team-only, by design)                                    |
 
 Full product & technical docs are mirrored in this repo — [PRD](./docs/prd.md),
 [TRD](./docs/trd.md), [backlog](./docs/core/backlog.md),
@@ -91,14 +91,14 @@ same library in-process on your machine.
 
 ## Tech stack
 
-| Layer | Choice |
-|---|---|
-| Core | TypeScript (strict), framework-free library |
-| Dashboard | Next.js, React, shadcn/ui |
-| Storage | Prompt files (git) + SQLite locally; PostgreSQL in the Phase-4 team tier only |
-| AI | OpenAI, Anthropic, Google APIs — hand-built adapters first |
-| IDE | MCP TypeScript SDK (stdio) |
-| Ship | npm packages (`@promptmuster/core` / `cli` / `mcp`), GitHub Actions, Vercel (read-only demo) |
+| Layer     | Choice                                                                                       |
+| --------- | -------------------------------------------------------------------------------------------- |
+| Core      | TypeScript (strict), framework-free library                                                  |
+| Dashboard | Next.js, React, shadcn/ui                                                                    |
+| Storage   | Prompt files (git) + SQLite locally; PostgreSQL in the Phase-4 team tier only                |
+| AI        | OpenAI, Anthropic, Google APIs — hand-built adapters first                                   |
+| IDE       | MCP TypeScript SDK (stdio)                                                                   |
+| Ship      | npm packages (`@promptmuster/core` / `cli` / `mcp`), GitHub Actions, Vercel (read-only demo) |
 
 ## Getting started
 

@@ -1,83 +1,83 @@
 .filters {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  align-items: center;
+  width: 100%;
 }
 
 .row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .row select,
 .favoriteToggle {
-    flex: 1 1 140px;
-    min-width: 140px;
+  flex: 1 1 140px;
+  min-width: 140px;
 }
 
 .row select {
-    padding: 0.5rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font: inherit;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font: inherit;
 }
 
 .search {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font: inherit;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font: inherit;
 }
 
 .favoriteToggle {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    background: white;
-    cursor: pointer;
-    font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font: inherit;
 }
 
-.favoriteToggle[aria-pressed="true"] {
-    background: #fff3cd;
-    border-color: #e0c46c;
+.favoriteToggle[aria-pressed='true'] {
+  background: #fff3cd;
+  border-color: #e0c46c;
 }
 
 .footer {
-    display: flex;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .clearButton {
-    background: none;
-    border: none;
-    color: var(--brand);
-    font: inherit;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0;
+  background: none;
+  border: none;
+  color: var(--brand);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
 }
 
 .clearButton:hover {
-    background: none;
-    text-decoration: underline;
+  background: none;
+  text-decoration: underline;
 }
 
 .count {
-    font-size: 0.875rem;
-    color: #555;
-    margin-left: auto;
+  font-size: 0.875rem;
+  color: #555;
+  margin-left: auto;
 }

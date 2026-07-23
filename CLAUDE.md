@@ -3,7 +3,6 @@
 AI prompt engineering workbench for managing, organizing, and iterating
 on AI prompts. Built with Next.js, React, and TypeScript.
 
-
 ## Current State
 
 Week 1 complete; Week 2 in progress — frontend only, no backend, no database.
@@ -20,7 +19,6 @@ Hooks: usePromptManager (CRUD, filtering, derived state)
 Types: prompt.ts
 Utils: prompt.ts
 
-
 ## Scheduled Direction Changes (planned — do not apply early)
 
 Decided 2026-07-15 in project-files/prd.md + trd.md; each lands on its
@@ -36,7 +34,6 @@ scheduled date as part of that day's work, not before:
   describes the current code and changes then.
 - **Week 5:** persistence = prompt files on disk + SQLite for runs
   (ADR-002/ADR-003) — NOT IndexedDB.
-
 
 ## How to Work
 
@@ -149,7 +146,6 @@ to handle this consistently?"
 
 I'll decide whether to add it. Don't modify this file yourself.
 
-
 ## Sessions
 
 ### Quick Task (single file, small change)
@@ -194,14 +190,12 @@ I'll decide whether to add it. Don't modify this file yourself.
 3. Report each finding with file, line, problem, and fix
 4. Wait for approval before applying fixes
 
-
 ## Commands
 
 - npm run dev — Start development server (localhost:3000)
 - npm run build — Production build
 - npm run lint — Run ESLint
 - npx tsc --noEmit — Type-check without emitting files
-
 
 ## Tech Stack
 
@@ -211,7 +205,6 @@ I'll decide whether to add it. Don't modify this file yourself.
 - Node.js 18+
 - Tailwind CSS v4 + shadcn/ui (Radix primitives; component source lives in src/components/ui/)
 
-
 ## Project Structure
 
 - src/app/ — Next.js App Router pages and layouts
@@ -219,7 +212,6 @@ I'll decide whether to add it. Don't modify this file yourself.
 - src/hooks/ — Custom React hooks
 - src/types/ — TypeScript type definitions
 - src/utils/ — Pure utility functions
-
 
 ## Domain
 
@@ -234,7 +226,6 @@ A Prompt represents a reusable AI prompt template:
 - isFavorite: boolean
 - createdAt: Date
 
-
 ## TypeScript Conventions
 
 - strict mode is enabled — do not weaken it
@@ -245,7 +236,6 @@ A Prompt represents a reusable AI prompt template:
 - Derive types with utility types rather than duplicating: type CreatePromptInput = Omit<Prompt, 'id' | 'createdAt' | 'isFavorite'>
 - Exported functions must have explicit return types
 - Use readonly on props and parameters that should not be mutated
-
 
 ## React Conventions
 
@@ -259,7 +249,6 @@ A Prompt represents a reusable AI prompt template:
 - Use crypto.randomUUID() for generating IDs
 - Handle empty states in every list component
 - Use entity ID as key prop — never array index for dynamic lists
-
 
 ## 'use client' Rules
 
@@ -275,7 +264,6 @@ Do NOT add 'use client' when a component ONLY:
 - Maps over arrays to render children
 - Conditionally renders based on props
 - Passes callbacks through to children without using them
-
 
 ## Component File Structure
 
@@ -293,20 +281,19 @@ Example:
 'use client';
 import { Prompt } from '@/types/prompt';
 
-interface PromptCardProps {     
+interface PromptCardProps {
     prompt: Prompt;
     onDelete: (id: string) => void;
 }
 export default function PromptCard({prompt, onDelete,}: PromptCardProps) {
     return (
         <div>
-                <h3>{prompt.title}</h3> 
+                <h3>{prompt.title}</h3>
                 <button onClick={() => onDelete(prompt.id)}>Delete</button>
         </div>
 );
       }
 ```
-
 
 ## Hook File Structure
 
@@ -323,7 +310,6 @@ Hooks must:
 - Define mutation functions in the middle
 - Compute derived values after mutations
 - Return a typed object as the last statement
-
 
 ## Naming
 
@@ -353,14 +339,12 @@ Hooks must:
 - No styled-components or other CSS-in-JS.
 - Keep class names descriptive: .card, .header, .badge not .c1, .h, .b
 
-
 ## Imports
 
 - Use @/ path alias for all src/ imports
 - Named exports for types, interfaces, utilities, hooks
 - Default exports only for components
 - Group: React/Next first, then external libraries, then internal modules
-
 
 ## Common React Event Types
 
@@ -369,7 +353,6 @@ Hooks must:
 - Textarea change: React.ChangeEvent<HTMLTextAreaElement>
 - Select change: React.ChangeEvent<HTMLSelectElement>
 - Button click: React.MouseEvent<HTMLButtonElement>
-
 
 ## State Update Patterns
 
@@ -385,13 +368,11 @@ setPrompts(prev => prev.map(p => p.id === id ? { ...p, isFavorite: !p.isFavorite
 Object — partial update (for filter state):
 setFilterState(prev => ({ ...prev, ...updates }))
 
-
 ## Error Handling
 
 - Wrap async operations in try/catch
 - Show user-visible feedback for errors
 - Type error objects as unknown, not any, then narrow
-
 
 ## Do NOT
 
@@ -412,7 +393,6 @@ setFilterState(prev => ({ ...prev, ...updates }))
 - Do not make changes beyond what was asked
 - Do not skip verification (tsc, lint) after changes
 
-
 ## When Uncertain
 
 1. Ask me rather than guessing
@@ -420,7 +400,6 @@ setFilterState(prev => ({ ...prev, ...updates }))
 3. Prefer explicit types over inferred types
 4. Prefer composition over inheritance
 5. Prefer small focused functions over large ones
-
 
 ## Lessons Learned
 

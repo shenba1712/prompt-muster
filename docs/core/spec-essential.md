@@ -5,6 +5,7 @@ This extract contains the philosophy, rules, templates, and quality
 standards that govern all generated roadmaps.
 
 IMPORTANT OVERRIDES:
+
 - The daily template in spec §12 was the initial draft. The preset's
   daily template (§4.3) supersedes it. See "Daily Template" section
   below for details.
@@ -84,16 +85,17 @@ future plans should follow it.
 
 The preset daily template:
 
-| Section              | Purpose                                              |
-|----------------------|------------------------------------------------------|
-| Theme & Goal         | ONE primary topic + single clear objective            |
-| Minimum Viable Day   | 15–25 minutes of essential work                      |
-| Build                | Core implementation work, 40–50 min                  |
-| Investigate          | One architecture/engineering question, 10–15 min     |
-| Document & Commit    | Notes, evidence, git push                            |
-| Daily Review         | 3–4 reflection questions testing judgment            |
+| Section            | Purpose                                          |
+| ------------------ | ------------------------------------------------ |
+| Theme & Goal       | ONE primary topic + single clear objective       |
+| Minimum Viable Day | 15–25 minutes of essential work                  |
+| Build              | Core implementation work, 40–50 min              |
+| Investigate        | One architecture/engineering question, 10–15 min |
+| Document & Commit  | Notes, evidence, git push                        |
+| Daily Review       | 3–4 reflection questions testing judgment        |
 
 Where the spec's additional sections went:
+
 - Learning and Resources → embedded as inline notes in Build
 - Architecture → Investigate section
 - AI Workflow → integrated into Build (Claude Code is the development method)
@@ -102,6 +104,7 @@ Where the spec's additional sections went:
 - Blockers → covered in "If Things Go Wrong" section
 
 Additional sections per preset (not in original spec):
+
 - "If Things Go Wrong" with specific failure scenarios and fixes
 - Time summary table with per-section breakdown
 - Optional reading/watching (OUTSIDE 75-min session)
@@ -170,6 +173,7 @@ When multiple valid options exist, optimize in this priority order:
 8. Time efficiency
 
 If two recommendations are otherwise equivalent:
+
 - Prefer building over consuming
 - Prefer practical work over additional theory
 - Prefer official documentation over secondary resources
@@ -236,47 +240,58 @@ Knowledge checks emphasize application, not memorization.
 ## Generation Rules (Spec §38)
 
 ### Cohesion
+
 Treat the roadmap as a complete curriculum. Every week builds on
 previous weeks. Avoid topics that assume uncovered knowledge.
 
 ### Prerequisites
+
 Always introduce topics according to dependencies. Prefer topics
 that unlock future learning.
 
 ### Reinforce, Don't Repeat
+
 Revisiting is encouraged. Repeating is not. When a topic reappears:
 increase difficulty, apply in different context, connect with new
 concepts, deepen understanding.
 
 ### Balance Breadth and Depth
+
 No months on single technology. No too many unrelated technologies
 in a short period. Deepen one area while reinforcing previous areas.
 
 ### Connect Topics
+
 Relate new concepts to previously learned material. Engineering
 knowledge should become increasingly interconnected.
 
 ### Build Before Expanding
+
 Before introducing advanced concepts, ensure the learner has built
 something with current concepts. Learn → Build → Reflect → Improve.
 
 ### Introduce Complexity Gradually
+
 One dimension at a time. Avoid increasing complexity across multiple
 dimensions simultaneously.
 
 ### Realistic Engineering
+
 Production-inspired examples. Include maintainability, deployment,
 monitoring, debugging, operational concerns, technical debt.
 
 ### Optimize for Long-Term Capability
+
 When multiple good decisions exist: which option makes a stronger
 engineer five years from now?
 
 ### Be Opinionated, Not Dogmatic
+
 Make recommendations. Acknowledge trade-offs. Encourage judgment
 over rule-following.
 
 ### Preserve Internal Consistency
+
 Future generation must remain consistent with previous weeks.
 Evolve intentionally, not unpredictably.
 
@@ -323,6 +338,7 @@ When rules conflict, resolve using this order:
 6. Current Task
 
 When precedence doesn't resolve it:
+
 - Choose what best develops long-term engineering capability
 - Prefer practical implementation over passive consumption
 - Favor engineering judgment over framework-specific knowledge
@@ -335,4 +351,3 @@ Topics like TDD, DDD, Clean Architecture, Microservices, FP, OOP
 must always be discussed in terms of: benefits, drawbacks, trade-offs,
 appropriate contexts, common failure modes. The objective is engineering
 judgment, not ideological preferences.
-

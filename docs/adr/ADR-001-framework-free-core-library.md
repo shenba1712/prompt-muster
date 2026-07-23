@@ -104,7 +104,7 @@ Trade-offs
 Slower to bootstrap NestJS-flavored patterns from day one, and the "company stack"
 practice is partially deferred to Phase 4 rather than exercised immediately. Deliberate:
 practicing the pattern on architecture that doesn't need it isn't the same skill as
-knowing when *not* to reach for a framework.
+knowing when _not_ to reach for a framework.
 
 ---
 

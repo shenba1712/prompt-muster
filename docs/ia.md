@@ -1,12 +1,12 @@
 # PromptMuster — Information Architecture
 
-| | |
-|---|---|
-| **Status** | 📝 Draft v0.1 — companion to [prd.md](prd.md) and [trd.md](trd.md) |
-| **Owner** | Shenbaga Srinivasan |
-| **Created** | 2026-07-15 |
-| **Last updated** | 2026-07-15 |
-| **Purpose** | The structural sitemap: how screens connect, and how data flows between them from a user's perspective. |
+|                  |                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| **Status**       | 📝 Draft v0.1 — companion to [prd.md](prd.md) and [trd.md](trd.md)                                      |
+| **Owner**        | Shenbaga Srinivasan                                                                                     |
+| **Created**      | 2026-07-15                                                                                              |
+| **Last updated** | 2026-07-15                                                                                              |
+| **Purpose**      | The structural sitemap: how screens connect, and how data flows between them from a user's perspective. |
 
 ---
 
@@ -21,7 +21,7 @@ This doc therefore covers three layers:
 2. **Screen inventory & flows** ([§2](#2-screen-inventory)–[§4](#4-user-flows)) — what each
    screen does and how data moves through it.
 3. **Non-visual surfaces** ([§5](#5-non-visual-surfaces)) — the MCP tools and CLI commands
-   that are the *other* interfaces' equivalent of a screen, mapped to the same entities.
+   that are the _other_ interfaces' equivalent of a screen, mapped to the same entities.
 
 Status legend matches [compliance-matrix.md](compliance-matrix.md): ✅ built · 🚧 in
 progress · 📝 designed, not built · 🔮 deferred (Future). Phases are the PRD's (0–4, F).
@@ -92,25 +92,25 @@ screen surface tied to Phase 1–2 features.
 
 ## 2. Screen inventory
 
-| Screen | Purpose | Primary entities | Key actions |
-|---|---|---|---|
-| Library | Browse, search, filter the prompt library | Prompt (list) | search, filter, favorite, open, new |
-| New Prompt / Editor | Author or edit a prompt | Prompt | edit messages/variables/model/schema, save |
-| Prompt Detail | Orientation hub for one prompt; tabs below | Prompt | navigate to sub-screens |
-| Run / Comparison | Execute against one or many models | Prompt, Execution Run | fill variables, pick model(s), run, view streamed output |
-| Executions (scoped) | This prompt's run history | Execution Run | view, re-run with different vars/model (replay) |
-| Runs (global) | All executions across the library | Execution Run | filter by prompt/model/date |
-| Run Detail | One execution's full record | Execution Run | view input/output/tokens/cost, replay |
-| History | Version list for a prompt | Version (git commit) | select two → diff, rollback |
-| Diff | Compare two versions | Version | view structural diff (messages/vars/params) |
-| Evals | Test suite overview for a prompt | Eval Suite | view cases, run suite, view past runs |
-| Eval Editor | Add/edit test cases | Eval Suite (test case) | add case, edit assertions |
-| Eval Run | One suite run's results | Eval Result, Baseline | view pass/fail, cost, regression vs baseline, save-as-baseline |
-| Cost | Aggregated spend view | Execution Run (aggregated) | filter by prompt/model/time, see projection |
-| Settings → Providers | Manage API key presence (not values) | Provider config | connect/disconnect provider |
-| Settings → Models | View/edit the models-as-data table | Model | see pricing/context, mark preferred |
-| Settings → Team | Team sync config | — | 🔮 Phase 4 |
-| Run Console | Simplified run+compare for non-devs | Prompt, Execution Run | fill variables, run, compare — read-only on everything else |
+| Screen               | Purpose                                    | Primary entities           | Key actions                                                    |
+| -------------------- | ------------------------------------------ | -------------------------- | -------------------------------------------------------------- |
+| Library              | Browse, search, filter the prompt library  | Prompt (list)              | search, filter, favorite, open, new                            |
+| New Prompt / Editor  | Author or edit a prompt                    | Prompt                     | edit messages/variables/model/schema, save                     |
+| Prompt Detail        | Orientation hub for one prompt; tabs below | Prompt                     | navigate to sub-screens                                        |
+| Run / Comparison     | Execute against one or many models         | Prompt, Execution Run      | fill variables, pick model(s), run, view streamed output       |
+| Executions (scoped)  | This prompt's run history                  | Execution Run              | view, re-run with different vars/model (replay)                |
+| Runs (global)        | All executions across the library          | Execution Run              | filter by prompt/model/date                                    |
+| Run Detail           | One execution's full record                | Execution Run              | view input/output/tokens/cost, replay                          |
+| History              | Version list for a prompt                  | Version (git commit)       | select two → diff, rollback                                    |
+| Diff                 | Compare two versions                       | Version                    | view structural diff (messages/vars/params)                    |
+| Evals                | Test suite overview for a prompt           | Eval Suite                 | view cases, run suite, view past runs                          |
+| Eval Editor          | Add/edit test cases                        | Eval Suite (test case)     | add case, edit assertions                                      |
+| Eval Run             | One suite run's results                    | Eval Result, Baseline      | view pass/fail, cost, regression vs baseline, save-as-baseline |
+| Cost                 | Aggregated spend view                      | Execution Run (aggregated) | filter by prompt/model/time, see projection                    |
+| Settings → Providers | Manage API key presence (not values)       | Provider config            | connect/disconnect provider                                    |
+| Settings → Models    | View/edit the models-as-data table         | Model                      | see pricing/context, mark preferred                            |
+| Settings → Team      | Team sync config                           | —                          | 🔮 Phase 4                                                     |
+| Run Console          | Simplified run+compare for non-devs        | Prompt, Execution Run      | fill variables, run, compare — read-only on everything else    |
 
 ---
 
@@ -129,8 +129,9 @@ learn."
 Prompt-Detail sub-screen.
 
 **Entry points that aren't in-app nav:**
+
 - **MCP `run_prompt`** can trigger an execution that later shows up in Runs/Run Detail —
-  the dashboard is a *viewer* of activity that originated elsewhere, not the only place work
+  the dashboard is a _viewer_ of activity that originated elsewhere, not the only place work
   happens (see [§5](#5-non-visual-surfaces)).
 - **CI Action** writes results the dashboard never renders directly (they live as a PR
   comment) — but a regressed baseline is visible in Eval Run the next time someone opens it.
@@ -144,14 +145,16 @@ system does in response. Cross-referenced to the TRD section that designs the un
 mechanism.
 
 ### 4.1 Create and save a prompt
+
 1. Library → **New Prompt**.
 2. Editor: title, category/tags, messages (system/user), typed variables, optional output
    schema ([trd.md §3](trd.md)).
 3. Save → core writes `<slug>.prompt.md` to the prompts directory.
-4. Save writes the file **and auto-commits** with a generated message — *resolved
-   2026-07-16, see [§8](#8-open-ia-questions) Q1.*
+4. Save writes the file **and auto-commits** with a generated message — _resolved
+   2026-07-16, see [§8](#8-open-ia-questions) Q1._
 
 ### 4.2 Run once against a model
+
 1. Prompt Detail → **Run**.
 2. Run screen renders a form generated from the prompt's `variables` schema; model defaults
    to the prompt's configured model.
@@ -165,15 +168,17 @@ mechanism.
 7. Screen shows final output + actual cost/latency, with a link into Run Detail.
 
 ### 4.3 Compare across models
+
 1. From Run, the user multi-selects models instead of one.
 2. Screen switches to a parallel-column layout, one column per model.
 3. Dashboard fires N `core.execute()` calls under bounded concurrency
    ([trd.md §6.4](trd.md)); each column streams independently.
 4. On completion: output + cost + latency shown per column, side by side.
-5. *(Closes part of the FR-EXE-05 gap flagged in [compliance-matrix.md §9](compliance-matrix.md)
-   — this is the proposed shape; exact layout/interaction still to be built.)*
+5. _(Closes part of the FR-EXE-05 gap flagged in [compliance-matrix.md §9](compliance-matrix.md)
+   — this is the proposed shape; exact layout/interaction still to be built.)_
 
 ### 4.4 Attach an eval and run the suite
+
 1. Prompt Detail → **Evals** → **Eval Editor**: add test cases (variable values +
    assertions), stored in the sibling `.eval.yaml` file ([trd.md §3](trd.md)).
 2. **Run Suite** (optionally scoped to specific models).
@@ -186,13 +191,15 @@ mechanism.
 6. **Save as new baseline** writes `.baseline.json`, committable for CI ([trd.md §10](trd.md)).
 
 ### 4.5 Version history and rollback
+
 1. Prompt Detail → **History**: version list is `git log` on that file, rendered as
    commit sha / date / message / author.
 2. Select two versions → **Diff**: structural diff of messages, variables, model params.
 3. **Rollback to this version** writes the old content back as a **new commit** — never a
-   destructive history rewrite. *(Recommended default — see [§6](#6-open-ia-questions).)*
+   destructive history rewrite. _(Recommended default — see [§6](#6-open-ia-questions).)_
 
-### 4.6 MCP-driven run from the IDE *(cross-surface)*
+### 4.6 MCP-driven run from the IDE _(cross-surface)_
+
 ```
 Developer (Claude Code)  →  MCP get_prompt   →  core.resolve()      →  prompt file
 Developer (Claude Code)  →  MCP run_prompt   →  [confirm — untrusted-origin
@@ -201,10 +208,12 @@ Developer (Claude Code)  →  MCP run_prompt   →  [confirm — untrusted-origi
                                                                      ↘  same row the dashboard's
                                                                         Runs/Run Detail reads
 ```
+
 This is the concrete version of "same internal API, different access points"
 ([prd.md §6.1](prd.md)) — the IDE run and a dashboard run are indistinguishable once logged.
 
-### 4.7 CI eval on a pull request *(cross-surface)*
+### 4.7 CI eval on a pull request _(cross-surface)_
+
 1. A prompt file changes in a PR.
 2. GitHub Action runs `promptmuster eval --changed` (CLI → core, [trd.md §10](trd.md)).
 3. Core runs the suite, compares to the committed baseline.
@@ -220,21 +229,21 @@ navigation surface for Ring 0/1 users who never open the dashboard.
 
 ### MCP tools ([trd.md §7](trd.md))
 
-| Tool | Touches | Confirm-gated? | Dashboard equivalent |
-|---|---|---|---|
-| `list_prompts` | Prompt (list) | No | Library |
-| `get_prompt` | Prompt | No | Prompt Detail |
-| `run_prompt` | Prompt → Execution Run | **Yes** — spend + untrusted-origin gate | Run |
+| Tool           | Touches                | Confirm-gated?                          | Dashboard equivalent |
+| -------------- | ---------------------- | --------------------------------------- | -------------------- |
+| `list_prompts` | Prompt (list)          | No                                      | Library              |
+| `get_prompt`   | Prompt                 | No                                      | Prompt Detail        |
+| `run_prompt`   | Prompt → Execution Run | **Yes** — spend + untrusted-origin gate | Run                  |
 
 ### CLI commands ([trd.md §8](trd.md))
 
-| Command | Touches | Dashboard equivalent |
-|---|---|---|
-| `promptmuster list` / `search` | Prompt (list) | Library |
-| `promptmuster run <name>` | Prompt → Execution Run | Run |
-| `promptmuster eval <name>` | Eval Suite → Eval Result/Baseline | Evals / Eval Run |
-| `promptmuster export` / `import` | Prompt (serialization) | — (file-level, no screen needed) |
-| `promptmuster mcp` | starts the MCP server | — |
+| Command                          | Touches                           | Dashboard equivalent             |
+| -------------------------------- | --------------------------------- | -------------------------------- |
+| `promptmuster list` / `search`   | Prompt (list)                     | Library                          |
+| `promptmuster run <name>`        | Prompt → Execution Run            | Run                              |
+| `promptmuster eval <name>`       | Eval Suite → Eval Result/Baseline | Evals / Eval Run                 |
+| `promptmuster export` / `import` | Prompt (serialization)            | — (file-level, no screen needed) |
+| `promptmuster mcp`               | starts the MCP server             | —                                |
 
 ---
 
@@ -243,60 +252,61 @@ navigation surface for Ring 0/1 users who never open the dashboard.
 Ties this doc to the storage design in [trd.md §4](trd.md): which screens read vs. write
 each entity.
 
-| Entity | Read by | Written by |
-|---|---|---|
-| Prompt (file) | Library, Prompt Detail, Run, History, Evals, Comparison, MCP `list/get_prompt`, CLI `list/run` | Editor; rollback action in History |
-| Version (git commit) | History, Diff | Editor's save (pending [§6.1](#6-open-ia-questions)); rollback |
-| Execution Run (SQLite) | Runs, Run Detail, Cost, Executions tab | Run/Comparison on execute; MCP `run_prompt`; CLI `run` |
-| Eval Suite (`.eval.yaml`) | Evals, Eval Editor | Eval Editor |
-| Eval Result / Baseline (`.baseline.json` + cache) | Eval Run, Diff-style regression view | Eval Run's "save as baseline"; CI Action |
-| Model (data table, TRD A6) | Settings → Models, Run's model picker, Cost | Settings → Models |
-| Provider keys (keychain/env) | Settings → Providers (presence only, masked) | Settings → Providers |
+| Entity                                            | Read by                                                                                        | Written by                                                     |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Prompt (file)                                     | Library, Prompt Detail, Run, History, Evals, Comparison, MCP `list/get_prompt`, CLI `list/run` | Editor; rollback action in History                             |
+| Version (git commit)                              | History, Diff                                                                                  | Editor's save (pending [§6.1](#6-open-ia-questions)); rollback |
+| Execution Run (SQLite)                            | Runs, Run Detail, Cost, Executions tab                                                         | Run/Comparison on execute; MCP `run_prompt`; CLI `run`         |
+| Eval Suite (`.eval.yaml`)                         | Evals, Eval Editor                                                                             | Eval Editor                                                    |
+| Eval Result / Baseline (`.baseline.json` + cache) | Eval Run, Diff-style regression view                                                           | Eval Run's "save as baseline"; CI Action                       |
+| Model (data table, TRD A6)                        | Settings → Models, Run's model picker, Cost                                                    | Settings → Models                                              |
+| Provider keys (keychain/env)                      | Settings → Providers (presence only, masked)                                                   | Settings → Providers                                           |
 
 ---
 
 ## 7. Screen states
 
-Per [core/CLAUDE.md](../CLAUDE.md)'s existing rule — *"Handle empty states in every
-list component"* — every list-bearing screen needs an explicit empty/loading/error design,
+Per [core/CLAUDE.md](../CLAUDE.md)'s existing rule — _"Handle empty states in every
+list component"_ — every list-bearing screen needs an explicit empty/loading/error design,
 not just the happy path.
 
-| Screen | Empty state | Error state (representative) |
-|---|---|---|
-| Library | "No prompts yet" + New Prompt CTA | — |
-| Run / Comparison | — | Provider call failed (per-model, doesn't block other columns) |
-| Runs / Executions | "No executions yet" + link to Run | — |
-| History | "No prior versions" (new prompt, no commits yet) | Git read failure |
-| Evals | "No test cases yet" + Add Case CTA | — |
-| Eval Run | — | A test case's provider/judge call failed — shown inline in that row, doesn't block the rest of the matrix |
-| Cost | "No spend yet" | — |
+| Screen            | Empty state                                      | Error state (representative)                                                                              |
+| ----------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| Library           | "No prompts yet" + New Prompt CTA                | —                                                                                                         |
+| Run / Comparison  | —                                                | Provider call failed (per-model, doesn't block other columns)                                             |
+| Runs / Executions | "No executions yet" + link to Run                | —                                                                                                         |
+| History           | "No prior versions" (new prompt, no commits yet) | Git read failure                                                                                          |
+| Evals             | "No test cases yet" + Add Case CTA               | —                                                                                                         |
+| Eval Run          | —                                                | A test case's provider/judge call failed — shown inline in that row, doesn't block the rest of the matrix |
+| Cost              | "No spend yet"                                   | —                                                                                                         |
 
 ---
 
 ## 8. Open IA questions
 
-Distinct from the TRD's open technical questions — these are about the *screen-level*
+Distinct from the TRD's open technical questions — these are about the _screen-level_
 experience, not the underlying design:
 
 1. **Does Save auto-commit?** ✅ **Resolved 2026-07-16: (b) — Save writes the file and
    auto-commits with a generated message** (e.g. `prompt(code-review-thorough): edit
-   messages`). No commit-message field in the Editor; the save toast reads
+messages`). No commit-message field in the Editor; the save toast reads
    "Saved · committed as vN" — exactly what [ux-flows.md](ux-flows.md) Flow 1 already drew.
 2. **Rollback semantics.** Recommended default (stated in [§4.5](#45-version-history-and-rollback)):
    rollback always creates a **new commit**, never rewrites history. Treat this as settled
-   unless there's a reason to reopen it. *Extended (v0.2, via [ux-flows.md](ux-flows.md)
+   unless there's a reason to reopen it. _Extended (v0.2, via [ux-flows.md](ux-flows.md)
    Flow 5): because it's non-destructive by construction, rollback also needs **no
-   confirmation modal** — it completes immediately with a toast.*
+   confirmation modal** — it completes immediately with a toast._
 3. **Comparison as a Run-mode vs. a separate screen.** This doc proposes "mode of Run"
-   ([§1](#1-sitemap), [§3](#3-navigation-model)) as the default. *Layout resolved (v0.2,
+   ([§1](#1-sitemap), [§3](#3-navigation-model)) as the default. _Layout resolved (v0.2,
    via [ux-flows.md](ux-flows.md) Flow 3): parallel columns, one per model, each with its
-   own cost/latency footer.*
+   own cost/latency footer._
 4. **Run Console scope (Phase 4).** How much of Editor/Evals is hidden vs. read-only for
    non-technical users is deliberately deferred — not needed until Phase 4 planning.
 
 ---
 
 ## Changelog
+
 - **v0.3 (2026-07-16)** — §8 Q1 resolved by owner: Save auto-commits with a generated
   message (§4.1 updated to match). Q4 (Run Console scope) is now the only open item.
 - **v0.2 (2026-07-15)** — Reconciliation pass: §8 Q2 extended (no rollback confirmation

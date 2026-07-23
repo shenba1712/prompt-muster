@@ -1,18 +1,18 @@
 # PromptMuster — UI/UX Prototypes & Flows
 
-| | |
-|---|---|
-| **Status** | 📝 Draft v0.1 — companion to [ia.md](ia.md) §4 and [design-system.md](design-system.md) |
-| **Owner** | Shenbaga Srinivasan |
-| **Created** | 2026-07-15 |
-| **Companion artifact** | Seven journeys as connected screens — see link accompanying this document |
+|                        |                                                                                         |
+| ---------------------- | --------------------------------------------------------------------------------------- |
+| **Status**             | 📝 Draft v0.1 — companion to [ia.md](ia.md) §4 and [design-system.md](design-system.md) |
+| **Owner**              | Shenbaga Srinivasan                                                                     |
+| **Created**            | 2026-07-15                                                                              |
+| **Companion artifact** | Seven journeys as connected screens — see link accompanying this document               |
 
 ---
 
 ## 0. What this is
 
 [ia.md §4](ia.md) described each journey as an ordered list of steps. This draws them as
-the actual screens, chained in sequence, so the step-by-step is *seen*, not just read. Same
+the actual screens, chained in sequence, so the step-by-step is _seen_, not just read. Same
 running example throughout both this and the design-system artifact — the
 `code-review-thorough` prompt, Anthropic as its primary model, OpenAI as the comparison
 partner — so a reader can follow one thread across every document in the set.
@@ -31,15 +31,15 @@ them in PromptMuster colors would misrepresent what a user actually sees on thos
 
 ## 1. The seven journeys
 
-| # | Journey | Screens | Notes |
-|---|---|---|---|
-| 1 | Create and save a prompt | Library → Editor → Library | New card highlighted, "committed as v1" toast |
-| 2 | Run once | Run (before) → Run (streaming) → Run (complete) | See [§2](#2-new-patterns-this-exercise-surfaced) for the streaming state |
-| 3 | Compare across models | Run (multi-select) → Comparison | Confirms Comparison is a *mode* of Run, not a separate screen — matches [ia.md §3](ia.md) |
-| 4 | Attach eval, run suite | Evals editor → Eval run (in progress) → Eval run (results) | Progressive reveal, not batch — see [§2](#2-new-patterns-this-exercise-surfaced) |
-| 5 | Version history, rollback | History → Diff → History (post-rollback) | Rollback needs no confirm dialog — see [§2](#2-new-patterns-this-exercise-surfaced) |
-| 6 | MCP-driven run from IDE | IDE panel (confirm-before-spend) → IDE panel (result) | Confirm gate ties directly to [trd.md §12](trd.md) |
-| 7 | CI eval on a PR | GitHub PR (check + bot comment) | Shows the pass case; regression noted as a caption, not a second frame |
+| #   | Journey                   | Screens                                                    | Notes                                                                                     |
+| --- | ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 1   | Create and save a prompt  | Library → Editor → Library                                 | New card highlighted, "committed as v1" toast                                             |
+| 2   | Run once                  | Run (before) → Run (streaming) → Run (complete)            | See [§2](#2-new-patterns-this-exercise-surfaced) for the streaming state                  |
+| 3   | Compare across models     | Run (multi-select) → Comparison                            | Confirms Comparison is a _mode_ of Run, not a separate screen — matches [ia.md §3](ia.md) |
+| 4   | Attach eval, run suite    | Evals editor → Eval run (in progress) → Eval run (results) | Progressive reveal, not batch — see [§2](#2-new-patterns-this-exercise-surfaced)          |
+| 5   | Version history, rollback | History → Diff → History (post-rollback)                   | Rollback needs no confirm dialog — see [§2](#2-new-patterns-this-exercise-surfaced)       |
+| 6   | MCP-driven run from IDE   | IDE panel (confirm-before-spend) → IDE panel (result)      | Confirm gate ties directly to [trd.md §12](trd.md)                                        |
+| 7   | CI eval on a PR           | GitHub PR (check + bot comment)                            | Shows the pass case; regression noted as a caption, not a second frame                    |
 
 ---
 
@@ -51,13 +51,13 @@ additions the visual layer made necessary.
 
 - **Streaming needs its own visible state.** A blinking cursor + a pulsing "Generating…"
   label, distinct from a generic spinner — added to the component vocabulary here.
-  *(Folded into [design-system.md §3](design-system.md) in v0.2.)*
+  _(Folded into [design-system.md §3](design-system.md) in v0.2.)_
 - **Eval rows reveal progressively, not as one batch.** Rows in progress show a neutral
   "…" pending badge until their result lands, rather than the whole table appearing at
   once when the suite finishes. Direct application of the design system's own "what's
   interactive should look interactive" principle.
 - **Rollback resolved: no confirmation modal.** [ia.md §8](ia.md) left this genuinely
-  open. Building the screen made the answer obvious: since a rollback is *always* a new
+  open. Building the screen made the answer obvious: since a rollback is _always_ a new
   commit ([ia.md §4.5](ia.md)'s already-settled rule), there's nothing destructive to
   confirm — the action completes immediately with a toast, the same pattern as saving a
   prompt. This is a resolution, not a new open question.
@@ -68,12 +68,13 @@ additions the visual layer made necessary.
   the local heuristic estimate recomputes ~400ms after the last keystroke; the exact
   provider-side count stays on-demand ([trd.md §5.4](trd.md)).
 - **Eval "pending" row state** — was missing from [design-system.md](design-system.md)'s
-  component table; *added there in v0.2* alongside the streaming-state pattern, so both
+  component table; _added there in v0.2_ alongside the streaming-state pattern, so both
   docs are now in sync.
 
 ---
 
 ## Changelog
+
 - **v0.3 (2026-07-16)** — Cost-preflight trigger resolved by owner (debounced on change);
   no open items remain in this doc.
 - **v0.2 (2026-07-15)** — Reconciliation pass: both component feedback items (streaming

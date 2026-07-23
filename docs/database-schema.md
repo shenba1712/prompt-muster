@@ -1,15 +1,15 @@
 # PromptMuster — Database Schema / ERD
 
-| | |
-|---|---|
-| **Status** | 📝 Draft v0.1 — companion to [trd.md §4](trd.md), [ADR-002](adr/ADR-002-prompts-as-files-runs-in-database.md), [ADR-003](adr/ADR-003-sqlite-local-postgres-team.md), [ADR-006](adr/ADR-006-models-and-pricing-as-data.md) |
-| **Owner** | Shenbaga Srinivasan |
-| **Created** | 2026-07-15 |
-| **Engine** | SQLite (local, Phase 1+) → PostgreSQL (team tier, Phase 4) — one repository interface, per ADR-003 |
+|             |                                                                                                                                                                                                                           |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**  | 📝 Draft v0.1 — companion to [trd.md §4](trd.md), [ADR-002](adr/ADR-002-prompts-as-files-runs-in-database.md), [ADR-003](adr/ADR-003-sqlite-local-postgres-team.md), [ADR-006](adr/ADR-006-models-and-pricing-as-data.md) |
+| **Owner**   | Shenbaga Srinivasan                                                                                                                                                                                                       |
+| **Created** | 2026-07-15                                                                                                                                                                                                                |
+| **Engine**  | SQLite (local, Phase 1+) → PostgreSQL (team tier, Phase 4) — one repository interface, per ADR-003                                                                                                                        |
 
 ---
 
-## 0. Read this first — the boundary this schema does *not* cross
+## 0. Read this first — the boundary this schema does _not_ cross
 
 The single most important fact about this schema: **prompts are not in it.**
 [ADR-002](adr/ADR-002-prompts-as-files-runs-in-database.md) put prompts, eval test
@@ -137,7 +137,7 @@ at read time instead of storing it. This schema stores it directly instead, beca
 reconstruction depends on the prompt file still being reachable at that exact commit —
 true today, but not guaranteed forever (a rebased branch, a squashed history, a deleted
 fork). [trd.md](trd.md)'s reproducibility requirement (NFR-05) is about being able to see
-*exactly* what was sent for any past run, so this table is self-contained on that point
+_exactly_ what was sent for any past run, so this table is self-contained on that point
 even if the git history it references is later disturbed.
 
 ### 2.4 `eval_runs`
@@ -182,7 +182,7 @@ CREATE TABLE eval_results (
 **Why wrap `execution_run` instead of storing output directly:** this is what makes the
 eval cache ([trd.md §6.4](trd.md)) a real mechanism rather than a described intention — if
 an `execution_run` with a matching `cache_key` already exists, the eval engine points a new
-`eval_results` row at that *existing* row instead of spending money on a repeat call. The
+`eval_results` row at that _existing_ row instead of spending money on a repeat call. The
 cache isn't a separate structure bolted onto evals; it's just "reuse a row you already
 have."
 
@@ -190,15 +190,15 @@ have."
 
 ## 3. Relationships
 
-| From | To | Kind | Cardinality |
-|---|---|---|---|
-| `execution_runs.model_id` | `models.id` | Foreign key | many → 1 |
-| `eval_results.eval_run_id` | `eval_runs.id` | Foreign key | many → 1 |
-| `eval_results.execution_run_id` | `execution_runs.id` | Foreign key | many → 1 |
-| `execution_runs.prompt_slug` + `prompt_commit_sha` | Prompt file | **Soft** (natural key) | many → 1 |
-| `eval_runs.prompt_slug` + `prompt_commit_sha` | Prompt file | **Soft** (natural key) | many → 1 |
-| `eval_runs.eval_suite_path` | EvalSuite file | **Soft** (natural key) | many → 1 |
-| `eval_runs.baseline_path` | Baseline file | **Soft** (natural key), nullable | many → 0..1 |
+| From                                               | To                  | Kind                             | Cardinality |
+| -------------------------------------------------- | ------------------- | -------------------------------- | ----------- |
+| `execution_runs.model_id`                          | `models.id`         | Foreign key                      | many → 1    |
+| `eval_results.eval_run_id`                         | `eval_runs.id`      | Foreign key                      | many → 1    |
+| `eval_results.execution_run_id`                    | `execution_runs.id` | Foreign key                      | many → 1    |
+| `execution_runs.prompt_slug` + `prompt_commit_sha` | Prompt file         | **Soft** (natural key)           | many → 1    |
+| `eval_runs.prompt_slug` + `prompt_commit_sha`      | Prompt file         | **Soft** (natural key)           | many → 1    |
+| `eval_runs.eval_suite_path`                        | EvalSuite file      | **Soft** (natural key)           | many → 1    |
+| `eval_runs.baseline_path`                          | Baseline file       | **Soft** (natural key), nullable | many → 0..1 |
 
 ---
 
@@ -207,11 +207,11 @@ have."
 Shown here only for the fields the database actually needs to cross-reference — their full
 shape is [trd.md §3](trd.md)'s job, not this document's.
 
-| Entity | File | Stable identifier the database stores |
-|---|---|---|
-| **Prompt** | `<slug>.prompt.md` | `prompt_slug` (the file's declared `name`) + `prompt_commit_sha` (git commit at run time) |
-| **EvalSuite** | `<slug>.eval.yaml` (sibling) | `eval_suite_path`; each test case needs its own stable `key` — see [§7](#7-open-questions) |
-| **Baseline** | `<slug>.baseline.json` (sibling) | `baseline_path` |
+| Entity        | File                             | Stable identifier the database stores                                                      |
+| ------------- | -------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Prompt**    | `<slug>.prompt.md`               | `prompt_slug` (the file's declared `name`) + `prompt_commit_sha` (git commit at run time)  |
+| **EvalSuite** | `<slug>.eval.yaml` (sibling)     | `eval_suite_path`; each test case needs its own stable `key` — see [§7](#7-open-questions) |
+| **Baseline**  | `<slug>.baseline.json` (sibling) | `baseline_path`                                                                            |
 
 ---
 
@@ -225,7 +225,7 @@ boundary each thing is on:
   ([ADR-006](adr/ADR-006-models-and-pricing-as-data.md)) — the database can enforce
   referential integrity, and a `JOIN` is just a `JOIN`.
 - **`prompt_slug` + `prompt_commit_sha` is a soft, natural-key reference** because the
-  Prompt is a *file*, not a row — the database has no way to enforce that a given slug and
+  Prompt is a _file_, not a row — the database has no way to enforce that a given slug and
   commit sha actually resolve to something on disk, and it shouldn't try to. The
   application layer resolves it (read the file at that git commit) when needed; the
   database just stores the pointer.
@@ -336,7 +336,7 @@ ALTER TABLE eval_runs      ADD COLUMN workspace_id TEXT REFERENCES workspaces(id
 ```
 
 `workspace_id` is nullable specifically so the local/solo schema and the team schema stay
-the *same* tables with one additive column — not a fork. Access control, invitations, and
+the _same_ tables with one additive column — not a fork. Access control, invitations, and
 row-level security are explicitly out of scope for this document (per prd.md §7.6, Phase 4
 is not yet designed in detail).
 
@@ -345,15 +345,15 @@ is not yet designed in detail).
 ## 9. SQLite ↔ Postgres syntax notes
 
 Because [ADR-003](adr/ADR-003-sqlite-local-postgres-team.md) commits to one repository
-interface over both engines, the syntax deltas below are the *only* things that should
+interface over both engines, the syntax deltas below are the _only_ things that should
 differ between the two implementations — the table/column shapes in §2 stay identical.
 
-| Concern | SQLite | Postgres |
-|---|---|---|
-| Primary keys | `TEXT` (app-generated `crypto.randomUUID()`, per [core/CLAUDE.md](../CLAUDE.md)'s existing convention) | Same — identical `TEXT` UUIDs, no syntax change |
-| Booleans | `INTEGER` (0/1) | `BOOLEAN` |
-| Timestamps | `TEXT` (ISO-8601) | `TIMESTAMPTZ` |
-| JSON columns | `TEXT` (app parses/serializes) | `JSONB` (native querying available, unused for now to keep the repository interface identical) |
+| Concern      | SQLite                                                                                                 | Postgres                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| Primary keys | `TEXT` (app-generated `crypto.randomUUID()`, per [core/CLAUDE.md](../CLAUDE.md)'s existing convention) | Same — identical `TEXT` UUIDs, no syntax change                                                |
+| Booleans     | `INTEGER` (0/1)                                                                                        | `BOOLEAN`                                                                                      |
+| Timestamps   | `TEXT` (ISO-8601)                                                                                      | `TIMESTAMPTZ`                                                                                  |
+| JSON columns | `TEXT` (app parses/serializes)                                                                         | `JSONB` (native querying available, unused for now to keep the repository interface identical) |
 
 Using app-generated UUIDs everywhere (rather than `AUTOINCREMENT`/`SERIAL`) is what keeps
 primary-key handling identical across both engines — a direct, deliberate consequence of

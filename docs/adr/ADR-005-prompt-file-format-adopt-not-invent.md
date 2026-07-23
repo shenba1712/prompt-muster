@@ -117,7 +117,7 @@ Pros
 
 - Format shape (YAML frontmatter + Handlebars body) already matches what trd.md §3
   sketched independently — least design friction of the three
-- Ecosystem depth: core libraries in JS/TS/Python/Go/Rust/Java, VS Code *and* JetBrains
+- Ecosystem depth: core libraries in JS/TS/Python/Go/Rust/Java, VS Code _and_ JetBrains
   plugins, a tree-sitter grammar, Monaco/CodeMirror editor modes — the dashboard's own
   prompt editor gets syntax highlighting close to free
 - Apache-2.0, stable (not alpha)

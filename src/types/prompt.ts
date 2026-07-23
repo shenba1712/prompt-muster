@@ -1,49 +1,54 @@
 export const MODEL_OPTIONS = [
-    'gpt-4o',
-    'gpt-4o-mini',
-    'claude-sonnet',
-    'claude-haiku',
-    'gemini-pro',
-    'gemini-flash',
+  'gpt-4o',
+  'gpt-4o-mini',
+  'claude-sonnet',
+  'claude-haiku',
+  'gemini-pro',
+  'gemini-flash',
 ] as const;
 
-export type Model = typeof MODEL_OPTIONS[number];
+export type Model = (typeof MODEL_OPTIONS)[number];
 
 export const CATEGORY_OPTIONS = [
-    'code-generation',
-    'debugging',
-    'code-review',
-    'documentation',
-    'refactoring',
-    'testing',
-    'architecture',
-    'data-modeling',
-    'devops',
-    'learning',
-    'communication',
+  'code-generation',
+  'debugging',
+  'code-review',
+  'documentation',
+  'refactoring',
+  'testing',
+  'architecture',
+  'data-modeling',
+  'devops',
+  'learning',
+  'communication',
 ] as const;
 
-export type Category = typeof CATEGORY_OPTIONS[number];
+export type Category = (typeof CATEGORY_OPTIONS)[number];
 
 export interface Prompt {
-    id: string;
-    title: string;
-    content: string;
-    model: Model;
-    category: Category;
-    tags: string[];
-    isFavorite: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  title: string;
+  content: string;
+  model: Model;
+  category: Category;
+  tags: string[];
+  isFavorite: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export type CreatePromptInput = Omit<Prompt, 'id' | 'createdAt' | 'isFavorite' | 'updatedAt'>;
+export type CreatePromptInput = Omit<
+  Prompt,
+  'id' | 'createdAt' | 'isFavorite' | 'updatedAt'
+>;
 
-export type UpdatePromptInput = Partial<Omit<Prompt, 'id' | 'createdAt' | 'updatedAt'>>;
+export type UpdatePromptInput = Partial<
+  Omit<Prompt, 'id' | 'createdAt' | 'updatedAt'>
+>;
 
 export interface FilterState {
-    model: Model | 'all';
-    category: Category | 'all';
-    search: string;
-    showFavorites: boolean;
+  model: Model | 'all';
+  category: Category | 'all';
+  search: string;
+  showFavorites: boolean;
 }

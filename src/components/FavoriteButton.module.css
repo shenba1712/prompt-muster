@@ -1,16 +1,16 @@
 .button {
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    cursor: pointer;
-    padding: 0.25rem;
-    line-height: 1;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
 }
 
 .button:hover {
-    transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 .favorite {
-    color: #f59e0b;
+  color: #f59e0b;
 }

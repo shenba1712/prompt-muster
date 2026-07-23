@@ -6,9 +6,9 @@ Status
 
 # Context
 
-[ADR-003](ADR-003-sqlite-local-postgres-team.md) settled *which engines* hold structured
+[ADR-003](ADR-003-sqlite-local-postgres-team.md) settled _which engines_ hold structured
 data: SQLite locally, PostgreSQL reserved for the Phase-4 team tier, behind one repository
-interface. It deliberately left open *how the SQLite side is driven*. Two credible options:
+interface. It deliberately left open _how the SQLite side is driven_. Two credible options:
 
 1. **`better-sqlite3` + a thin, hand-rolled repository** — a synchronous driver (natural
    fit for a CLI that opens the DB, runs a query, exits) with the repository interface

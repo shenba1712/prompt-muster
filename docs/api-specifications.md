@@ -1,10 +1,10 @@
 # PromptMuster — API Specifications
 
-| | |
-|---|---|
-| **Status** | 📝 Draft v0.1 — companion to [trd.md §1, §7](trd.md), [ADR-001](adr/ADR-001-framework-free-core-library.md), [ia.md §5](ia.md) |
-| **Owner** | Shenbaga Srinivasan |
-| **Created** | 2026-07-15 |
+|             |                                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Status**  | 📝 Draft v0.1 — companion to [trd.md §1, §7](trd.md), [ADR-001](adr/ADR-001-framework-free-core-library.md), [ia.md §5](ia.md) |
+| **Owner**   | Shenbaga Srinivasan                                                                                                            |
+| **Created** | 2026-07-15                                                                                                                     |
 
 ---
 
@@ -22,11 +22,11 @@ that relationship would document a boundary that doesn't exist.
 What this system actually has is **three distinct contract surfaces**, only one of which
 is a conventional client/server API:
 
-| Surface | What crosses it | Is it "an API"? |
-|---|---|---|
-| **[§1](#1-surface-a--internal-core-library-api) Internal core library** | TypeScript function calls, in-process | A contract in the "stable interface" sense, not a network one |
-| **[§2](#2-surface-b--mcp-server-api) MCP server** | JSON-RPC-ish tool calls, IDE agent ↔ PromptMuster | Yes — the one real process-boundary contract in Phase 1–3 |
-| **[§3](#3-surface-c--team-http-api-phase-4-only) Team HTTP API** | REST, only in Phase 4 | Yes, but doesn't exist yet |
+| Surface                                                                 | What crosses it                                   | Is it "an API"?                                               |
+| ----------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------- |
+| **[§1](#1-surface-a--internal-core-library-api) Internal core library** | TypeScript function calls, in-process             | A contract in the "stable interface" sense, not a network one |
+| **[§2](#2-surface-b--mcp-server-api) MCP server**                       | JSON-RPC-ish tool calls, IDE agent ↔ PromptMuster | Yes — the one real process-boundary contract in Phase 1–3     |
+| **[§3](#3-surface-c--team-http-api-phase-4-only) Team HTTP API**        | REST, only in Phase 4                             | Yes, but doesn't exist yet                                    |
 
 Each is spec'd below in its own native contract language — TypeScript signatures for the
 library, JSON Schema for MCP tools, REST endpoint sketches for Phase 4 — rather than
@@ -40,21 +40,21 @@ Every CLI command, MCP tool, and dashboard route handler is a thin wrapper aroun
 functions. This is the surface [trd.md §1](trd.md)'s architecture diagram labels
 "parse · resolve vars · execute · eval · cost · storage · index" — spelled out concretely.
 
-| Module | Function | Input | Returns | Throws | Used by |
-|---|---|---|---|---|---|
-| Prompt | `listPrompts(opts)` | `{category?, tag?, search?, favorite?}` | `PromptSummary[]` | — | Library screen, MCP `list_prompts`, CLI `list` |
-| Prompt | `getPrompt(slug)` | `slug: string` | `Prompt` | `PromptNotFoundError` | Prompt Detail, MCP `get_prompt`, CLI |
-| Prompt | `savePrompt(prompt)` | `Prompt` | `{slug, commitSha}` | `ValidationError` | Editor screen |
-| Prompt | `resolveVariables(prompt, vars)` | `Prompt, Record<string,string>` | `ResolvedMessages` | `MissingVariableError` | Run screen, `execute()` |
-| Execution | `execute(req)` | `ExecutionRequest` | `AsyncIterable<Chunk>` | `ProviderError` | Run, Comparison, MCP `run_prompt` |
-| Execution | `countTokens(req)` | `ExecutionRequest` | `TokenCount` (flags exact vs. estimate — [trd.md §5.4](trd.md)) | — | Cost preflight badge |
-| Execution | `estimateCost(req)` | `ExecutionRequest` | `CostEstimate` | — | Cost preflight badge, MCP `run_prompt(dry_run)` |
-| Eval | `runEvalSuite(slug, opts)` | `slug, {models: string[]}` | `AsyncIterable<EvalResultEvent>` | — | Eval Run screen |
-| Eval | `compareToBaseline(evalRunId, baselinePath)` | ids | `RegressionReport` | — | Eval Run regression view |
-| Eval | `saveBaseline(evalRunId, path)` | ids | `void` | — | "Save as baseline" action |
-| Cost | `getCostSummary(range)` | `DateRange` | `CostSummary` | — | Cost dashboard |
-| Storage | `queryRuns(filter)` | `RunFilter` | `ExecutionRun[]` | — | Runs screen, Run Detail |
-| Storage | `getRun(id)` | `id: string` | `ExecutionRun` | `RunNotFoundError` | Run Detail |
+| Module    | Function                                     | Input                                   | Returns                                                         | Throws                 | Used by                                         |
+| --------- | -------------------------------------------- | --------------------------------------- | --------------------------------------------------------------- | ---------------------- | ----------------------------------------------- |
+| Prompt    | `listPrompts(opts)`                          | `{category?, tag?, search?, favorite?}` | `PromptSummary[]`                                               | —                      | Library screen, MCP `list_prompts`, CLI `list`  |
+| Prompt    | `getPrompt(slug)`                            | `slug: string`                          | `Prompt`                                                        | `PromptNotFoundError`  | Prompt Detail, MCP `get_prompt`, CLI            |
+| Prompt    | `savePrompt(prompt)`                         | `Prompt`                                | `{slug, commitSha}`                                             | `ValidationError`      | Editor screen                                   |
+| Prompt    | `resolveVariables(prompt, vars)`             | `Prompt, Record<string,string>`         | `ResolvedMessages`                                              | `MissingVariableError` | Run screen, `execute()`                         |
+| Execution | `execute(req)`                               | `ExecutionRequest`                      | `AsyncIterable<Chunk>`                                          | `ProviderError`        | Run, Comparison, MCP `run_prompt`               |
+| Execution | `countTokens(req)`                           | `ExecutionRequest`                      | `TokenCount` (flags exact vs. estimate — [trd.md §5.4](trd.md)) | —                      | Cost preflight badge                            |
+| Execution | `estimateCost(req)`                          | `ExecutionRequest`                      | `CostEstimate`                                                  | —                      | Cost preflight badge, MCP `run_prompt(dry_run)` |
+| Eval      | `runEvalSuite(slug, opts)`                   | `slug, {models: string[]}`              | `AsyncIterable<EvalResultEvent>`                                | —                      | Eval Run screen                                 |
+| Eval      | `compareToBaseline(evalRunId, baselinePath)` | ids                                     | `RegressionReport`                                              | —                      | Eval Run regression view                        |
+| Eval      | `saveBaseline(evalRunId, path)`              | ids                                     | `void`                                                          | —                      | "Save as baseline" action                       |
+| Cost      | `getCostSummary(range)`                      | `DateRange`                             | `CostSummary`                                                   | —                      | Cost dashboard                                  |
+| Storage   | `queryRuns(filter)`                          | `RunFilter`                             | `ExecutionRun[]`                                                | —                      | Runs screen, Run Detail                         |
+| Storage   | `getRun(id)`                                 | `id: string`                            | `ExecutionRun`                                                  | `RunNotFoundError`     | Run Detail                                      |
 
 **Key shared types** (full field definitions live in [database-schema.md](database-schema.md)
 and [trd.md §3](trd.md) — this is just enough to read the table above):
@@ -63,15 +63,18 @@ and [trd.md §3](trd.md) — this is just enough to read the table above):
 interface ExecutionRequest {
   promptSlug: string;
   variables: Record<string, string>;
-  modelId: string;          // FK to models.id, database-schema.md §2.1
+  modelId: string; // FK to models.id, database-schema.md §2.1
 }
 
-interface Chunk { text: string; done: boolean; }
+interface Chunk {
+  text: string;
+  done: boolean;
+}
 
 interface CostEstimate {
   tokens: number;
   costUsd: number;
-  isEstimate: boolean;      // true for Anthropic/Google heuristic counts — trd.md §5.4
+  isEstimate: boolean; // true for Anthropic/Google heuristic counts — trd.md §5.4
 }
 ```
 
@@ -109,9 +112,17 @@ Read-only, no confirmation required.
 Result:
 
 ```json
-{ "prompts": [
-  { "slug": "code-review-thorough", "title": "code-review-thorough", "category": "code-review", "model": "claude-opus-4-8", "favorite": false }
-] }
+{
+  "prompts": [
+    {
+      "slug": "code-review-thorough",
+      "title": "code-review-thorough",
+      "category": "code-review",
+      "model": "claude-opus-4-8",
+      "favorite": false
+    }
+  ]
+}
 ```
 
 ### 2.2 `get_prompt`
@@ -139,14 +150,22 @@ Result:
   "slug": "code-review-thorough",
   "commitSha": "a3f9c12",
   "messages": [
-    { "role": "system", "content": "You are a senior engineer. Report only correctness bugs." },
+    {
+      "role": "system",
+      "content": "You are a senior engineer. Report only correctness bugs."
+    },
     { "role": "user", "content": "Review this {{language}} diff:\n{{diff}}" }
   ],
   "variables": [
     { "name": "language", "type": "select" },
     { "name": "diff", "type": "file" }
   ],
-  "model": { "id": "claude-opus-4-8", "provider": "anthropic", "inputPricePerMtok": 5.00, "outputPricePerMtok": 25.00 },
+  "model": {
+    "id": "claude-opus-4-8",
+    "provider": "anthropic",
+    "inputPricePerMtok": 5.0,
+    "outputPricePerMtok": 25.0
+  },
   "outputSchema": null
 }
 ```
@@ -164,9 +183,19 @@ for how the gate actually works.
     "type": "object",
     "properties": {
       "slug": { "type": "string" },
-      "variables": { "type": "object", "additionalProperties": { "type": "string" } },
-      "model": { "type": "string", "description": "Override the prompt's default model" },
-      "dry_run": { "type": "boolean", "default": false, "description": "If true, return a cost estimate only — do not call the provider or record a run." }
+      "variables": {
+        "type": "object",
+        "additionalProperties": { "type": "string" }
+      },
+      "model": {
+        "type": "string",
+        "description": "Override the prompt's default model"
+      },
+      "dry_run": {
+        "type": "boolean",
+        "default": false,
+        "description": "If true, return a cost estimate only — do not call the provider or record a run."
+      }
     },
     "required": ["slug", "variables"],
     "additionalProperties": false
@@ -177,7 +206,12 @@ for how the gate actually works.
 Result — `dry_run: true`:
 
 ```json
-{ "estimate": true, "estimated_tokens": 1150, "estimated_cost_usd": 0.006, "model": "claude-opus-4-8" }
+{
+  "estimate": true,
+  "estimated_tokens": 1150,
+  "estimated_cost_usd": 0.006,
+  "model": "claude-opus-4-8"
+}
 ```
 
 Result — `dry_run: false` (or omitted):
@@ -211,7 +245,7 @@ UI, but the actual approval step documented in [ux-flows.md](ux-flows.md) lives 
 client/agent side, not inside this server's tool schema.
 
 **Enforcement counterpart (added v0.2):** because the above is only a convention, the
-budget cap is enforced *inside core* on every execution path — a client that skips the
+budget cap is enforced _inside core_ on every execution path — a client that skips the
 dry-run handshake entirely still cannot exceed it ([threat-model.md P2/T2](threat-model.md);
 verified by [qa-test-plan.md](qa-test-plan.md) TC-MCP-014 and TC-SEC-003).
 
@@ -232,16 +266,16 @@ over-designing what's two phases away — NestJS wraps the exact functions in
 [§1](#1-surface-a--internal-core-library-api) behind REST, per
 [ADR-001](adr/ADR-001-framework-free-core-library.md).
 
-| Method | Path | Wraps |
-|---|---|---|
-| `GET` | `/api/v1/prompts` | `listPrompts()` |
-| `GET` | `/api/v1/prompts/:slug` | `getPrompt()` |
-| `POST` | `/api/v1/prompts` | `savePrompt()` |
-| `POST` | `/api/v1/runs` | `execute()` (SSE response for streaming) |
-| `GET` | `/api/v1/runs/:id` | `getRun()` |
-| `GET` | `/api/v1/runs` | `queryRuns()` |
-| `POST` | `/api/v1/evals/:slug/run` | `runEvalSuite()` |
-| `GET` | `/api/v1/cost/summary` | `getCostSummary()` |
+| Method | Path                      | Wraps                                    |
+| ------ | ------------------------- | ---------------------------------------- |
+| `GET`  | `/api/v1/prompts`         | `listPrompts()`                          |
+| `GET`  | `/api/v1/prompts/:slug`   | `getPrompt()`                            |
+| `POST` | `/api/v1/prompts`         | `savePrompt()`                           |
+| `POST` | `/api/v1/runs`            | `execute()` (SSE response for streaming) |
+| `GET`  | `/api/v1/runs/:id`        | `getRun()`                               |
+| `GET`  | `/api/v1/runs`            | `queryRuns()`                            |
+| `POST` | `/api/v1/evals/:slug/run` | `runEvalSuite()`                         |
+| `GET`  | `/api/v1/cost/summary`    | `getCostSummary()`                       |
 
 Full request/response schemas, auth (workspace-scoped per
 [database-schema.md §8](database-schema.md)), and rate limiting are explicitly **not**
@@ -256,20 +290,26 @@ A single set of error codes, represented differently per surface but never redef
 surface — this is what [trd.md §11](trd.md)'s "typed results over thrown exceptions at
 provider boundaries" note becomes concretely.
 
-| Code | Meaning | Surface A (throws) | Surface B (MCP result) | Surface C (Phase 4 HTTP) |
-|---|---|---|---|---|
-| `PROMPT_NOT_FOUND` | slug doesn't resolve to a file | `PromptNotFoundError` | `{isError:true, error:{code,message}}` | `404` |
-| `RUN_NOT_FOUND` | run id doesn't exist | `RunNotFoundError` | same shape | `404` |
-| `MISSING_VARIABLE` | a required `{{var}}` wasn't supplied | `MissingVariableError` | same shape | `400` |
-| `VALIDATION_ERROR` | malformed prompt/eval file | `ValidationError` | same shape | `400` |
-| `PROVIDER_ERROR` | upstream OpenAI/Anthropic/Google call failed | `ProviderError` | same shape | `502` |
-| `BUDGET_EXCEEDED` | run would exceed a configured cost cap ([trd.md §6.4](trd.md)) | `BudgetExceededError` | same shape | `402` |
-| `RATE_LIMITED` | provider 429, retries exhausted ([trd.md §5.3](trd.md)) | `RateLimitError` | same shape | `429` |
+| Code               | Meaning                                                        | Surface A (throws)     | Surface B (MCP result)                 | Surface C (Phase 4 HTTP) |
+| ------------------ | -------------------------------------------------------------- | ---------------------- | -------------------------------------- | ------------------------ |
+| `PROMPT_NOT_FOUND` | slug doesn't resolve to a file                                 | `PromptNotFoundError`  | `{isError:true, error:{code,message}}` | `404`                    |
+| `RUN_NOT_FOUND`    | run id doesn't exist                                           | `RunNotFoundError`     | same shape                             | `404`                    |
+| `MISSING_VARIABLE` | a required `{{var}}` wasn't supplied                           | `MissingVariableError` | same shape                             | `400`                    |
+| `VALIDATION_ERROR` | malformed prompt/eval file                                     | `ValidationError`      | same shape                             | `400`                    |
+| `PROVIDER_ERROR`   | upstream OpenAI/Anthropic/Google call failed                   | `ProviderError`        | same shape                             | `502`                    |
+| `BUDGET_EXCEEDED`  | run would exceed a configured cost cap ([trd.md §6.4](trd.md)) | `BudgetExceededError`  | same shape                             | `402`                    |
+| `RATE_LIMITED`     | provider 429, retries exhausted ([trd.md §5.3](trd.md))        | `RateLimitError`       | same shape                             | `429`                    |
 
 Surface B's MCP result shape for every error:
 
 ```json
-{ "isError": true, "error": { "code": "BUDGET_EXCEEDED", "message": "This run would exceed the $20.00 monthly cap by $3.40." } }
+{
+  "isError": true,
+  "error": {
+    "code": "BUDGET_EXCEEDED",
+    "message": "This run would exceed the $20.00 monthly cap by $3.40."
+  }
+}
 ```
 
 ---
@@ -277,7 +317,7 @@ Surface B's MCP result shape for every error:
 ## 5. What this document doesn't cover
 
 **Outbound provider calls** (PromptMuster → OpenAI/Anthropic/Google) are a different API
-relationship entirely — PromptMuster is the *client* there, not the server. That contract is
+relationship entirely — PromptMuster is the _client_ there, not the server. That contract is
 already spec'd in [trd.md §5.1](trd.md)'s `ProviderAdapter` interface; this document isn't
 duplicating it.
 

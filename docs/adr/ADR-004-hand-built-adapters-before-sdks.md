@@ -162,7 +162,7 @@ Could I clearly explain this decision to another engineer?
 Did I choose the simplest solution that satisfies today's requirements?
 
 ☐ Yes　☑ Maybe　☐ No — the simplest path to a working feature is the SDK; the simplest
-path to the intended *learning outcome* is the raw API first. This ADR deliberately
+path to the intended _learning outcome_ is the raw API first. This ADR deliberately
 optimizes for the latter.
 
 ---

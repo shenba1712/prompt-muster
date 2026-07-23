@@ -1,13 +1,13 @@
 # PromptMuster — Design System / Style Guide
 
-| | |
-|---|---|
-| **Status** | 📝 Draft v0.1 — companion to [prd.md](prd.md), [trd.md](trd.md), [ia.md](ia.md) |
-| **Owner** | Shenbaga Srinivasan |
-| **Created** | 2026-07-15 |
-| **Last updated** | 2026-07-15 |
-| **Companion artifact** | Live token/component showcase — see [§9](#9-companion-artifact) |
-| **Relationship** | Implements the screens in [ia.md](ia.md) with concrete tokens. Assumes the shadcn/ui + Tailwind adoption already decided in [../core/backlog.md](core/backlog.md) #07. |
+|                        |                                                                                                                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**             | 📝 Draft v0.1 — companion to [prd.md](prd.md), [trd.md](trd.md), [ia.md](ia.md)                                                                                        |
+| **Owner**              | Shenbaga Srinivasan                                                                                                                                                    |
+| **Created**            | 2026-07-15                                                                                                                                                             |
+| **Last updated**       | 2026-07-15                                                                                                                                                             |
+| **Companion artifact** | Live token/component showcase — see [§9](#9-companion-artifact)                                                                                                        |
+| **Relationship**       | Implements the screens in [ia.md](ia.md) with concrete tokens. Assumes the shadcn/ui + Tailwind adoption already decided in [../core/backlog.md](core/backlog.md) #07. |
 
 ---
 
@@ -63,22 +63,22 @@ as `hsl(H S% L%)`, e.g. `--background: hsl(250 20% 99%);`. Do **not** paste the 
 triplets: the bare-`H S% L%` + `hsl(var(--token))` form is the older Tailwind v3 convention
 and resolves to invalid colors under v4. The color values themselves are identical either way.
 
-| Token | Light | Dark | Used for |
-|---|---|---|---|
-| `--background` | `250 20% 99%` | `252 22% 6%` | Page background |
-| `--foreground` | `252 15% 12%` | `250 15% 95%` | Default text |
-| `--card` | `250 20% 99%` | `252 18% 9%` | Card / panel surface |
-| `--card-foreground` | `252 15% 12%` | `250 15% 95%` | Text on card |
-| `--popover` / `--popover-foreground` | same as card | same as card | Dropdowns, tooltips |
-| `--primary` | `252 47% 41%` | `248 74% 75%` | Primary buttons, links, active states |
-| `--primary-foreground` | `0 0% 100%` | `252 30% 12%` | Text/icons on primary |
-| `--secondary` / `--muted` / `--accent` | `250 15% 95%` | `252 12% 15%` | Secondary buttons, subtle fills |
-| `--muted-foreground` | `252 8% 45%` | `252 8% 62%` | Placeholder, disabled, captions |
-| `--destructive` | `0 58% 52%` | *same* `0 58% 52%` | Destructive actions, eval fail, errors |
-| `--destructive-foreground` | `0 0% 100%` | `0 0% 100%` | Text on destructive |
-| `--border` / `--input` | `250 15% 89%` | `252 12% 18%` | Hairlines, input borders |
-| `--ring` | `252 47% 41%` | `248 74% 75%` | Focus ring (= `--primary`) |
-| `--radius` | `0.375rem` | *(not themed)* | Base corner radius |
+| Token                                  | Light         | Dark               | Used for                               |
+| -------------------------------------- | ------------- | ------------------ | -------------------------------------- |
+| `--background`                         | `250 20% 99%` | `252 22% 6%`       | Page background                        |
+| `--foreground`                         | `252 15% 12%` | `250 15% 95%`      | Default text                           |
+| `--card`                               | `250 20% 99%` | `252 18% 9%`       | Card / panel surface                   |
+| `--card-foreground`                    | `252 15% 12%` | `250 15% 95%`      | Text on card                           |
+| `--popover` / `--popover-foreground`   | same as card  | same as card       | Dropdowns, tooltips                    |
+| `--primary`                            | `252 47% 41%` | `248 74% 75%`      | Primary buttons, links, active states  |
+| `--primary-foreground`                 | `0 0% 100%`   | `252 30% 12%`      | Text/icons on primary                  |
+| `--secondary` / `--muted` / `--accent` | `250 15% 95%` | `252 12% 15%`      | Secondary buttons, subtle fills        |
+| `--muted-foreground`                   | `252 8% 45%`  | `252 8% 62%`       | Placeholder, disabled, captions        |
+| `--destructive`                        | `0 58% 52%`   | _same_ `0 58% 52%` | Destructive actions, eval fail, errors |
+| `--destructive-foreground`             | `0 0% 100%`   | `0 0% 100%`        | Text on destructive                    |
+| `--border` / `--input`                 | `250 15% 89%` | `252 12% 18%`      | Hairlines, input borders               |
+| `--ring`                               | `252 47% 41%` | `248 74% 75%`      | Focus ring (= `--primary`)             |
+| `--radius`                             | `0.375rem`    | _(not themed)_     | Base corner radius                     |
 
 **Toolchain notes (Tailwind v4 shadcn):** `--destructive-foreground` is **not consumed** by
 the current shadcn primitives (the destructive variant uses `text-white`) — omit it unless a
@@ -88,11 +88,11 @@ above (subtle fills carry default text); set both to the `--foreground` value fo
 **Two extra semantic tokens, not in stock shadcn** — needed because evals produce more than
 binary pass/fail:
 
-| Token | Value (fixed, both modes) | Used for |
-|---|---|---|
-| `--success` | `112 89% 33%` (`#0ca30c`) | Eval pass, saved/confirmed states |
-| `--warning` | `40 97% 56%` (`#fab219`) | Approaching cost budget, non-fatal notice |
-| `--serious` | `15 78% 67%` (`#ec835a`) | Flaky/uncertain eval result — needs review |
+| Token       | Value (fixed, both modes) | Used for                                   |
+| ----------- | ------------------------- | ------------------------------------------ |
+| `--success` | `112 89% 33%` (`#0ca30c`) | Eval pass, saved/confirmed states          |
+| `--warning` | `40 97% 56%` (`#fab219`)  | Approaching cost budget, non-fatal notice  |
+| `--serious` | `15 78% 67%` (`#ec835a`)  | Flaky/uncertain eval result — needs review |
 
 `--success`/`--warning`/`--serious`/`--destructive` are a **fixed 4-step status scale**,
 identical in light and dark mode by design — status meaning must not shift with theme.
@@ -111,7 +111,7 @@ The Comparison screen ([ia.md §4.3](ia.md)) and model badges need to distinguis
 **OpenAI / Anthropic / Google** at a glance. Rather than pick three "nice" hues, I validated
 candidates against the CVD-safety + contrast checker (`dataviz` skill's
 `validate_palette.js`, Machado-2009 simulation, checked pairwise since a user can select
-*any subset* to compare — not always all three in a fixed order).
+_any subset_ to compare — not always all three in a fixed order).
 
 **First attempt failed** — blue + violet + aqua/magenta looked fine in light mode but broke
 in dark mode:
@@ -135,24 +135,24 @@ $ node validate_palette.js "#3987e5,#d55181" --mode dark --surface "#0b0b12"
 [PASS] CVD separation   worst adjacent ΔE 40.5+   → ALL CHECKS PASS
 ```
 
-| Provider | Light | Dark | Treatment |
-|---|---|---|---|
-| **OpenAI** | `208 65% 51%` (`#2a78d6`) | `213 74% 60%` (`#3987e5`) | Filled badge |
-| **Anthropic** | `340 68% 76%` (`#e87ba4`) | `340 54% 62%` (`#d55181`) | Filled badge |
-| **Google & everything else** (local, self-hosted, future providers) | `--muted-foreground` on `--border` | same | **Outlined, no fill** — a genuinely different encoding channel, not a third competing hue |
+| Provider                                                            | Light                              | Dark                      | Treatment                                                                                 |
+| ------------------------------------------------------------------- | ---------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------- |
+| **OpenAI**                                                          | `208 65% 51%` (`#2a78d6`)          | `213 74% 60%` (`#3987e5`) | Filled badge                                                                              |
+| **Anthropic**                                                       | `340 68% 76%` (`#e87ba4`)          | `340 54% 62%` (`#d55181`) | Filled badge                                                                              |
+| **Google & everything else** (local, self-hosted, future providers) | `--muted-foreground` on `--border` | same                      | **Outlined, no fill** — a genuinely different encoding channel, not a third competing hue |
 
 This isn't a compromise — it **scales better**: a filled-hue system runs out of safely
 distinguishable colors fast (this exercise just proved 3 was already the ceiling); an
 outlined "everything else" bucket absorbs a 4th, 5th, 10th provider with zero new color
 decisions. It also happens to freed up **violet** with no collision, which is why the UI's
 primary/brand accent (`--primary` above) can be that same validated violet step
-(`#4a3aa7` / `#9085e9`) reused as a *different job* — brand accent, not series identity —
+(`#4a3aa7` / `#9085e9`) reused as a _different job_ — brand accent, not series identity —
 which the method explicitly treats as a separate concern.
 
 Providers are **always labeled by name as text** — the badge color is a supporting scan aid,
 never the sole identifier (mandatory regardless of CVD status, per WCAG 1.4.1).
 
-#### Category color — deliberately *not* color-coded
+#### Category color — deliberately _not_ color-coded
 
 PromptMuster has **11 fixed prompt categories** (code-generation, debugging, code-review,
 documentation, refactoring, testing, architecture, data-modeling, devops, learning,
@@ -170,26 +170,26 @@ method's own answer, not a shortcut around it.
 Two roles, chosen for what this product actually displays — not a third "display" face,
 which would be over-designing a reference tool.
 
-| Role | Stack | Why |
-|---|---|---|
-| **UI** | `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` | Native per OS — reads as a tool installed on your machine, not a webapp; avoids the generic-default "Inter for everything" |
+| Role               | Stack                                                                                     | Why                                                                                                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **UI**             | `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`     | Native per OS — reads as a tool installed on your machine, not a webapp; avoids the generic-default "Inter for everything"                                        |
 | **Content / code** | `"JetBrains Mono", "Cascadia Code", "SF Mono", Consolas, "Roboto Mono", Menlo, monospace` | Prompt bodies, diffs, JSON schemas, and template variables (`{{var}}`) are literally monospace content — whitespace and alignment are load-bearing, not stylistic |
 
-`prompts.write` will be the *most-read* text in the product, so the mono stack leads with
+`prompts.write` will be the _most-read_ text in the product, so the mono stack leads with
 real coding fonts (JetBrains Mono ships with JetBrains IDEs; Cascadia Code ships with
 Windows Terminal) rather than falling straight to generic `monospace`.
 
 **Type scale** (Tailwind-numbered for direct implementation):
 
-| Step | Size / line-height | Role |
-|---|---|---|
-| `xs` | 12px / 16px | Micro-labels, badges, timestamps |
-| `sm` | 13px / 20px | Secondary text, form labels, table cells |
-| `base` | 14px / 22px | Default UI text — deliberately smaller than marketing "body" scale |
-| `md` | 16px / 24px | Emphasized body, card titles |
-| `lg` | 18px / 28px | Section headers |
-| `xl` | 22px / 30px | Page titles |
-| `2xl` | 28px / 36px | Dashboard hero numbers only (Cost screen) — used sparingly |
+| Step   | Size / line-height | Role                                                               |
+| ------ | ------------------ | ------------------------------------------------------------------ |
+| `xs`   | 12px / 16px        | Micro-labels, badges, timestamps                                   |
+| `sm`   | 13px / 20px        | Secondary text, form labels, table cells                           |
+| `base` | 14px / 22px        | Default UI text — deliberately smaller than marketing "body" scale |
+| `md`   | 16px / 24px        | Emphasized body, card titles                                       |
+| `lg`   | 18px / 28px        | Section headers                                                    |
+| `xl`   | 22px / 30px        | Page titles                                                        |
+| `2xl`  | 28px / 36px        | Dashboard hero numbers only (Cost screen) — used sparingly         |
 
 Prompt/code content uses the same size steps but **1.6 line-height** (vs. 1.4–1.5 for UI
 text) — prompts are read carefully, closer to how an editor sets code than how a UI sets
@@ -219,20 +219,20 @@ Derived from `--radius` (`0.375rem`): `sm = 0.25rem` · `md = 0.375rem` · `lg =
 Two shadow levels, reserved for genuinely transient surfaces — not applied to resting cards
 (principle 3, [§1](#1-design-principles--grounded-in-this-subject-not-generic)):
 
-| Token | Value | Used for |
-|---|---|---|
-| `--shadow-sm` | `0 1px 2px hsl(252 15% 12% / 0.06)` | Dropdowns, popovers |
-| `--shadow-md` | `0 4px 16px hsl(252 15% 12% / 0.12)` | Modals, dialogs |
+| Token         | Value                                | Used for            |
+| ------------- | ------------------------------------ | ------------------- |
+| `--shadow-sm` | `0 1px 2px hsl(252 15% 12% / 0.06)`  | Dropdowns, popovers |
+| `--shadow-md` | `0 4px 16px hsl(252 15% 12% / 0.12)` | Modals, dialogs     |
 
 Resting cards/panels: `--border` (1px) + `--card` background only, no shadow.
 
 ### 2.6 Motion
 
-| Token | Value |
-|---|---|
-| `--duration-fast` | 120ms — hover, focus ring |
-| `--duration-base` | 180ms — tab switches, accordions |
-| `--duration-slow` | 240ms — dialog/modal open |
+| Token             | Value                                                                                                                                          |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--duration-fast` | 120ms — hover, focus ring                                                                                                                      |
+| `--duration-base` | 180ms — tab switches, accordions                                                                                                               |
+| `--duration-slow` | 240ms — dialog/modal open                                                                                                                      |
 | `--ease-standard` | `cubic-bezier(0.2, 0, 0, 1)` — snappy start, decelerate to rest; not a springy/bouncy curve, which reads as "playful app" rather than dev tool |
 
 `@media (prefers-reduced-motion: reduce)`: all durations collapse to ≤1ms; no transform-
@@ -244,23 +244,23 @@ based transitions, opacity-only where a state change must be perceptible at all.
 
 Scoped to what [ia.md](ia.md)'s screens actually need — not a full library.
 
-| Component | Variants | States | Notes |
-|---|---|---|---|
-| **Button** | primary, secondary, destructive, ghost, link | default, hover, focus-visible, active, disabled | Primary = `--primary` fill; destructive reserved for genuinely destructive actions (delete prompt, discard changes) |
-| **Input / Textarea** | text, multiline (prompt editor) | default, focus, error, disabled | Error state = `--destructive` border + inline message below, never color-only |
-| **Select** | single-select (model picker, category) | default, open, disabled | Model picker groups by provider using the [§2.1](#21-color) badge treatment |
-| **Badge — category** | 11 fixed categories | static | Neutral/text-only — see [§2.1](#21-color) |
-| **Badge — provider** | OpenAI, Anthropic, Other | static | Filled (OpenAI/Anthropic) or outlined (Other) — see [§2.1](#21-color) |
-| **Badge — status** | pass, fail, warning, review | static | Icon + label + `--success`/`--destructive`/`--warning`/`--serious` — never color alone |
-| **Card** (PromptCard) | default, favorited | default, hover, focus-visible | Border + `--card` background, no shadow (principle 3) |
-| **Tabs** (Prompt Detail sub-nav) | — | default, active, hover, focus-visible | Active tab underline = `--primary`, not a filled pill |
-| **Alert / Toast** | info, success, warning, destructive | enter, visible, exit | Exit respects `--duration-base`; reduced-motion → fade only |
-| **Table row** (Eval Run results) | pass, fail | default, hover | Row-level status stripe (functional, not decorative — see artifact-design's "severity stripe" guidance) + icon, matching Badge — status |
-| **Stat tile** (Cost/token figures) | default, over-budget | — | Large figure in tabular-nums; over-budget uses `--warning` background wash, not text-color-only |
-| **Code / prompt block** | read-only, editable | default, focus (editable) | Mono content stack; `{{variable}}` tokens rendered in `--primary` to visually separate template slots from literal text |
-| **Diff line** (History → Diff) | added, removed, unchanged | — | Added = `--success` background wash + left border; removed = `--destructive` equivalent — a git-diff-familiar pattern, functional not decorative |
-| **Streaming output** (added v0.2) | — | generating, complete | Blinking block cursor + pulsing "Generating…" label — a distinct state, not a generic spinner; folded back from [ux-flows.md](ux-flows.md) Flow 2 |
-| **Table row — pending** (added v0.2) | — | pending, resolved | Neutral "…" badge until that row's result lands; eval rows reveal progressively rather than as one delayed batch ([ux-flows.md](ux-flows.md) Flow 4) |
+| Component                            | Variants                                     | States                                          | Notes                                                                                                                                                |
+| ------------------------------------ | -------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Button**                           | primary, secondary, destructive, ghost, link | default, hover, focus-visible, active, disabled | Primary = `--primary` fill; destructive reserved for genuinely destructive actions (delete prompt, discard changes)                                  |
+| **Input / Textarea**                 | text, multiline (prompt editor)              | default, focus, error, disabled                 | Error state = `--destructive` border + inline message below, never color-only                                                                        |
+| **Select**                           | single-select (model picker, category)       | default, open, disabled                         | Model picker groups by provider using the [§2.1](#21-color) badge treatment                                                                          |
+| **Badge — category**                 | 11 fixed categories                          | static                                          | Neutral/text-only — see [§2.1](#21-color)                                                                                                            |
+| **Badge — provider**                 | OpenAI, Anthropic, Other                     | static                                          | Filled (OpenAI/Anthropic) or outlined (Other) — see [§2.1](#21-color)                                                                                |
+| **Badge — status**                   | pass, fail, warning, review                  | static                                          | Icon + label + `--success`/`--destructive`/`--warning`/`--serious` — never color alone                                                               |
+| **Card** (PromptCard)                | default, favorited                           | default, hover, focus-visible                   | Border + `--card` background, no shadow (principle 3)                                                                                                |
+| **Tabs** (Prompt Detail sub-nav)     | —                                            | default, active, hover, focus-visible           | Active tab underline = `--primary`, not a filled pill                                                                                                |
+| **Alert / Toast**                    | info, success, warning, destructive          | enter, visible, exit                            | Exit respects `--duration-base`; reduced-motion → fade only                                                                                          |
+| **Table row** (Eval Run results)     | pass, fail                                   | default, hover                                  | Row-level status stripe (functional, not decorative — see artifact-design's "severity stripe" guidance) + icon, matching Badge — status              |
+| **Stat tile** (Cost/token figures)   | default, over-budget                         | —                                               | Large figure in tabular-nums; over-budget uses `--warning` background wash, not text-color-only                                                      |
+| **Code / prompt block**              | read-only, editable                          | default, focus (editable)                       | Mono content stack; `{{variable}}` tokens rendered in `--primary` to visually separate template slots from literal text                              |
+| **Diff line** (History → Diff)       | added, removed, unchanged                    | —                                               | Added = `--success` background wash + left border; removed = `--destructive` equivalent — a git-diff-familiar pattern, functional not decorative     |
+| **Streaming output** (added v0.2)    | —                                            | generating, complete                            | Blinking block cursor + pulsing "Generating…" label — a distinct state, not a generic spinner; folded back from [ux-flows.md](ux-flows.md) Flow 2    |
+| **Table row — pending** (added v0.2) | —                                            | pending, resolved                               | Neutral "…" badge until that row's result lands; eval rows reveal progressively rather than as one delayed batch ([ux-flows.md](ux-flows.md) Flow 4) |
 
 ---
 
@@ -288,7 +288,7 @@ Scoped to what [ia.md](ia.md)'s screens actually need — not a full library.
 ## 5. Dark mode strategy
 
 Token-level, matching the artifact-design pattern used for the companion showcase
-([§9](#9-companion-artifact)): define tokens once on `:root`, redefine only the *values*
+([§9](#9-companion-artifact)): define tokens once on `:root`, redefine only the _values_
 (never component CSS directly) under `@media (prefers-color-scheme: dark)`, then redefine
 again under explicit `[data-theme="dark"]` / `[data-theme="light"]` so an in-app theme
 toggle can override the OS preference in either direction. Status tokens
@@ -348,12 +348,13 @@ separate design-token build step needed at this project's scale.
 A live, interactive rendering of this token system — real color swatches with computed
 contrast, a type specimen, the spacing/radius scale, and working component states
 (hover/focus-visible are real CSS, not mockup screenshots) — is published separately;
-see the message accompanying this document for the link. It's a *showcase* of these tokens,
+see the message accompanying this document for the link. It's a _showcase_ of these tokens,
 not a second source of truth — if the two ever disagree, this document wins.
 
 ---
 
 ## Changelog
+
 - **v0.3 (2026-07-23)** — §2.1/§6 corrected for the installed **Tailwind v4** toolchain:
   token values must be `hsl()`-wrapped (v4's `@theme inline` consumes the var directly; the
   bare `hsl(var(--token))` form was v3). Noted `--destructive-foreground` is unused in v4,

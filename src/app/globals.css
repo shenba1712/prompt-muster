@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -11,7 +11,10 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   background: #fafafa;
   color: #1a1a1a;
   line-height: 1.6;
@@ -40,7 +43,9 @@ button:hover {
   background: #f0f0f0;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -48,7 +53,9 @@ input, textarea, select {
   width: 100%;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: 2px solid var(--brand);
   outline-offset: 1px;
 }
