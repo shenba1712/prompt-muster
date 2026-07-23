@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -36,6 +37,7 @@
     "eslint-config-next": "16.2.10",
     "jsdom": "^29.1.1",
     "postcss": "^8.5.22",
+    "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
     "typescript": "^5",
     "vitest": "^4.1.10"
