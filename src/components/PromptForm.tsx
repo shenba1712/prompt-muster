@@ -10,6 +10,16 @@ import {
   Prompt,
 } from '@/types/prompt';
 import { isModel, isCategory } from '@/utils/prompt';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import styles from './PromptForm.module.css';
 
 interface PromptFormProps {
@@ -84,7 +94,7 @@ export default function PromptForm({
 
   return (
     <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
-      <input
+      <Input
         ref={titleInputRef}
         type="text"
         value={title}
@@ -94,7 +104,7 @@ export default function PromptForm({
         placeholder="Prompt title"
         aria-label="Prompt title"
       />
-      <textarea
+      <Textarea
         value={content}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
           setContent(e.target.value)
@@ -103,36 +113,42 @@ export default function PromptForm({
         aria-label="Prompt content"
       />
       <div className={styles.row}>
-        <select
+        <Select
           value={model}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-            const value = e.target.value;
-            if (isModel(value)) setModel(value);
+          onValueChange={(value: string | null) => {
+            if (value !== null && isModel(value)) setModel(value);
           }}
-          aria-label="Model"
         >
-          {MODEL_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <select
+          <SelectTrigger aria-label="Model" className="flex-1 min-w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {MODEL_OPTIONS.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
           value={category}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-            const value = e.target.value;
-            if (isCategory(value)) setCategory(value);
+          onValueChange={(value: string | null) => {
+            if (value !== null && isCategory(value)) setCategory(value);
           }}
-          aria-label="Category"
         >
-          {CATEGORY_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger aria-label="Category" className="flex-1 min-w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORY_OPTIONS.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      <input
+      <Input
         type="text"
         value={tags}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -149,12 +165,12 @@ export default function PromptForm({
         )}
       </div>
       <div className={styles.actions}>
-        <button type="button" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
-        </button>
-        <button type="submit">
+        </Button>
+        <Button type="submit">
           {isEditing ? 'Save changes' : 'Add Prompt'}
-        </button>
+        </Button>
       </div>
     </form>
   );

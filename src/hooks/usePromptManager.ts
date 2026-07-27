@@ -76,8 +76,6 @@ export function usePromptManager(): UsePromptManagerReturn {
     setFilterState((prev) => ({ ...prev, ...updates }));
   };
 
-  const searchTerm = filterState.search.trim().toLowerCase();
-
   const filteredPrompts = filterPrompts(prompts, filterState);
 
   const promptCount = prompts.length;

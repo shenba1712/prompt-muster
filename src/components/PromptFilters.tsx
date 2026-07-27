@@ -3,6 +3,15 @@
 import type { JSX } from 'react';
 import { FilterState, MODEL_OPTIONS, CATEGORY_OPTIONS } from '@/types/prompt';
 import { isModel, isCategory } from '@/utils/prompt';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import styles from './PromptFilters.module.css';
 
 interface PromptFiltersProps {
@@ -36,52 +45,68 @@ export default function PromptFilters({
   return (
     <div className={styles.filters}>
       <div className={styles.row}>
-        <select
+        <Select
           value={filterState.model}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-            const value = e.target.value;
-            if (value === 'all' || isModel(value))
+          onValueChange={(value: string | null) => {
+            if (value !== null && (value === 'all' || isModel(value)))
               onFilterChange({ model: value });
           }}
-          aria-label="Filter by model"
         >
-          <option value="all">All models</option>
-          {MODEL_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <select
+          <SelectTrigger
+            aria-label="Filter by model"
+            className="flex-1 min-w-[140px]"
+          >
+            <SelectValue>
+              {(value: string) => (value === 'all' ? 'All models' : value)}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All models</SelectItem>
+            {MODEL_OPTIONS.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
           value={filterState.category}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-            const value = e.target.value;
-            if (value === 'all' || isCategory(value))
+          onValueChange={(value: string | null) => {
+            if (value !== null && (value === 'all' || isCategory(value)))
               onFilterChange({ category: value });
           }}
-          aria-label="Filter by category"
         >
-          <option value="all">All categories</option>
-          {CATEGORY_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <button
+          <SelectTrigger
+            aria-label="Filter by category"
+            className="flex-1 min-w-[140px]"
+          >
+            <SelectValue>
+              {(value: string) => (value === 'all' ? 'All categories' : value)}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All categories</SelectItem>
+            {CATEGORY_OPTIONS.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
           type="button"
-          className={styles.favoriteToggle}
+          variant={filterState.showFavorites ? 'default' : 'outline'}
           aria-pressed={filterState.showFavorites}
           onClick={() =>
             onFilterChange({ showFavorites: !filterState.showFavorites })
           }
+          className="flex-1 min-w-[140px]"
         >
           {filterState.showFavorites ? '★ Favorites' : '☆ Favorites'}
-        </button>
+        </Button>
       </div>
-      <input
+      <Input
         type="text"
-        className={styles.search}
         value={filterState.search}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           onFilterChange({ search: e.target.value })
@@ -91,13 +116,9 @@ export default function PromptFilters({
       />
       <div className={styles.footer}>
         {hasActiveFilters && (
-          <button
-            type="button"
-            className={styles.clearButton}
-            onClick={clearFilters}
-          >
+          <Button type="button" variant="link" onClick={clearFilters}>
             Clear filters
-          </button>
+          </Button>
         )}
         <p className={styles.count}>
           Showing {filteredCount} of {totalCount} prompts.

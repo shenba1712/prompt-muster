@@ -27,29 +27,10 @@
   background: var(--brand-dark);
 }
 
-.form input,
-.form textarea,
-.form select {
-  padding: 0.5rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  font: inherit;
-}
-
-.form textarea {
-  min-height: 6rem;
-  resize: vertical;
-}
-
 .row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-}
-
-.row select {
-  flex: 1 1 140px;
-  min-width: 140px;
 }
 
 .error {

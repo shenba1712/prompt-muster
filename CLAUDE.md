@@ -10,7 +10,7 @@ All data is in-memory using React useState (lost on refresh).
 Seed data function exists for development testing.
 CRUD is complete including the update/edit flow (Week 2).
 Tests: Vitest + React Testing Library set up; usePromptManager and utility tests exist (Week 2).
-No styling library yet (shadcn/ui planned for Week 2).
+Styling: Tailwind v4 + shadcn/ui (Base UI primitives) installed Week 2; migrating components off CSS Modules incrementally (coexistence rule — see CSS Conventions).
 No routing yet — single page application.
 No data persistence yet (prompt files on disk + SQLite planned for Week 5 — supersedes the earlier IndexedDB plan; see project-files/trd.md §4 and ADR-002).
 
@@ -203,7 +203,7 @@ I'll decide whether to add it. Don't modify this file yourself.
 - React 18+
 - TypeScript 5+ (strict mode)
 - Node.js 18+
-- Tailwind CSS v4 + shadcn/ui (Radix primitives; component source lives in src/components/ui/)
+- Tailwind CSS v4 + shadcn/ui on Base UI primitives (@base-ui/react; "base-lyra" style, phosphor icons — see components.json). Component source lives in src/components/ui/
 
 ## Project Structure
 
