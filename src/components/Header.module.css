@@ -19,15 +19,3 @@
   color: var(--brand-contrast);
   margin: 0;
 }
-
-.addButton {
-  background: var(--brand-contrast);
-  color: var(--brand);
-  border: none;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-}
-
-.addButton:hover {
-  background: #e1f5ee;
-}
