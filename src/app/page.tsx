@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import PromptList from '@/components/PromptList';
 import PromptForm from '@/components/PromptForm';
 import PromptFilters from '@/components/PromptFilters';
+import { Button } from '@/components/ui/button';
 import { usePromptManager } from '@/hooks/usePromptManager';
 
 type FormState = { mode: 'create' } | { mode: 'edit'; prompt: Prompt };
@@ -47,7 +48,9 @@ export default function Home() {
           </p>
         )}
         {/*test data. should be removed when persistence is added*/}
-        <button onClick={seedPrompts}>Load Sample Data</button>
+        <Button type="button" variant="outline" onClick={seedPrompts}>
+          Load Sample Data
+        </Button>
 
         <PromptFilters
           filterState={filterState}
