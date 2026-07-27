@@ -4,33 +4,33 @@
 
 @custom-variant dark (&:is(.dark *));
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
-  background: #fafafa;
-  color: #1a1a1a;
-  line-height: 1.6;
-}
-
-h1 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-h3 {
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
-}
-
 @layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    background: #fafafa;
+    color: #1a1a1a;
+    line-height: 1.6;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
   button {
     padding: 0.25rem 0.75rem;
     border: 1px solid #ddd;
@@ -88,6 +88,8 @@ h3 {
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-openai: var(--openai);
+  --color-anthropic: var(--anthropic);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -131,6 +133,8 @@ h3 {
   --border: hsl(250 15% 89%);
   --input: hsl(250 15% 89%);
   --ring: hsl(252 47% 41%);
+  --openai: hsl(208 65% 51%);
+  --anthropic: hsl(340 68% 76%);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -167,6 +171,8 @@ h3 {
   --border: hsl(252 12% 18%);
   --input: hsl(252 12% 18%);
   --ring: hsl(248 74% 75%);
+  --openai: hsl(213 74% 60%);
+  --anthropic: hsl(340 54% 62%);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

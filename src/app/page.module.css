@@ -1,7 +1,4 @@
 .page {
-  --background: #fafafa;
-  --foreground: #fff;
-
   --brand: #0f6e56;
   --brand-dark: #085041;
   --brand-gradient-end: #185fa5;
@@ -22,7 +19,7 @@
   width: 100%;
   max-width: 800px;
   gap: 1.5rem;
-  background-color: var(--foreground);
+  background-color: var(--card);
   padding: 2.5rem 2rem;
 }
 
@@ -39,12 +36,5 @@
 @media (max-width: 600px) {
   .main {
     padding: 1.5rem 1.25rem;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .page {
-    --background: #000;
-    --foreground: #000;
   }
 }

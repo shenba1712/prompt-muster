@@ -2,8 +2,17 @@
 
 import { useState, type JSX } from 'react';
 import { Prompt } from '@/types/prompt';
+import { getModelProvider } from '@/utils/prompt';
 import FavoriteButton from '@/components/FavoriteButton';
-import styles from './PromptCard.module.css';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -36,36 +45,60 @@ export default function PromptCard({
       ? `${prompt.content.slice(0, CONTENT_PREVIEW_LIMIT)}...`
       : prompt.content;
 
+  const provider = getModelProvider(prompt.model);
+  const modelBadgeVariant =
+    provider === 'openai'
+      ? 'openai'
+      : provider === 'anthropic'
+        ? 'anthropic'
+        : 'outline';
+
   return (
-    <div className={styles.card}>
-      <div className={styles.header}>
-        <h3>{prompt.title}</h3>
+    <Card>
+      <CardHeader>
+        <CardTitle>{prompt.title}</CardTitle>
         <FavoriteButton
           isFavorite={prompt.isFavorite}
           onToggle={() => onToggleFavorite(prompt.id)}
         />
-      </div>
-      <div className={styles.badges}>
-        <span className={styles.badge} data-model={prompt.model}>
-          {prompt.model}
-        </span>
-        <span className={styles.badge} data-category={prompt.category}>
-          {prompt.category}
-        </span>
-      </div>
-      <p className={styles.content}>{preview}</p>
-      <div className={styles.tags}>
-        {prompt.tags.map((tag) => (
-          <span key={tag} className={styles.tag}>
-            {tag}
-          </span>
-        ))}
-      </div>
-      <div className={styles.actions}>
-        <button onClick={() => onEdit(prompt)}>Edit</button>
-        <button onClick={handleCopy}>{copied ? 'Copied!' : 'Copy'}</button>
-        <button onClick={() => onDelete(prompt.id)}>Delete</button>
-      </div>
-    </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-wrap gap-2">
+          <Badge variant={modelBadgeVariant}>{prompt.model}</Badge>
+          <Badge variant="secondary">{prompt.category}</Badge>
+        </div>
+        <p className="text-sm text-muted-foreground">{preview}</p>
+        {prompt.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {prompt.tags.map((tag) => (
+              <Badge key={tag} variant="secondary">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        )}
+      </CardContent>
+      <CardFooter>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => onEdit(prompt)}
+        >
+          Edit
+        </Button>
+        <Button type="button" variant="outline" size="sm" onClick={handleCopy}>
+          {copied ? 'Copied!' : 'Copy'}
+        </Button>
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={() => onDelete(prompt.id)}
+        >
+          Delete
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

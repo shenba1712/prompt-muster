@@ -1,7 +1,9 @@
 'use client';
 
 import type { JSX } from 'react';
-import styles from './FavoriteButton.module.css';
+import { StarIcon } from '@phosphor-icons/react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface FavoriteButtonProps {
   isFavorite: boolean;
@@ -13,12 +15,18 @@ export default function FavoriteButton({
   onToggle,
 }: FavoriteButtonProps): JSX.Element {
   return (
-    <button
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
       onClick={onToggle}
-      className={`${styles.button} ${isFavorite ? styles.favorite : ''}`}
       aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+      className="min-h-11 min-w-11 text-muted-foreground hover:text-foreground"
     >
-      {isFavorite ? '★' : '☆'}
-    </button>
+      <StarIcon
+        weight={isFavorite ? 'fill' : 'regular'}
+        className={cn('size-5', isFavorite && 'text-amber-500')}
+      />
+    </Button>
   );
 }

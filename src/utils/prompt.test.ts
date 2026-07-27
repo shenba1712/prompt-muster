@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createPrompt, isModel, isCategory } from './prompt';
+import { createPrompt, isModel, isCategory, getModelProvider } from './prompt';
 import { MODEL_OPTIONS, CATEGORY_OPTIONS } from '@/types/prompt';
 
 describe('createPrompt', () => {
@@ -90,4 +90,27 @@ describe('isCategory', () => {
   it('returns false for a near-miss casing', () => {
     expect(isCategory('Code-Generation')).toBe(false);
   });
+});
+
+describe('getModelProvider', () => {
+  it.each(['gpt-4o', 'gpt-4o-mini'] as const)(
+    'returns "openai" for %s',
+    (model) => {
+      expect(getModelProvider(model)).toBe('openai');
+    }
+  );
+
+  it.each(['claude-sonnet', 'claude-haiku'] as const)(
+    'returns "anthropic" for %s',
+    (model) => {
+      expect(getModelProvider(model)).toBe('anthropic');
+    }
+  );
+
+  it.each(['gemini-pro', 'gemini-flash'] as const)(
+    'returns "other" for %s',
+    (model) => {
+      expect(getModelProvider(model)).toBe('other');
+    }
+  );
 });
