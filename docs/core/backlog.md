@@ -147,7 +147,7 @@ and is unaffected by it (prd.md's Phase 0).
               state, page-level data flow
      Week: 2-3
 
-#07 [ ] Professional UI (shadcn/ui)
+#07 [x] Professional UI (shadcn/ui)
 
      Component library integration for consistent,
      professional design. Brings Tailwind — see

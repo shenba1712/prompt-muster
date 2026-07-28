@@ -5,12 +5,12 @@ on AI prompts. Built with Next.js, React, and TypeScript.
 
 ## Current State
 
-Week 1 complete; Week 2 in progress — frontend only, no backend, no database.
+Week 2 complete — frontend only, no backend, no database.
 All data is in-memory using React useState (lost on refresh).
 Seed data function exists for development testing.
 CRUD is complete including the update/edit flow (Week 2).
-Tests: Vitest + React Testing Library set up; usePromptManager and utility tests exist (Week 2).
-Styling: Tailwind v4 + shadcn/ui (Base UI primitives) installed Week 2; migrating components off CSS Modules incrementally (coexistence rule — see CSS Conventions).
+Tests: Vitest + React Testing Library set up; usePromptManager and utility tests exist (69 tests across 3 files).
+Styling: Tailwind v4 + shadcn/ui (Base UI primitives) installed Week 2; migration complete — every component plus the page shell renders exclusively on shadcn primitives (Button, Input, Textarea, Select, plus custom Badge and Card), zero raw `<button>`/`<input>`/`<select>`/`<textarea>` left anywhere in `src/`.
 No routing yet — single page application.
 No data persistence yet (prompt files on disk + SQLite planned for Week 5 — supersedes the earlier IndexedDB plan; see project-files/trd.md §4 and ADR-002).
 

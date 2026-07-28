@@ -2,7 +2,7 @@
 
 ## Current Week
 
-**Week 1** — Project Foundation, React Fundamentals, AI-First Development
+**Week 2** — Complete. Closing the CRUD Gap, Professional UI (shadcn/ui), First Tests
 
 ## Progress
 
@@ -10,15 +10,15 @@ _"Complete" means the feature works as an interactive frontend feature per Week 
 
 ### Backlog Features
 
-| #   | Feature                       | Status                                                    |
-| --- | ----------------------------- | --------------------------------------------------------- |
-| 01  | Prompt CRUD                   | In progress — create/read/delete work; no edit/update yet |
-| 02  | Prompt Favoriting             | Complete                                                  |
-| 03  | Multi-Dimensional Filtering   | Complete                                                  |
-| 04  | Full-Text Search              | Complete                                                  |
-| 05  | Category and Tag Organization | Complete                                                  |
-| 06  | Next.js Routing               | Not started                                               |
-| 07  | Professional UI (shadcn/ui)   | Not started                                               |
+| #   | Feature                       | Status                                                                                                                 |
+| --- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| 01  | Prompt CRUD                   | Complete — create/read/update/delete all work (update flow landed Week 2)                                            |
+| 02  | Prompt Favoriting             | Complete                                                                                                               |
+| 03  | Multi-Dimensional Filtering   | Complete                                                                                                               |
+| 04  | Full-Text Search              | Complete                                                                                                               |
+| 05  | Category and Tag Organization | Complete                                                                                                               |
+| 06  | Next.js Routing               | Not started — deliberately deferred to Week 3                                                                         |
+| 07  | Professional UI (shadcn/ui)   | Complete — every component and `page.tsx` migrated, exceeding the original Week 2 scope (PromptForm/PromptFilters only) |
 
 ### Week 1 Deliverables
 
@@ -28,11 +28,25 @@ _"Complete" means the feature works as an interactive frontend feature per Week 
 | 2   | Next.js + TypeScript project         | Complete                                                                                         |
 | 3   | Domain types                         | Complete                                                                                         |
 | 4   | Seven typed components               | Complete — Header, PromptForm, PromptFilters, PromptCard, PromptList, EmptyState, FavoriteButton |
-| 5   | State management (CRUD + favorite)   | In progress — add/delete/favorite done, update/edit missing                                      |
+| 5   | State management (CRUD + favorite)   | Complete — update/edit landed Week 2 (was the known gap at Week 1 close)                          |
 | 6   | Custom usePromptManager hook         | Complete                                                                                         |
 | 7   | Multi-dimensional filtering          | Complete                                                                                         |
 | 8   | Coding challenge                     | Complete                                                                                         |
 | 9   | GitHub repo with daily commits       | Complete                                                                                         |
+
+### Week 2 Deliverables
+
+| #   | Deliverable                                                                | Status                                                                                                                     |
+| --- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `updatePrompt` in `usePromptManager` + edit UI wired into PromptForm/PromptCard | Complete                                                                                                              |
+| 2   | Visible validation errors on empty title/content submit                   | Complete                                                                                                                   |
+| 3   | Select defaults in PromptForm initialize to a real union value            | Complete                                                                                                                   |
+| 4   | shadcn/ui installed and driving every interactive control                 | Complete — went beyond PromptForm/PromptFilters to the whole app (Header, PromptCard, EmptyState, FavoriteButton, `page.tsx`), plus custom `Badge`/`Card` primitives |
+| 5   | `.prettierrc` committed, codebase reformatted                             | Complete                                                                                                                   |
+| 6   | Vitest installed with real tests (`utils/prompt.ts`, `filterPrompts`, `usePromptManager`, minimum 12 cases across 3 files) | Complete — exceeded the minimum (69 tests across 3 files)                                                     |
+| 7   | `coding-challenges` repo: Two Sum + LeetCode 3 solution + complexity notes | Unverified from this repo — lives in a separate repo, not checkable from here                                             |
+| 8   | `notes/week-02-*.md` for every day worked                                 | Not done — no daily notes found; only the closing `notes/week-02-review.md` exists                                       |
+| 9   | Updated `core/completion-log.md`, `core/backlog.md`, `core/claude.md` Current State, `docs/dashboard.md` | Complete                                                                                                    |
 
 ## Confidence Levels
 
@@ -55,15 +69,17 @@ Scale: 1 (unfamiliar) to 5 (confident). **Self-assessed only** — Claude can't 
 
 ## Topics to Revisit
 
-- Error-handling and form-validation strategy — currently ad hoc (one try/catch added reactively during review); needs a deliberate pass once the shape is clearer.
-- Delete confirmation / undo pattern — deferred pending design thinking on where this goes.
-- Prompt CRUD is missing "update" — add/delete/favorite exist, editing an existing prompt doesn't yet.
-- Button/UI-primitive consistency — deliberately deferred to the shadcn/ui migration (Week 2+) rather than building throwaway variants now.
-- **Silent no-op bug (confirmed live):** deleting the prompt you're currently editing, then clicking "Save changes," closes the form as if it succeeded with no error shown — the update silently matches nothing. Deferred pending the app-wide error-handling design pass. Likely resolved by inline editing _if_ the card being edited is replaced by the form (removing its own Delete button from the equation) — verify this is actually true when inline editing is built, don't assume it for free.
-- **Unsaved-input loss (confirmed by design, not yet tested live):** switching the edit target to a different prompt — or starting a create, then clicking Edit — remounts the form (by design, via its `key`) and silently discards whatever was typed, no confirmation. Likely resolved by inline editing _if_ it supports multiple open forms at once — verify, don't assume.
+- Error-handling strategy beyond form validation and clipboard-copy failures — still ad hoc; needs a deliberate pass once the shape is clearer.
+- Delete confirmation / undo pattern — still deferred pending design thinking on where this goes. Two weeks running now.
+- **Silent no-op bug (confirmed live, still open):** deleting the prompt you're currently editing, then clicking "Save changes," closes the form as if it succeeded with no error shown — the update silently matches nothing. `updatePrompt` still no-ops silently on a non-existent id.
+- **Unsaved-input loss (confirmed by design, still open):** switching the edit target to a different prompt — or starting a create, then clicking Edit — remounts the form (by design, via its `key`) and silently discards whatever was typed, no confirmation.
+- `usePromptManager` still owns CRUD, filtering, and clipboard state in one hook — deliberately not split yet (single consumer).
+- `seedPrompts` test-data generator still lives inside the production hook, self-flagged as temporary, not yet relocated.
+- Dark-mode tokens are now theme-correct (`globals.css` `.dark` values match design-system.md §2.1), but there's still no toggle or `prefers-color-scheme` wiring that activates `.dark` — the values are ready, the activation mechanism isn't built.
 
 ## Weekly Reviews
 
-| Week | Status | Key Takeaway                                                                                                                                                                                                        | Link                    |
-| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| 1    | Active | Built filtering, favoriting, search, and a full visual identity through heavy iteration; strongest reasoning shown in TypeScript/state architecture, biggest gap is CRUD's missing "update" and zero test coverage. | notes/week-01-review.md |
+| Week | Status   | Key Takeaway                                                                                                                                                                                                        | Link                    |
+| ---- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1    | Complete | Built filtering, favoriting, search, and a full visual identity through heavy iteration; strongest reasoning shown in TypeScript/state architecture, biggest gap is CRUD's missing "update" and zero test coverage. | notes/week-01-review.md |
+| 2    | Complete | Closed the CRUD gap (edit/update), migrated the entire app to shadcn/ui well beyond the original two-file scope, stood up Vitest with 69 tests, and found/fixed two separate CSS cascade-layer bugs left over from pre-shadcn code. | notes/week-02-review.md |
