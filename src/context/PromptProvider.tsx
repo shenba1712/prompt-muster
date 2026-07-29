@@ -1,4 +1,6 @@
-import { useState } from 'react';
+'use client';
+
+import { createContext, useContext, useState } from 'react';
 import {
   CreatePromptInput,
   UpdatePromptInput,
@@ -25,7 +27,25 @@ export interface UsePromptManagerReturn {
   seedPrompts: () => void; // test data
 }
 
-export function usePromptManager(): UsePromptManagerReturn {
+interface PromptProviderProps {
+  readonly children: React.ReactNode;
+}
+
+const PromptContext = createContext<UsePromptManagerReturn | undefined>(
+  undefined
+);
+
+export function usePrompts(): UsePromptManagerReturn {
+  const context = useContext(PromptContext);
+
+  if (context === undefined) {
+    throw new Error('usePrompts must be used within a <PromptProvider>.');
+  }
+
+  return context;
+}
+
+export default function PromptProvider({ children }: PromptProviderProps) {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [filterState, setFilterState] = useState<FilterState>({
@@ -135,7 +155,7 @@ export function usePromptManager(): UsePromptManagerReturn {
     setPrompts(seeds);
   };
 
-  return {
+  const value: UsePromptManagerReturn = {
     prompts,
     filteredPrompts,
     promptCount,
@@ -151,4 +171,8 @@ export function usePromptManager(): UsePromptManagerReturn {
     setFilter,
     seedPrompts,
   };
+
+  return (
+    <PromptContext.Provider value={value}>{children}</PromptContext.Provider>
+  );
 }

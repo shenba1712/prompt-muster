@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { usePromptManager } from './usePromptManager';
+import PromptProvider, { usePrompts } from './PromptProvider';
 import { CreatePromptInput, UpdatePromptInput } from '@/types/prompt';
 
 beforeEach(() => {
@@ -11,10 +11,12 @@ beforeEach(() => {
   });
 });
 
-describe('usePromptManager', () => {
+describe('PromptProvider', () => {
   describe('addPrompt', () => {
     it('increases the prompts array length', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       expect(result.current.prompts).toHaveLength(0);
 
       const input: CreatePromptInput = {
@@ -33,7 +35,9 @@ describe('usePromptManager', () => {
     });
 
     it('creates a prompt with the right fields', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       const input: CreatePromptInput = {
         title: 'Code Review',
@@ -60,7 +64,9 @@ describe('usePromptManager', () => {
     });
 
     it('adds new prompts to the front of the array', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input1: CreatePromptInput = {
         title: 'First',
         content: 'a',
@@ -92,7 +98,9 @@ describe('usePromptManager', () => {
 
   describe('updatePrompt', () => {
     it('is a no-op when updating non-existent prompt', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input: CreatePromptInput = {
         title: 'A',
         content: 'a',
@@ -117,7 +125,9 @@ describe('usePromptManager', () => {
     });
 
     it('changes only the updated fields', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input: CreatePromptInput = {
         title: 'Original Title',
         content: 'Original content',
@@ -156,7 +166,9 @@ describe('usePromptManager', () => {
     });
 
     it('updates multiple fields while preserving others', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input: CreatePromptInput = {
         title: 'Original',
         content: 'Original content',
@@ -189,7 +201,9 @@ describe('usePromptManager', () => {
     });
 
     it('stacks multiple sequential updates correctly', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input: CreatePromptInput = {
         title: 'Original',
         content: 'Original content',
@@ -227,7 +241,9 @@ describe('usePromptManager', () => {
 
   describe('deletePrompt', () => {
     it('removes exactly one prompt by id', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input1: CreatePromptInput = {
         title: 'First',
         content: 'a',
@@ -268,7 +284,9 @@ describe('usePromptManager', () => {
     });
 
     it('decrements favoriteCount when deleting a favorite', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input: CreatePromptInput = {
         title: 'Fav',
         content: 'a',
@@ -297,7 +315,9 @@ describe('usePromptManager', () => {
     });
 
     it('is a no-op when deleting non-existent prompt', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input: CreatePromptInput = {
         title: 'A',
         content: 'a',
@@ -322,7 +342,9 @@ describe('usePromptManager', () => {
 
   describe('toggleFavorite', () => {
     it('toggles isFavorite and updates favoriteCount', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input: CreatePromptInput = {
         title: 'T',
         content: 'c',
@@ -355,7 +377,9 @@ describe('usePromptManager', () => {
     });
 
     it('is a no-op when toggling non-existent prompt', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input: CreatePromptInput = {
         title: 'T',
         content: 'c',
@@ -382,7 +406,9 @@ describe('usePromptManager', () => {
 
   describe('copyToClipboard', () => {
     it('writes content to clipboard', async () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const content = 'Clipboard test content';
 
       await act(async () => {
@@ -393,7 +419,9 @@ describe('usePromptManager', () => {
     });
 
     it('sets error when clipboard write fails with Error', async () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       Object.assign(navigator, {
         clipboard: {
@@ -409,7 +437,9 @@ describe('usePromptManager', () => {
     });
 
     it('sets fallback error when clipboard rejects with non-Error object', async () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       Object.assign(navigator, {
         clipboard: {
@@ -425,7 +455,9 @@ describe('usePromptManager', () => {
     });
 
     it('clears error on successful clipboard write after prior failure', async () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       Object.assign(navigator, {
         clipboard: {
@@ -455,7 +487,9 @@ describe('usePromptManager', () => {
 
   describe('filtering', () => {
     it('narrows filteredPrompts when model filter is set', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input1: CreatePromptInput = {
         title: 'A',
         content: 'a',
@@ -487,7 +521,9 @@ describe('usePromptManager', () => {
     });
 
     it('narrows filteredPrompts when search filter is set', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input1: CreatePromptInput = {
         title: 'Code Review',
         content: 'a',
@@ -519,7 +555,9 @@ describe('usePromptManager', () => {
     });
 
     it('clears filters and shows all prompts again', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
       const input1: CreatePromptInput = {
         title: 'A',
         content: 'a',
@@ -561,7 +599,9 @@ describe('usePromptManager', () => {
 
   describe('filtering', () => {
     it('partial filter updates preserve existing filter state', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       act(() => {
         result.current.addPrompt({
@@ -597,7 +637,9 @@ describe('usePromptManager', () => {
     });
 
     it('combines multiple filters with AND semantics', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       act(() => {
         result.current.addPrompt({
@@ -645,7 +687,9 @@ describe('usePromptManager', () => {
 
   describe('seedPrompts', () => {
     it('loads seed data with correct count and structure', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       expect(result.current.prompts).toHaveLength(0);
 
@@ -657,7 +701,9 @@ describe('usePromptManager', () => {
     });
 
     it('replaces existing prompts when called twice', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       act(() => {
         result.current.seedPrompts();
@@ -676,7 +722,9 @@ describe('usePromptManager', () => {
     });
 
     it('seed data has all required fields', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       act(() => {
         result.current.seedPrompts();
@@ -696,7 +744,9 @@ describe('usePromptManager', () => {
     });
 
     it('seed data includes favorites', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       act(() => {
         result.current.seedPrompts();
@@ -708,7 +758,9 @@ describe('usePromptManager', () => {
     });
 
     it('seed data is fully filtered when filter is applied', () => {
-      const { result } = renderHook(() => usePromptManager());
+      const { result } = renderHook(() => usePrompts(), {
+        wrapper: PromptProvider,
+      });
 
       act(() => {
         result.current.seedPrompts();
@@ -724,5 +776,114 @@ describe('usePromptManager', () => {
         expect(prompt.model).toBe('claude-sonnet');
       });
     });
+  });
+});
+
+describe('usePrompts context guard', () => {
+  it('throws when called outside a PromptProvider', () => {
+    // React re-throws render errors to console.error; silence the noise.
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(() => renderHook(() => usePrompts())).toThrow();
+
+    consoleSpy.mockRestore();
+  });
+
+  it('throws a message naming the provider', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(() => renderHook(() => usePrompts())).toThrow(
+      'usePrompts must be used within a <PromptProvider>.'
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it('does not throw inside a PromptProvider', () => {
+    expect(() =>
+      renderHook(() => usePrompts(), { wrapper: PromptProvider })
+    ).not.toThrow();
+  });
+
+  it('exposes the full manager shape to consumers', () => {
+    const { result } = renderHook(() => usePrompts(), {
+      wrapper: PromptProvider,
+    });
+
+    expect(result.current.prompts).toEqual([]);
+    expect(result.current.error).toBe(null);
+    expect(result.current.promptCount).toBe(0);
+    expect(result.current.filteredPromptCount).toBe(0);
+    expect(result.current.favoriteCount).toBe(0);
+    expect(result.current.filterState).toEqual({
+      model: 'all',
+      category: 'all',
+      search: '',
+      showFavorites: false,
+    });
+    expect(typeof result.current.addPrompt).toBe('function');
+    expect(typeof result.current.updatePrompt).toBe('function');
+    expect(typeof result.current.deletePrompt).toBe('function');
+    expect(typeof result.current.copyToClipboard).toBe('function');
+    expect(typeof result.current.toggleFavorite).toBe('function');
+    expect(typeof result.current.setFilter).toBe('function');
+    expect(typeof result.current.seedPrompts).toBe('function');
+  });
+});
+
+describe('PromptProvider state sharing', () => {
+  it('gives two sibling consumers the same prompts reference', () => {
+    const { result } = renderHook(
+      () => ({ first: usePrompts(), second: usePrompts() }),
+      { wrapper: PromptProvider }
+    );
+
+    expect(result.current.first.prompts).toBe(result.current.second.prompts);
+  });
+
+  it('shows one consumer a prompt added by another', () => {
+    const { result } = renderHook(
+      () => ({ first: usePrompts(), second: usePrompts() }),
+      { wrapper: PromptProvider }
+    );
+
+    act(() => {
+      result.current.first.addPrompt({
+        title: 'Shared Prompt',
+        content: 'added via the first consumer',
+        model: 'gpt-4o',
+        category: 'testing',
+        tags: [],
+      });
+    });
+
+    expect(result.current.second.prompts).toHaveLength(1);
+    expect(result.current.second.prompts[0].title).toBe('Shared Prompt');
+    expect(result.current.second.promptCount).toBe(1);
+  });
+
+  it('shows one consumer a filter set by another', () => {
+    const { result } = renderHook(
+      () => ({ first: usePrompts(), second: usePrompts() }),
+      { wrapper: PromptProvider }
+    );
+
+    act(() => {
+      result.current.first.setFilter({ model: 'claude-sonnet' });
+    });
+
+    expect(result.current.second.filterState.model).toBe('claude-sonnet');
+  });
+
+  it('isolates state between two separate providers', () => {
+    const first = renderHook(() => usePrompts(), { wrapper: PromptProvider });
+    const second = renderHook(() => usePrompts(), { wrapper: PromptProvider });
+
+    act(() => {
+      first.result.current.seedPrompts();
+    });
+
+    expect(first.result.current.prompts).toHaveLength(5);
+    expect(second.result.current.prompts).toHaveLength(0);
   });
 });
