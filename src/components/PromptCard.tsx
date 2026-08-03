@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, type JSX } from 'react';
+import Link from 'next/link';
 import { Prompt } from '@/types/prompt';
-import { getModelProvider } from '@/utils/prompt';
 import FavoriteButton from '@/components/FavoriteButton';
+import ModelBadge from '@/components/ModelBadge';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -45,26 +46,27 @@ export default function PromptCard({
       ? `${prompt.content.slice(0, CONTENT_PREVIEW_LIMIT)}...`
       : prompt.content;
 
-  const provider = getModelProvider(prompt.model);
-  const modelBadgeVariant =
-    provider === 'openai'
-      ? 'openai'
-      : provider === 'anthropic'
-        ? 'anthropic'
-        : 'outline';
-
   return (
-    <Card>
+    <Card className="relative">
       <CardHeader>
-        <CardTitle>{prompt.title}</CardTitle>
-        <FavoriteButton
-          isFavorite={prompt.isFavorite}
-          onToggle={() => onToggleFavorite(prompt.id)}
-        />
+        <CardTitle>
+          <Link
+            href={`/prompts/${prompt.id}`}
+            className="after:absolute after:inset-0 hover:underline"
+          >
+            {prompt.title}
+          </Link>
+        </CardTitle>
+        <div className="relative z-10">
+          <FavoriteButton
+            isFavorite={prompt.isFavorite}
+            onToggle={() => onToggleFavorite(prompt.id)}
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2">
-          <Badge variant={modelBadgeVariant}>{prompt.model}</Badge>
+          <ModelBadge model={prompt.model} />
           <Badge variant="secondary">{prompt.category}</Badge>
         </div>
         <p className="text-sm text-muted-foreground">{preview}</p>
@@ -78,7 +80,7 @@ export default function PromptCard({
           </div>
         )}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="relative z-10">
         <Button
           type="button"
           variant="outline"
