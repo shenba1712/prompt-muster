@@ -11,7 +11,7 @@
 - Vitest installed; `filterPrompts` extracted from the hook into
   `src/utils/filterPrompts.ts`; 69 tests across `utils/prompt.ts`,
   `utils/filterPrompts.ts`, and `usePromptManager.ts` — first test coverage
-  the project has ever had, landed *before* the UI migration touched
+  the project has ever had, landed _before_ the UI migration touched
   anything.
 - shadcn/ui installed and driving every interactive control app-wide:
   `PromptForm`, `PromptFilters`, `PromptCard`, `Header`, `EmptyState`,
@@ -50,7 +50,7 @@ unresolved for two weeks running now.
   them globally would have been out of scope for an accessibility fix
   targeting one control.
 - **`cursor-pointer` and `resize-y` were added explicitly to `Button`'s and
-  `Textarea`'s own Tailwind classes *before* deleting the legacy CSS
+  `Textarea`'s own Tailwind classes _before_ deleting the legacy CSS
   reset** — neither shadcn primitive set those properties itself, so they
   were silently inherited from the very rule being deleted. "Nothing looks
   different yet" isn't proof a rule is dead, only that its effect is
@@ -82,7 +82,7 @@ unresolved for two weeks running now.
    This is what caused "hover makes button text white," and it was
    app-wide, not specific to one button.
 3. Once the first two layering bugs were fixed, `Badge` components still
-   rendered with zero padding — traced to the *same class* of bug: the
+   rendered with zero padding — traced to the _same class_ of bug: the
    top-level `* { margin: 0; padding: 0; }` reset hadn't been moved into
    `@layer base` yet either.
 4. base-ui's `Select.Value` renders the raw selected value with no
@@ -105,7 +105,7 @@ unresolved for two weeks running now.
   hook, self-flagged as temporary, not yet relocated.
 - Error-handling strategy beyond form validation and clipboard-copy
   failures is still ad hoc.
-- Dark-mode *tokens* are now correct (`.dark` class values in `globals.css`
+- Dark-mode _tokens_ are now correct (`.dark` class values in `globals.css`
   match design-system.md §2.1), but there's still no in-app toggle or
   `prefers-color-scheme` wiring that actually activates `.dark` — the
   values are ready, the activation mechanism isn't built.

@@ -10,14 +10,14 @@ _"Complete" means the feature works as an interactive frontend feature per Week 
 
 ### Backlog Features
 
-| #   | Feature                       | Status                                                                                                                 |
-| --- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| 01  | Prompt CRUD                   | Complete — create/read/update/delete all work (update flow landed Week 2)                                            |
-| 02  | Prompt Favoriting             | Complete                                                                                                               |
-| 03  | Multi-Dimensional Filtering   | Complete                                                                                                               |
-| 04  | Full-Text Search              | Complete                                                                                                               |
-| 05  | Category and Tag Organization | Complete                                                                                                               |
-| 06  | Next.js Routing               | Not started — deliberately deferred to Week 3                                                                         |
+| #   | Feature                       | Status                                                                                                                  |
+| --- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 01  | Prompt CRUD                   | Complete — create/read/update/delete all work (update flow landed Week 2)                                               |
+| 02  | Prompt Favoriting             | Complete                                                                                                                |
+| 03  | Multi-Dimensional Filtering   | Complete                                                                                                                |
+| 04  | Full-Text Search              | Complete                                                                                                                |
+| 05  | Category and Tag Organization | Complete                                                                                                                |
+| 06  | Next.js Routing               | Not started — deliberately deferred to Week 3                                                                           |
 | 07  | Professional UI (shadcn/ui)   | Complete — every component and `page.tsx` migrated, exceeding the original Week 2 scope (PromptForm/PromptFilters only) |
 
 ### Week 1 Deliverables
@@ -28,7 +28,7 @@ _"Complete" means the feature works as an interactive frontend feature per Week 
 | 2   | Next.js + TypeScript project         | Complete                                                                                         |
 | 3   | Domain types                         | Complete                                                                                         |
 | 4   | Seven typed components               | Complete — Header, PromptForm, PromptFilters, PromptCard, PromptList, EmptyState, FavoriteButton |
-| 5   | State management (CRUD + favorite)   | Complete — update/edit landed Week 2 (was the known gap at Week 1 close)                          |
+| 5   | State management (CRUD + favorite)   | Complete — update/edit landed Week 2 (was the known gap at Week 1 close)                         |
 | 6   | Custom usePromptManager hook         | Complete                                                                                         |
 | 7   | Multi-dimensional filtering          | Complete                                                                                         |
 | 8   | Coding challenge                     | Complete                                                                                         |
@@ -36,17 +36,17 @@ _"Complete" means the feature works as an interactive frontend feature per Week 
 
 ### Week 2 Deliverables
 
-| #   | Deliverable                                                                | Status                                                                                                                     |
-| --- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| 1   | `updatePrompt` in `usePromptManager` + edit UI wired into PromptForm/PromptCard | Complete                                                                                                              |
-| 2   | Visible validation errors on empty title/content submit                   | Complete                                                                                                                   |
-| 3   | Select defaults in PromptForm initialize to a real union value            | Complete                                                                                                                   |
-| 4   | shadcn/ui installed and driving every interactive control                 | Complete — went beyond PromptForm/PromptFilters to the whole app (Header, PromptCard, EmptyState, FavoriteButton, `page.tsx`), plus custom `Badge`/`Card` primitives |
-| 5   | `.prettierrc` committed, codebase reformatted                             | Complete                                                                                                                   |
-| 6   | Vitest installed with real tests (`utils/prompt.ts`, `filterPrompts`, `usePromptManager`, minimum 12 cases across 3 files) | Complete — exceeded the minimum (69 tests across 3 files)                                                     |
-| 7   | `coding-challenges` repo: Two Sum + LeetCode 3 solution + complexity notes | Unverified from this repo — lives in a separate repo, not checkable from here                                             |
-| 8   | `notes/week-02-*.md` for every day worked                                 | Not done — no daily notes found; only the closing `notes/week-02-review.md` exists                                       |
-| 9   | Updated `core/completion-log.md`, `core/backlog.md`, `core/claude.md` Current State, `docs/dashboard.md` | Complete                                                                                                    |
+| #   | Deliverable                                                                                                                | Status                                                                                                                                                               |
+| --- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `updatePrompt` in `usePromptManager` + edit UI wired into PromptForm/PromptCard                                            | Complete                                                                                                                                                             |
+| 2   | Visible validation errors on empty title/content submit                                                                    | Complete                                                                                                                                                             |
+| 3   | Select defaults in PromptForm initialize to a real union value                                                             | Complete                                                                                                                                                             |
+| 4   | shadcn/ui installed and driving every interactive control                                                                  | Complete — went beyond PromptForm/PromptFilters to the whole app (Header, PromptCard, EmptyState, FavoriteButton, `page.tsx`), plus custom `Badge`/`Card` primitives |
+| 5   | `.prettierrc` committed, codebase reformatted                                                                              | Complete                                                                                                                                                             |
+| 6   | Vitest installed with real tests (`utils/prompt.ts`, `filterPrompts`, `usePromptManager`, minimum 12 cases across 3 files) | Complete — exceeded the minimum (69 tests across 3 files)                                                                                                            |
+| 7   | `coding-challenges` repo: Two Sum + LeetCode 3 solution + complexity notes                                                 | Unverified from this repo — lives in a separate repo, not checkable from here                                                                                        |
+| 8   | `notes/week-02-*.md` for every day worked                                                                                  | Not done — no daily notes found; only the closing `notes/week-02-review.md` exists                                                                                   |
+| 9   | Updated `core/completion-log.md`, `core/backlog.md`, `core/claude.md` Current State, `docs/dashboard.md`                   | Complete                                                                                                                                                             |
 
 ## Confidence Levels
 
@@ -79,7 +79,7 @@ Scale: 1 (unfamiliar) to 5 (confident). **Self-assessed only** — Claude can't 
 
 ## Weekly Reviews
 
-| Week | Status   | Key Takeaway                                                                                                                                                                                                        | Link                    |
-| ---- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| 1    | Complete | Built filtering, favoriting, search, and a full visual identity through heavy iteration; strongest reasoning shown in TypeScript/state architecture, biggest gap is CRUD's missing "update" and zero test coverage. | notes/week-01-review.md |
+| Week | Status   | Key Takeaway                                                                                                                                                                                                                        | Link                    |
+| ---- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1    | Complete | Built filtering, favoriting, search, and a full visual identity through heavy iteration; strongest reasoning shown in TypeScript/state architecture, biggest gap is CRUD's missing "update" and zero test coverage.                 | notes/week-01-review.md |
 | 2    | Complete | Closed the CRUD gap (edit/update), migrated the entire app to shadcn/ui well beyond the original two-file scope, stood up Vitest with 69 tests, and found/fixed two separate CSS cascade-layer bugs left over from pre-shadcn code. | notes/week-02-review.md |
