@@ -71,8 +71,7 @@ Scale: 1 (unfamiliar) to 5 (confident). **Self-assessed only** — Claude can't 
 
 - Error-handling strategy beyond form validation and clipboard-copy failures — still ad hoc; needs a deliberate pass once the shape is clearer.
 - Delete confirmation / undo pattern — still deferred pending design thinking on where this goes. Two weeks running now.
-- **Silent no-op bug (confirmed live, still open):** deleting the prompt you're currently editing, then clicking "Save changes," closes the form as if it succeeded with no error shown — the update silently matches nothing. `updatePrompt` still no-ops silently on a non-existent id.
-- **Unsaved-input loss (confirmed by design, still open):** switching the edit target to a different prompt — or starting a create, then clicking Edit — remounts the form (by design, via its `key`) and silently discards whatever was typed, no confirmation.
+- **Silent no-op bug (narrowed, not eliminated):** `updatePrompt` still no-ops silently on a non-existent id with no error shown. The single-page repro (deleting the prompt you're editing, from the same page, then saving) no longer exists now that create/edit live on their own routes (`/prompts/new`, `/prompts/[id]/edit`) with no Delete button co-rendered — but the underlying no-op is still there and would resurface via any other path to a stale id (e.g. a second tab deleting the same prompt).
 - `usePromptManager` still owns CRUD, filtering, and clipboard state in one hook — deliberately not split yet (single consumer).
 - `seedPrompts` test-data generator still lives inside the production hook, self-flagged as temporary, not yet relocated.
 - Dark-mode tokens are now theme-correct (`globals.css` `.dark` values match design-system.md §2.1), but there's still no toggle or `prefers-color-scheme` wiring that activates `.dark` — the values are ready, the activation mechanism isn't built.

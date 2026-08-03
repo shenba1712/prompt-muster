@@ -2,6 +2,7 @@ import type { JSX } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import styles from '../page.module.css';
 
 export default function PromptNotFound(): JSX.Element {
@@ -21,7 +22,7 @@ export default function PromptNotFound(): JSX.Element {
             </p>
             <Link
               href="/prompts"
-              className={buttonVariants({ variant: 'outline' })}
+              className={cn(buttonVariants({ variant: 'outline' }))}
             >
               ← Back to prompts
             </Link>

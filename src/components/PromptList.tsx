@@ -7,7 +7,6 @@ import styles from './PromptList.module.css';
 interface PromptListProps {
   prompts: Prompt[];
   totalCount: number;
-  onEdit: (prompt: Prompt) => void;
   onDelete: (id: string) => void;
   onCopy: (content: string) => void;
   onToggleFavorite: (id: string) => void;
@@ -16,7 +15,6 @@ interface PromptListProps {
 export default function PromptList({
   prompts,
   totalCount,
-  onEdit,
   onDelete,
   onCopy,
   onToggleFavorite,
@@ -35,7 +33,6 @@ export default function PromptList({
         <PromptCard
           key={prompt.id}
           prompt={prompt}
-          onEdit={onEdit}
           onDelete={onDelete}
           onCopy={onCopy}
           onToggleFavorite={onToggleFavorite}

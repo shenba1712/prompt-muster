@@ -1,12 +1,13 @@
 'use client';
 
-import { use, type JSX } from 'react';
+import { startTransition, use, type JSX } from 'react';
 import Link from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import ModelBadge from '@/components/ModelBadge';
 import FavoriteButton from '@/components/FavoriteButton';
-import { Badge } from '@/components/ui/badge';
+import PromptBadges from '@/components/PromptBadges';
+import PromptTags from '@/components/PromptTags';
+import PromptActions from '@/components/PromptActions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePrompts } from '@/context/PromptProvider';
 import styles from '../page.module.css';
@@ -21,7 +22,8 @@ export default function PromptDetailPage({
 }: PromptDetailPageProps): JSX.Element {
   const { id } = use(params);
   const router = useRouter();
-  const { prompts, toggleFavorite } = usePrompts();
+  const { prompts, toggleFavorite, deletePrompt, copyToClipboard } =
+    usePrompts();
 
   const prompt = prompts.find((p) => p.id === id);
 
@@ -29,9 +31,23 @@ export default function PromptDetailPage({
     notFound();
   }
 
+  const handleDelete = (deletedId: string) => {
+    // Deleting the prompt we're currently viewing — unlike the list (where
+    // the card just disappears in place), this page has nothing left to
+    // show. router.push() alone races the context update: deletePrompt's
+    // setPrompts is an urgent update, so this page can re-render (prompt ->
+    // undefined -> notFound()) and strand the transition-priority navigation
+    // on the old URL before it commits. Wrapping both in startTransition
+    // gives them the same priority so the navigation isn't preempted.
+    startTransition(() => {
+      router.push('/prompts');
+      deletePrompt(deletedId);
+    });
+  };
+
   return (
     <div className={styles.page}>
-      <Header onOpenForm={() => router.push('/prompts')} />
+      <Header />
       <main className={styles.main}>
         <Link
           href="/prompts"
@@ -49,20 +65,8 @@ export default function PromptDetailPage({
             />
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-2">
-              <ModelBadge model={prompt.model} />
-              <Badge variant="secondary">{prompt.category}</Badge>
-            </div>
-
-            {prompt.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {prompt.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            )}
+            <PromptBadges model={prompt.model} category={prompt.category} />
+            <PromptTags tags={prompt.tags} />
 
             {/* Full content here, unlike the card's 120-char preview. */}
             <p className="text-sm whitespace-pre-wrap">{prompt.content}</p>
@@ -71,6 +75,12 @@ export default function PromptDetailPage({
               Created {prompt.createdAt.toLocaleDateString()}
             </p>
           </CardContent>
+          <PromptActions
+            promptId={prompt.id}
+            content={prompt.content}
+            onCopy={copyToClipboard}
+            onDelete={handleDelete}
+          />
         </Card>
       </main>
     </div>

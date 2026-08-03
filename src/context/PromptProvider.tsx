@@ -17,7 +17,7 @@ export interface UsePromptManagerReturn {
   filteredPromptCount: number;
   favoriteCount: number;
   error: string | null;
-  addPrompt: (input: CreatePromptInput) => void;
+  addPrompt: (input: CreatePromptInput) => Prompt;
   updatePrompt: (id: string, updates: UpdatePromptInput) => void;
   deletePrompt: (id: string) => void;
   copyToClipboard: (content: string) => Promise<void>;
@@ -55,9 +55,10 @@ export default function PromptProvider({ children }: PromptProviderProps) {
     showFavorites: false,
   });
 
-  const addPrompt = (input: CreatePromptInput) => {
+  const addPrompt = (input: CreatePromptInput): Prompt => {
     const newPrompt = createPrompt(input);
     setPrompts((prev) => [newPrompt, ...prev]);
+    return newPrompt;
   };
 
   const updatePrompt = (id: string, updates: UpdatePromptInput): void => {
