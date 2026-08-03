@@ -2,7 +2,7 @@
 
 import { use, type JSX } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import ModelBadge from '@/components/ModelBadge';
 import FavoriteButton from '@/components/FavoriteButton';
@@ -25,6 +25,10 @@ export default function PromptDetailPage({
 
   const prompt = prompts.find((p) => p.id === id);
 
+  if (!prompt) {
+    notFound();
+  }
+
   return (
     <div className={styles.page}>
       <Header onOpenForm={() => router.push('/prompts')} />
@@ -36,59 +40,38 @@ export default function PromptDetailPage({
           ← Back to prompts
         </Link>
 
-        {prompt ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>{prompt.title}</CardTitle>
-              <FavoriteButton
-                isFavorite={prompt.isFavorite}
-                onToggle={() => toggleFavorite(prompt.id)}
-              />
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                <ModelBadge model={prompt.model} />
-                <Badge variant="secondary">{prompt.category}</Badge>
+        <Card>
+          <CardHeader>
+            <CardTitle>{prompt.title}</CardTitle>
+            <FavoriteButton
+              isFavorite={prompt.isFavorite}
+              onToggle={() => toggleFavorite(prompt.id)}
+            />
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              <ModelBadge model={prompt.model} />
+              <Badge variant="secondary">{prompt.category}</Badge>
+            </div>
+
+            {prompt.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {prompt.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
+            )}
 
-              {prompt.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {prompt.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
+            {/* Full content here, unlike the card's 120-char preview. */}
+            <p className="text-sm whitespace-pre-wrap">{prompt.content}</p>
 
-              {/* Full content here, unlike the card's 120-char preview. */}
-              <p className="text-sm whitespace-pre-wrap">{prompt.content}</p>
-
-              <p className="text-xs text-muted-foreground tabular-nums">
-                Created {prompt.createdAt.toLocaleDateString()}
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {prompts.length === 0
-                  ? 'No prompts loaded'
-                  : 'Prompt not found'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {prompts.length === 0
-                  ? // Prompts live in memory only until persistence lands (Week 5),
-                    // so a refresh or a direct URL visit starts from an empty list.
-                    'Prompts are held in memory for now, so refreshing or opening this link directly clears them. Go back to the list and load or create a prompt.'
-                  : 'This prompt does not exist — it may have been deleted.'}
-              </p>
-            </CardContent>
-          </Card>
-        )}
+            <p className="text-xs text-muted-foreground tabular-nums">
+              Created {prompt.createdAt.toLocaleDateString()}
+            </p>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
