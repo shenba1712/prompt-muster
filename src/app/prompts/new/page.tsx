@@ -3,10 +3,8 @@
 import type { JSX } from 'react';
 import { useRouter } from 'next/navigation';
 import { CreatePromptInput } from '@/types/prompt';
-import Header from '@/components/Header';
 import PromptForm from '@/components/PromptForm';
 import { usePrompts } from '@/context/PromptProvider';
-import styles from '../page.module.css';
 
 export default function NewPromptPage(): JSX.Element {
   const router = useRouter();
@@ -18,14 +16,6 @@ export default function NewPromptPage(): JSX.Element {
   };
 
   return (
-    <div className={styles.page}>
-      <Header />
-      <main className={styles.main}>
-        <PromptForm
-          onSave={handleSave}
-          onCancel={() => router.push('/prompts')}
-        />
-      </main>
-    </div>
+    <PromptForm onSave={handleSave} onCancel={() => router.push('/prompts')} />
   );
 }

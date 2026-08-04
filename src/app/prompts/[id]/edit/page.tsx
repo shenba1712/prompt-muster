@@ -3,10 +3,8 @@
 import { use, type JSX } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { CreatePromptInput } from '@/types/prompt';
-import Header from '@/components/Header';
 import PromptForm from '@/components/PromptForm';
 import { usePrompts } from '@/context/PromptProvider';
-import styles from '../../page.module.css';
 
 interface EditPromptPageProps {
   // Next 16: route params arrive as a Promise, unwrapped with React's use().
@@ -32,15 +30,10 @@ export default function EditPromptPage({
   };
 
   return (
-    <div className={styles.page}>
-      <Header />
-      <main className={styles.main}>
-        <PromptForm
-          prompt={prompt}
-          onSave={handleSave}
-          onCancel={() => router.push(`/prompts/${prompt.id}`)}
-        />
-      </main>
-    </div>
+    <PromptForm
+      prompt={prompt}
+      onSave={handleSave}
+      onCancel={() => router.push(`/prompts/${prompt.id}`)}
+    />
   );
 }

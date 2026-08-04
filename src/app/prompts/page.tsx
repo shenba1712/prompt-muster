@@ -2,7 +2,6 @@
 
 import type { JSX } from 'react';
 import styles from './page.module.css';
-import Header from '@/components/Header';
 import PromptList from '@/components/PromptList';
 import PromptFilters from '@/components/PromptFilters';
 import { Button } from '@/components/ui/button';
@@ -23,34 +22,31 @@ export default function PromptsPage(): JSX.Element {
   } = usePrompts();
 
   return (
-    <div className={styles.page}>
-      <Header />
-      <main className={styles.main}>
-        {error && (
-          <p role="alert" className={styles.error}>
-            {error}
-          </p>
-        )}
-        {/*test data. should be removed when persistence is added*/}
-        <Button type="button" variant="outline" onClick={seedPrompts}>
-          Load Sample Data
-        </Button>
+    <>
+      {error && (
+        <p role="alert" className={styles.error}>
+          {error}
+        </p>
+      )}
+      {/*test data. should be removed when persistence is added*/}
+      <Button type="button" variant="outline" onClick={seedPrompts}>
+        Load Sample Data
+      </Button>
 
-        <PromptFilters
-          filterState={filterState}
-          onFilterChange={setFilter}
-          totalCount={promptCount}
-          filteredCount={filteredPromptCount}
-        />
+      <PromptFilters
+        filterState={filterState}
+        onFilterChange={setFilter}
+        totalCount={promptCount}
+        filteredCount={filteredPromptCount}
+      />
 
-        <PromptList
-          prompts={filteredPrompts}
-          totalCount={promptCount}
-          onDelete={deletePrompt}
-          onCopy={copyToClipboard}
-          onToggleFavorite={toggleFavorite}
-        />
-      </main>
-    </div>
+      <PromptList
+        prompts={filteredPrompts}
+        totalCount={promptCount}
+        onDelete={deletePrompt}
+        onCopy={copyToClipboard}
+        onToggleFavorite={toggleFavorite}
+      />
+    </>
   );
 }

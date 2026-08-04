@@ -3,14 +3,12 @@
 import { startTransition, use, type JSX } from 'react';
 import Link from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
-import Header from '@/components/Header';
 import FavoriteButton from '@/components/FavoriteButton';
 import PromptBadges from '@/components/PromptBadges';
 import PromptTags from '@/components/PromptTags';
 import PromptActions from '@/components/PromptActions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePrompts } from '@/context/PromptProvider';
-import styles from '../page.module.css';
 
 interface PromptDetailPageProps {
   // Next 16: route params arrive as a Promise, unwrapped with React's use().
@@ -46,43 +44,40 @@ export default function PromptDetailPage({
   };
 
   return (
-    <div className={styles.page}>
-      <Header />
-      <main className={styles.main}>
-        <Link
-          href="/prompts"
-          className="text-sm text-muted-foreground hover:text-foreground hover:underline"
-        >
-          ← Back to prompts
-        </Link>
+    <>
+      <Link
+        href="/prompts"
+        className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+      >
+        ← Back to prompts
+      </Link>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{prompt.title}</CardTitle>
-            <FavoriteButton
-              isFavorite={prompt.isFavorite}
-              onToggle={() => toggleFavorite(prompt.id)}
-            />
-          </CardHeader>
-          <CardContent>
-            <PromptBadges model={prompt.model} category={prompt.category} />
-            <PromptTags tags={prompt.tags} />
-
-            {/* Full content here, unlike the card's 120-char preview. */}
-            <p className="text-sm whitespace-pre-wrap">{prompt.content}</p>
-
-            <p className="text-xs text-muted-foreground tabular-nums">
-              Created {prompt.createdAt.toLocaleDateString()}
-            </p>
-          </CardContent>
-          <PromptActions
-            promptId={prompt.id}
-            content={prompt.content}
-            onCopy={copyToClipboard}
-            onDelete={handleDelete}
+      <Card>
+        <CardHeader>
+          <CardTitle>{prompt.title}</CardTitle>
+          <FavoriteButton
+            isFavorite={prompt.isFavorite}
+            onToggle={() => toggleFavorite(prompt.id)}
           />
-        </Card>
-      </main>
-    </div>
+        </CardHeader>
+        <CardContent>
+          <PromptBadges model={prompt.model} category={prompt.category} />
+          <PromptTags tags={prompt.tags} />
+
+          {/* Full content here, unlike the card's 120-char preview. */}
+          <p className="text-sm whitespace-pre-wrap">{prompt.content}</p>
+
+          <p className="text-xs text-muted-foreground tabular-nums">
+            Created {prompt.createdAt.toLocaleDateString()}
+          </p>
+        </CardContent>
+        <PromptActions
+          promptId={prompt.id}
+          content={prompt.content}
+          onCopy={copyToClipboard}
+          onDelete={handleDelete}
+        />
+      </Card>
+    </>
   );
 }
