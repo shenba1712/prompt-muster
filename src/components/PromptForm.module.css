@@ -3,9 +3,9 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: white;
+  background: var(--card);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   width: 100%;
 }
@@ -36,9 +36,15 @@
 .error {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid #f5b5b5;
+  border: 1px solid color-mix(in oklch, var(--destructive) 40%, transparent);
   border-radius: 6px;
-  background: #fdecec;
-  color: #b42318;
+  background: color-mix(in oklch, var(--destructive) 10%, transparent);
+  color: var(--destructive);
   font-size: 0.875rem;
+}
+
+/* Matches the destructive button's dark:bg-destructive/20 — the tint needs
+   more saturation to stay visible against the dark card background. */
+:global(.dark) .error {
+  background: color-mix(in oklch, var(--destructive) 20%, transparent);
 }
