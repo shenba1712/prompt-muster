@@ -5,17 +5,43 @@ on AI prompts. Built with Next.js, React, and TypeScript.
 
 ## Current State
 
-Week 2 complete — frontend only, no backend, no database.
-All data is in-memory using React useState (lost on refresh).
+Week 3 in progress (routing) — frontend only, no backend, no database.
+All data is in-memory, now lifted into a `PromptProvider` React Context
+(`src/context/PromptProvider.tsx`) instead of page-level `useState`, so it
+survives client-side navigation. Still lost on full refresh — persistence is
+still Week 5, unchanged.
 Seed data function exists for development testing.
 CRUD is complete including the update/edit flow (Week 2).
-Tests: Vitest + React Testing Library set up; PromptProvider and utility tests exist (77 tests across 3 files).
-State: all prompt state lives in a single React Context — `PromptProvider`
-(`src/context/PromptProvider.tsx`), mounted once in the root layout and
-read via `usePrompts()`. See the State Management section below.
-Styling: Tailwind v4 + shadcn/ui (Base UI primitives) installed Week 2; migration complete — every component plus the page shell renders exclusively on shadcn primitives (Button, Input, Textarea, Select, plus custom Badge and Card), zero raw `<button>`/`<input>`/`<select>`/`<textarea>` left anywhere in `src/`.
-No routing yet — single page application.
-No data persistence yet (prompt files on disk + SQLite planned for Week 5 — supersedes the earlier IndexedDB plan; see project-files/trd.md §4 and ADR-002).
+Tests: Vitest + React Testing Library; 77 tests across 4 files (added
+`PromptProvider.test.tsx` this week) — all green.
+Styling: Tailwind v4 + shadcn/ui (Base UI primitives) installed Week 2;
+migration complete for interactive primitives, but a 2026-08-04 design-review
+audit found the Week 2 migration never touched layout chrome — the gradient
+`Header`, default-anchor-styled prompt titles, a unicode favorite star, and
+"Load Sample Data" sitting in production layout are all still Week 1
+scaffolding. Tracked as ticket `07.6` (`core/tickets.md`); `#07` is reopened
+to `[~]` in `core/backlog.md` until it lands.
+Routing: App Router structure landed this week — `/prompts` list,
+`/prompts/[id]` detail + `not-found.tsx`, `/prompts/new` +
+`/prompts/[id]/edit` editor routes sharing `PromptForm`. `06.4` (filters/
+search as URL state + a settings page stub) is the one remaining routing
+ticket, not yet started.
+Dark mode: toggle built (`ThemeToggle.tsx` + `src/lib/theme.ts`) using a
+server-read cookie (`cookies()` in `layout.tsx`), not `localStorage` — avoids
+the hydration-flash problem more thoroughly than the originally-planned
+approach; see `core/completion-log.md`'s Week 3 section for why.
+No data persistence yet (prompt files on disk + SQLite planned for Week 5 —
+supersedes the earlier IndexedDB plan; see project-files/trd.md §4 and
+ADR-002).
+
+Components: Header, PromptForm, PromptList, PromptCard, PromptFilters,
+EmptyState, FavoriteButton, ThemeToggle (9 files + CSS modules, some now also
+composed from extracted PromptActions/tags/badges pieces from the editor-
+routes refactor)
+Context: PromptProvider (wraps usePromptManager, exposed via usePrompts())
+Hooks: usePromptManager (CRUD, filtering, derived state)
+Types: prompt.ts
+Utils: prompt.ts, theme.ts
 
 ## Scheduled Direction Changes (planned — do not apply early)
 
@@ -188,6 +214,42 @@ I'll decide whether to add it. Don't modify this file yourself.
 3. Report each finding with file, line, problem, and fix
 4. Wait for approval before applying fixes
 
+## Commands
+
+- npm run dev — Start development server (localhost:3000)
+- npm run build — Production build
+- npm run lint — Run ESLint
+- npx tsc --noEmit — Type-check without emitting files
+
+## Tech Stack
+
+- Next.js 14+ (App Router)
+- React 18+
+- TypeScript 5+ (strict mode)
+- Node.js 18+
+- Tailwind CSS v4 + shadcn/ui on Base UI primitives (@base-ui/react; "base-lyra" style, phosphor icons — see components.json). Component source lives in src/components/ui/
+
+## Project Structure
+
+- src/app/ — Next.js App Router pages and layouts
+- src/components/ — React components (one per file)
+- src/hooks/ — Custom React hooks
+- src/types/ — TypeScript type definitions
+- src/utils/ — Pure utility functions
+
+## Domain
+
+A Prompt represents a reusable AI prompt template:
+
+- id: string (crypto.randomUUID())
+- title: string
+- content: string
+- model: Model (gpt-4o | gpt-4o-mini | claude-sonnet | claude-haiku | gemini-pro | gemini-flash)
+- category: Category (code-generation | debugging | code-review | documentation | refactoring | testing | architecture | data-modeling | devops | learning | communication)
+- tags: string[]
+- isFavorite: boolean
+- createdAt: Date
+
 ## TypeScript Conventions
 
 - strict mode is enabled — do not weaken it
@@ -211,39 +273,6 @@ I'll decide whether to add it. Don't modify this file yourself.
 - Use crypto.randomUUID() for generating IDs
 - Handle empty states in every list component
 - Use entity ID as key prop — never array index for dynamic lists
-
-## State Management
-
-All prompt state lives in one React Context. There is no
-`usePromptManager` hook any more — its state, mutations, and derived
-values were moved verbatim into the provider.
-
-- `src/context/PromptProvider.tsx` holds the state (`prompts`, `error`,
-  `filterState`), the mutations (`addPrompt`, `updatePrompt`,
-  `deletePrompt`, `toggleFavorite`, `copyToClipboard`, `setFilter`),
-  the derived counts, and `seedPrompts`.
-- It is a `'use client'` component mounted exactly once, in
-  `src/app/layout.tsx` around `{children}`. The layout stays a server
-  component — importing a client component does not make the importer
-  one, and `layout.tsx` still exports `metadata`, which Next forbids in
-  a `'use client'` module.
-- Consumers read state with the `usePrompts()` hook, exported from the
-  same file. It throws
-  `usePrompts must be used within a <PromptProvider>.` when called
-  outside the provider, so a missing provider fails loudly instead of
-  silently dropping mutations.
-- The context value type is `UsePromptManagerReturn`. The name is
-  retained from the old hook so consumers did not have to change; it is
-  now the provider's value shape.
-
-Rules for new work:
-
-- Never call `useState` for prompt data in a component — add the state
-  to `PromptProvider` and expose it through `UsePromptManagerReturn`.
-- Never mount a second `PromptProvider`; nested providers create
-  isolated state islands.
-- Page-local UI state (which form is open, which row is expanded) stays
-  in the component. Only shared prompt data belongs in the context.
 
 ## 'use client' Rules
 
@@ -309,7 +338,7 @@ Hooks must:
 ## Naming
 
 - Components: PascalCase — PromptCard.tsx
-- Hooks: camelCase with use prefix — usePrompts, useDebounce.ts
+- Hooks: camelCase with use prefix — usePromptManager.ts
 - Types: camelCase — prompt.ts
 - Utilities: camelCase — prompt.ts
 - CSS Modules: PascalCase.module — PromptCard.module.css
@@ -340,6 +369,28 @@ Hooks must:
 - Named exports for types, interfaces, utilities, hooks
 - Default exports only for components
 - Group: React/Next first, then external libraries, then internal modules
+
+## Common React Event Types
+
+- Form submit: React.FormEvent<HTMLFormElement>
+- Text input change: React.ChangeEvent<HTMLInputElement>
+- Textarea change: React.ChangeEvent<HTMLTextAreaElement>
+- Select change: React.ChangeEvent<HTMLSelectElement>
+- Button click: React.MouseEvent<HTMLButtonElement>
+
+## State Update Patterns
+
+Array — add item:
+setPrompts(prev => [...prev, newPrompt])
+
+Array — remove item:
+setPrompts(prev => prev.filter(p => p.id !== id))
+
+Array — update one item:
+setPrompts(prev => prev.map(p => p.id === id ? { ...p, isFavorite: !p.isFavorite } : p))
+
+Object — partial update (for filter state):
+setFilterState(prev => ({ ...prev, ...updates }))
 
 ## Error Handling
 
