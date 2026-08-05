@@ -28,10 +28,15 @@ export default function PromptsPage(): JSX.Element {
           {error}
         </p>
       )}
-      {/*test data. should be removed when persistence is added*/}
-      <Button type="button" variant="outline" onClick={seedPrompts}>
-        Load Sample Data
-      </Button>
+      {/* Dev-only affordance — there's no persistence yet, so this is how
+          the app gets test data locally. Gated out of production builds;
+          Next's bundler strips this block entirely when NODE_ENV is
+          'production', so it never ships. */}
+      {process.env.NODE_ENV !== 'production' && (
+        <Button type="button" variant="outline" onClick={seedPrompts}>
+          Load Sample Data
+        </Button>
+      )}
 
       <PromptFilters
         filterState={filterState}

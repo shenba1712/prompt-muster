@@ -160,7 +160,7 @@ and is unaffected by it (prd.md's Phase 0).
      flips to [x]. Carried into Week 4.
 
 
-#07 [~] Professional UI (shadcn/ui)
+#07 [x] Professional UI (shadcn/ui)
 
      Component library integration for consistent,
      professional design. Brings Tailwind — see
@@ -179,6 +179,13 @@ and is unaffected by it (prd.md's Phase 0).
      primitives migration, which only covered Button/Input/Select/
      Textarea/Badge/Card — not layout chrome. Ticket 07.6 (tickets.md)
      closes this gap. Complete #07 again only once 07.6 lands.
+     RESOLVED (2026-08-04): 07.6 landed same day — gradient Header
+     removed, prompt titles styled as real headings, unicode favorite
+     star replaced with a designed icon, design-system.md's type scale/
+     spacing rhythm applied app-wide, "Load Sample Data" gated to
+     dev-only builds. #07 closed to [x] again. 07.7 (keyboard-nav audit)
+     and 07.8 (motion/toast policy) are separate follow-on tickets from
+     the same audit — neither gates #07.
 
 
 TIER 1 CHECKPOINT
