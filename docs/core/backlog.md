@@ -83,6 +83,7 @@ Status Key
 [~] In progress
 [x] Complete
 
+
 ═══════════════════════════════════════════════════════
 TIER 1 — FOUNDATION (Weeks 1-4) — UNCHANGED
 ═══════════════════════════════════════════════════════
@@ -91,6 +92,7 @@ These make PromptMuster functional as a frontend exercise. Without them,
 nothing else works. Every feature here is a prerequisite for
 something in a later phase. This tier predates the direction reset
 and is unaffected by it (prd.md's Phase 0).
+
 
 #01 [x] Prompt CRUD
 
@@ -101,6 +103,7 @@ and is unaffected by it (prd.md's Phase 0).
               state management, custom hooks
      Week: 1 (update flow completed Week 2 — tickets.md 01.1)
 
+
 #02 [x] Prompt Favoriting
 
      Toggle favorite status with visual indicator.
@@ -109,6 +112,7 @@ and is unaffected by it (prd.md's Phase 0).
      Teaches: Immutable state updates, component
               composition, extending existing types
      Week: 1
+
 
 #03 [x] Multi-Dimensional Filtering
 
@@ -119,6 +123,7 @@ and is unaffected by it (prd.md's Phase 0).
               computed values, avoiding stored derived state
      Week: 1
 
+
 #04 [x] Full-Text Search
 
      Case-insensitive search across titles and content.
@@ -127,6 +132,7 @@ and is unaffected by it (prd.md's Phase 0).
      Teaches: String manipulation, filter composition,
               debouncing (later optimization)
      Week: 1
+
 
 #05 [x] Category and Tag Organization
 
@@ -137,7 +143,8 @@ and is unaffected by it (prd.md's Phase 0).
               multi-value inputs
      Week: 1
 
-#06 [ ] Next.js Routing
+
+#06 [~] Next.js Routing
 
      Separate pages: prompt list, prompt detail, prompt
      editor, settings.
@@ -146,8 +153,14 @@ and is unaffected by it (prd.md's Phase 0).
      Teaches: App Router, layouts, dynamic routes, URL
               state, page-level data flow
      Week: 2-3
+     UPDATE (2026-08-04): 06.1-06.3 landed Week 3 (App Router +
+     PromptProvider context, detail route + not-found, editor
+     routes). 06.4 (filters/search as URL state + settings page
+     stub) not started — the one remaining ticket before this
+     flips to [x]. Carried into Week 4.
 
-#07 [x] Professional UI (shadcn/ui)
+
+#07 [~] Professional UI (shadcn/ui)
 
      Component library integration for consistent,
      professional design. Brings Tailwind — see
@@ -158,11 +171,19 @@ and is unaffected by it (prd.md's Phase 0).
               customization, accessibility basics
      Week: 2-3 (shadcn primitives migrated Week 2 Friday
      per reference/roadmap/week2-plans/fri.md)
+     NOTE (2026-08-04): Reopened to [~]. A design-review session found
+     design-system.md's actual tokens/type-scale/spacing were never fully
+     applied, and Week 1 scaffolding (gradient Header, default-anchor
+     prompt titles, unicode favorite star, dev-only "Load Sample Data"
+     sitting in production layout) was left untouched by the 07.1-07.3
+     primitives migration, which only covered Button/Input/Select/
+     Textarea/Badge/Card — not layout chrome. Ticket 07.6 (tickets.md)
+     closes this gap. Complete #07 again only once 07.6 lands.
+
 
 TIER 1 CHECKPOINT
 
 After Tier 1, you can demonstrate:
-
 - Clean React/TypeScript app with strict types
 - Custom hooks with derived state
 - Professional UI with routing
@@ -182,6 +203,7 @@ flywheel this whole project's success depends on (prd.md §10).
 
 Ring: 0 (you, daily, inside Claude Code / Cursor).
 
+
 #08 [ ] Prompt File Format & Parser
 
      Each prompt becomes a file (YAML frontmatter + role-tagged
@@ -197,6 +219,11 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
      NOTE: This is the load-bearing contract (trd.md §3). Format
      decided 2026-07-16: adopt and extend dotprompt (ADR-005) — no
      open decision left to block starting this feature.
+     UPDATE (2026-08-04): ticket 08.6 adds detection for a file
+     changed underneath an open Editor (branch switch / external
+     edit) — a git-native tool's real daily-use failure mode, not
+     an edge case (audit finding #7).
+
 
 #09 [ ] Domain Model Rewrite — Messages, Variables, Params
 
@@ -214,6 +241,12 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
      NOTE: Corrects the Week 1 content: string model
      (reference/key-desicions.md). This is a planned, good lesson,
      not scope creep.
+     UPDATE (2026-08-04): tickets 09.6 (domain-specific validation —
+     undeclared {{var}}, malformed outputSchema, unknown model ID)
+     and 09.7 (sort/pagination once the library holds 100+ prompts)
+     close two gaps every doc's small running example papered over
+     (audit findings #9, #10).
+
 
 #10 [ ] Models & Pricing as Data
 
@@ -229,6 +262,7 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
               why snapshot pinning matters for reproducibility
      Week: 6
      ADR: ADR-006
+
 
 #11 [ ] SQLite Runs & Logs Persistence
 
@@ -246,6 +280,55 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
      ADR: ADR-002, ADR-003, ADR-008 (better-sqlite3 + thin
      hand-rolled repository — decided 2026-07-16, Prisma
      reconsidered only if/when Phase 4 makes it earn its weight)
+     UPDATE (2026-08-04, broader audit): five real gaps found in
+     this feature's own design, all folded into tickets 11.1/11.4-
+     11.8 rather than discovered mid-build or at Phase 4: (1) the
+     "mechanical Postgres swap" claim ignores that better-sqlite3
+     is sync and Postgres access can't be — resolve at 11.1's
+     interface design, not later (finding #4); (2) no migration
+     mechanism is defined for the SQLite schema itself (finding
+     #5); (3) `prompt_commit_sha` has no defined behavior for
+     running against uncommitted edits — the likely majority case
+     while iterating (finding #6); (4) multi-process write
+     concurrency (dashboard + CLI/MCP/CI writing the same file) is
+     named as a risk in ADR-003 but never resolved — WAL mode /
+     busy_timeout needed (finding #19); (5) no run-lifecycle
+     reconciliation ("interrupted" status) or `runs purge` command
+     exists despite trd.md committing to both, and no backup/
+     export path exists for run/cost data at all, unlike the
+     prompt library which git covers (findings #11, #12).
+
+
+#11a [ ] Library Home Summary Strip
+
+     A header band above the Library list surfacing prompt
+     count, runs today, and cost this week — not a separate
+     Home screen (ia.md §8 Q5, resolved 2026-08-04: Library
+     stays Home; this is the cheapest real orientation layer,
+     not a full dashboard, which would decorate mostly-empty
+     data this early).
+
+     Prerequisites: #11, #14, #30 (needs real run/cost data —
+                    built once, after Cost exists, not before)
+     Teaches: Aggregation over data already being logged,
+              designing a UI element that degrades gracefully
+              to nothing when there's no data yet
+     Week: Phase 3, alongside or just after #30 (corrected
+     2026-08-04, audit finding #24 — previously said "Phase 2,"
+     which contradicted its own #30 prerequisite; #30 is a Phase 3
+     feature, Week 18-19. Same class of error already caught and
+     fixed for #29 in the original re-cut; missed here until now.
+     11a.2 additionally needs #23, a Phase 2 feature — so 11a
+     cannot start until both #23 and #30 exist, i.e. not before
+     Phase 3.)
+     NOTE: A full dedicated Home dashboard (recent runs,
+     favorites, quick-create) was considered and explicitly
+     deferred — revisit post-Phase 2 only if this strip proves
+     insufficient in daily use.
+     UPDATE (2026-08-04): ticket 11a.2 adds proactive local
+     regression surfacing to this strip once #23 exists — see
+     audit finding #14 below.
+
 
 #12 [ ] Provider Adapter — Single Provider Execution
 
@@ -259,6 +342,41 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
               "see the wire first" is the point (ADR-004)
      Week: 7
      ADR: ADR-004 (raw fetch first; official SDKs allowed after)
+     NOTE (2026-08-04): ux-flows.md's seven journeys are
+     happy-path only — no designed rate-limit/invalid-key/
+     timeout/dropped-stream screen exists despite trd.md §5.3/§11's
+     real error taxonomy underneath. Ticket 12.6 closes this
+     (audit finding #1); 13.3 and 29.2/20.4 extend it to streaming
+     and multi-provider partial failure.
+     UPDATE (2026-08-04, broader audit): ticket 12.1 also needs to
+     resolve function-calling/structured-output representation in
+     the interface — prompt files already carry `outputSchema` and
+     the Phase-2 eval engine's schema assertion depends on it, but
+     the three providers enforce structured output through
+     structurally different mechanisms with no hook in a flat
+     `execute()` call (finding #7). Resolve before Phase 2 builds
+     on the assumption it already works.
+
+
+#12a [ ] Provider Onboarding & Key Health
+
+     A first-run flow for adding a provider API key (Settings →
+     Providers), plus a per-provider "test connection" affordance
+     to verify a key works before it's trusted with a real,
+     money-spending run.
+
+     Prerequisites: #12 (specifically 12.2's key-handling plumbing)
+     Teaches: Onboarding as a designed flow rather than an assumed
+              prerequisite; cheap trust-building UI ahead of an
+              expensive action
+     Week: Phase 1, alongside #12
+     NOTE: Without this, the first real session is "the app
+     silently needs environment variables it never mentions" —
+     currently buried as a sub-clause of ticket 12.2, not its own
+     experience (2026-08-04 audit findings #2, #3). Competing
+     tools (promptfoo, PromptLayer) surface connection health;
+     this closes the same gap here.
+
 
 #13 [ ] Streaming Responses
 
@@ -270,6 +388,16 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
      Teaches: Server-Sent Events, async iterables end-to-end,
               progressive UI rendering, backpressure
      Week: 7-8
+     UPDATE (2026-08-04): ticket 13.3 adds stream-drop recovery —
+     a connection lost mid-stream must show what was received plus
+     a clear "incomplete" marker, not a silently truncated result
+     treated as final (audit finding #1).
+     UPDATE (2026-08-04, broader audit): the internal `Chunk` type
+     (`{text, done}`) has no usage/token field, but the runs schema
+     requires input/output tokens and cost per run — resolve where
+     `price(usage, model)` gets its `Usage` object from before
+     Phase 2's eval cost controls assume it exists (finding #8).
+
 
 #14 [ ] Token Counting & Cost Preflight
 
@@ -289,6 +417,7 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
      uncommon, and doing it honestly per-provider is a real
      interview story (trd.md §5.4).
 
+
 #15 [ ] Multi-Provider Execution
 
      Execute against OpenAI, Anthropic, and Google. User chooses
@@ -301,6 +430,13 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
               retry/backoff on transient errors (429/503), fail
               fast on 400/401
      Week: 8-9
+     UPDATE (2026-08-04, broader audit): ticket 15.4 adds a
+     recurring fixture-drift check — the project's own "no
+     automated test ever makes a billed call" rule removes the
+     only mechanism that would otherwise catch a silent provider
+     API change making an adapter subtly wrong while its fixture
+     suite stays green forever (finding #10).
+
 
 #16 [ ] MCP Server — Read + Run
 
@@ -324,6 +460,20 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
      SECURITY: run_prompt is a prompt-injection surface once
      prompts can come from outside your own library — confirm
      before executing (trd.md §12).
+     CRITICAL UPDATE (2026-08-04, broader audit finding #1 — the
+     audit's single Critical): the confirm-gate as designed
+     protects `run_prompt` because it spends money, but the actual
+     T1 injection threat lands the moment `get_prompt` (or
+     `list_prompts`) hands attacker-controlled file text back to
+     the calling agent — a normal, encouraged, zero-spend action
+     that today carries no signal at all. Ticket 16.1 must carry
+     the external-origin flag into the read tools' responses, not
+     just gate the spend tool. Related: ticket 16.2 must also move
+     the untrusted-content confirm-gate (P5) into core itself, the
+     same fix T2 already forced for budget enforcement but never
+     applied to content trust (finding #2) — including a concrete
+     definition of "external-origin," which no doc currently gives.
+
 
 #17 [ ] Local Dashboard Security Hardening
 
@@ -340,11 +490,20 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
      Week: 9
      NOTE: This is a Phase 1 requirement, not later polish
      (threat-model.md T3/T4; trd.md §9, §12).
+     UPDATE (2026-08-04, broader audit): Origin/Host validation
+     widened to every route handler, not just state-changing ones
+     — a read-only route serving run history (T3's own "most
+     sensitive file on disk") isn't state-changing by the original
+     test, yet DNS rebinding defeats the CORS distinction for GETs
+     too (finding #3). Also: ticket 17.3 extends the secret scan to
+     the model's *output*, not just input variables — a secret can
+     be echoed back in a response (e.g. a diff review quoting a
+     token), which the original scan doesn't cover (finding #17).
+
 
 PHASE 1 CHECKPOINT
 
 After Phase 1, you can demonstrate:
-
 - Prompts as versionable files with a real schema, not in-memory
   objects
 - Multi-provider streaming execution with honest cost preflight
@@ -367,6 +526,7 @@ re-run the suite, see what regressed and what it cost.
 
 Ring: 1 (individual developers, once this ships publicly in Phase 3).
 
+
 #18 [ ] Eval Test Cases & Core Assertions
 
      Attach test cases (variable values + assertions) to a prompt
@@ -383,6 +543,7 @@ Ring: 1 (individual developers, once this ships publicly in Phase 3).
               file sits beside source
      Week: 10
 
+
 #19 [ ] LLM-as-Judge Assertion
 
      A cheap model (e.g. claude-haiku-4-5) scores output against a
@@ -396,6 +557,7 @@ Ring: 1 (individual developers, once this ships publicly in Phase 3).
               not just accepted
      Week: 10-11
 
+
 #20 [ ] Eval Suite Runner
 
      Run a suite across one or more models: a matrix of
@@ -408,6 +570,12 @@ Ring: 1 (individual developers, once this ships publicly in Phase 3).
               lot of requests fast), summarizing heterogeneous
               assertion results into one report
      Week: 11-12
+     UPDATE (2026-08-04): ticket 20.4 adds a distinct "errored"
+     matrix-cell state (timeout/rate-limit) — design-system.md's
+     Table row only had pass/fail, but a 3-provider matrix will
+     regularly have one cell error while the rest succeed (audit
+     finding #6).
+
 
 #21 [ ] Eval Cost Controls & Caching
 
@@ -425,6 +593,14 @@ Ring: 1 (individual developers, once this ships publicly in Phase 3).
      Week: 12
      NOTE: Evals spend real money every run — this is core, not
      polish (trd.md §6.4; threat-model.md P2).
+     UPDATE (2026-08-04, broader audit): the cache's check-then-
+     insert has no concurrency guard, despite this feature's own
+     bounded-concurrency worker pool (#20.2) — two test cases
+     resolving to the same cache key can both miss simultaneously
+     and both pay for the provider call, defeating the cache's
+     entire cost-control purpose under the exact concurrency model
+     it's built for (finding #20).
+
 
 #22 [ ] Determinism Handling
 
@@ -437,6 +613,7 @@ Ring: 1 (individual developers, once this ships publicly in Phase 3).
               (prd.md §10) — statistical thresholds vs. exact
               comparison
      Week: 12-13
+
 
 #23 [ ] Regression View
 
@@ -453,6 +630,11 @@ Ring: 1 (individual developers, once this ships publicly in Phase 3).
      rollback) — most of that is now free via git; the part that
      isn't free is comparing eval results across versions, which
      is this feature.
+     UPDATE (2026-08-04): ticket 23.3 adds handling for a replayed
+     run whose pinned model snapshot (ADR-006) has since been
+     retired by the provider — a clear message instead of a raw
+     404 (audit finding #8).
+
 
 #24 [ ] Committable Eval Baselines
 
@@ -464,6 +646,7 @@ Ring: 1 (individual developers, once this ships publicly in Phase 3).
               its test cases, not hidden in a database only you
               can query
      Week: 13-14
+
 
 #25 [ ] Judge Golden-Set Validation Harness
 
@@ -478,10 +661,10 @@ Ring: 1 (individual developers, once this ships publicly in Phase 3).
      Priority: P2 (nice-to-have, not required for the pillar to be
      real).
 
+
 PHASE 2 CHECKPOINT
 
 After Phase 2, you can demonstrate:
-
 - A working eval runner: assertions, LLM-as-judge, regression view,
   cost-aware by design
 - Testing non-deterministic systems honestly (pass@k, thresholds,
@@ -503,6 +686,7 @@ prd.md §11.2 items 4 and 6).
 
 Ring: 1 (open source: files, CLI, MCP, IDE, CI).
 
+
 #26 [ ] CLI Tool
 
      Terminal access: promptmuster run <name> --model=... --var k=v,
@@ -514,6 +698,7 @@ Ring: 1 (open source: files, CLI, MCP, IDE, CI).
      Teaches: CLI design, argument parsing (commander or
               hand-rolled), npm package publishing (npx promptmuster)
      Week: 16
+
 
 #27 [ ] Prompt Export / Import (JSON/YAML)
 
@@ -527,6 +712,7 @@ Ring: 1 (open source: files, CLI, MCP, IDE, CI).
      NOTE: Mostly free via files already (prd.md §7.5) — this
      feature is the validation/migration layer on top, not the
      file format itself.
+
 
 #28 [ ] CI GitHub Action for Evals
 
@@ -544,6 +730,13 @@ Ring: 1 (open source: files, CLI, MCP, IDE, CI).
      PR-review webhooks — same webhook/CI learning, on-thesis
      instead of a second crowded "auto-review my PR" product
      (trd.md §10).
+     UPDATE (2026-08-04, broader audit): qa-test-plan.md's TC-SEC-*/
+     TC-E2E/TC-IF-* cases are stated as release-blocking, but no
+     ticket in this chunk (or #17/#20/#23/#16) ever cited the TC-ID
+     it's supposed to satisfy — a blocker with no ticket-level
+     acceptance criterion has no forcing function to get written
+     (finding #9). Ticket 28.1 now cites TC-IF-02/03 directly.
+
 
 #29 [ ] Multi-Model Side-by-Side Comparison
 
@@ -554,6 +747,11 @@ Ring: 1 (open source: files, CLI, MCP, IDE, CI).
      Teaches: Parallel async operations, comparison UI, data
               normalization across providers
      Week: 18
+     UPDATE (2026-08-04): ticket 29.2 adds a partial-failure layout
+     — one column erroring while the others succeed is the common
+     case with 3 live providers, not the exception (audit finding
+     #6).
+
 
 #30 [ ] Cost Dashboard
 
@@ -566,6 +764,7 @@ Ring: 1 (open source: files, CLI, MCP, IDE, CI).
               design over data you were already logging
      Week: 18-19
 
+
 #31 [ ] Post-Run Quality Ratings
 
      Rate output quality after execution (thumbs up/down or 1-5
@@ -575,6 +774,7 @@ Ring: 1 (open source: files, CLI, MCP, IDE, CI).
      Teaches: Feedback-loop design, subjective-data collection UX
      Week: 19
      Priority: P2.
+
 
 #32 [ ] OSS Launch Readiness
 
@@ -598,11 +798,62 @@ Ring: 1 (open source: files, CLI, MCP, IDE, CI).
      don't occupy: local-first + git-native files + MCP-in-IDE.
      Landscape awareness is part of the portfolio story, not a
      liability to bury.
+     UPDATE (2026-08-04): ticket 32.4 ships 1-2 curated example
+     `.prompt` files as starter content — a fresh install currently
+     drops a stranger into a completely empty library with no
+     example of the messages/variables/outputSchema shape (audit
+     finding #4). Also: ticket 07.7 (keyboard-navigation audit
+     against design-system.md §4's stated hard requirement) should
+     land before this gate — "portfolio-ready" includes a11y that
+     was never actually ticketed until now.
+
+
+#32a [ ] Demo Site Landing Page
+
+     The Pipeline C demo's root route becomes a real landing
+     page (hero, screenshots, differentiation narrative, "try
+     it live" CTA into the read-only Library/Run screens) —
+     not a bare drop into sample data. Same deployment, same
+     design-system.md tokens; no separate site/hosting tech
+     (devops-cicd.md §3.4, resolved 2026-08-04).
+
+     Prerequisites: #32 (demo site + README pitch exist),
+                    #07.6 (screenshots need the visual-polish
+                    pass landed first — screenshotting the
+                    current stock-shadcn state would undercut
+                    the pitch)
+     Teaches: A landing page is a conversion surface, distinct
+              from a README's discovery job; reusing committed
+              positioning copy across two surfaces instead of
+              writing it twice
+     Week: Phase 3, immediately after #32
+     NOTE: Closes the specific failure mode where the demo link
+     is shared directly (Slack, Show HN, LinkedIn) with no
+     README read first, so a visitor has zero framing.
+     UPDATE (2026-08-04): ticket 32a.3 states responsiveness as
+     this route's own explicit commitment, separate from the
+     dashboard's deliberate desktop-only design — design-system.md
+     has zero breakpoints anywhere, which is fine for the dense
+     app but not for a page meant to be shared and opened on a
+     phone first (audit finding #13).
+     UPDATE (2026-08-04, broader audit): two more gaps in the demo
+     itself, distinct from the landing-page work above — ticket
+     32a.4 adds an incident-response story for the demo's client
+     bundle itself being compromised (a bad deploy/dependency/
+     injected script silently changing what the key-entry field
+     does), which neither devops-cicd.md §3 nor disaster-
+     recovery.md §2.3 currently cover beyond "is the demo down"
+     (finding #13, this pass — distinct from the same-numbered
+     UI/UX finding above, see tickets.md's note on the two audits'
+     independent numbering). Ticket 32a.5 adds an explicit caveat
+     that a pasted key is visible to any browser extension with
+     host/network permissions, independent of the demo's XSS
+     defenses (finding #18).
+
 
 PHASE 3 CHECKPOINT
 
 After Phase 3, you can demonstrate:
-
 - Four interfaces (dashboard, MCP, CLI, CI) over one core library
 - A public OSS repo with a live demo, a real README, and a listing
   someone else could find
@@ -622,6 +873,7 @@ favor of the local path staying serverless). Only pursued once Ring
 1 (Phase 3) has actually validated the tool is worth teaming up
 around.
 
+
 #33 [ ] Repo-Based Sharing Workflows
 
      A shared prompt repo a team uses together — PRs reviewed like
@@ -633,6 +885,7 @@ around.
               hosted product, "review a prompt like a code change"
               as a real practice
      Week: 21-22
+
 
 #34 [ ] Dashboard for Non-Technical Consumers
 
@@ -647,6 +900,7 @@ around.
               live
      Week: 22-23
 
+
 #35 [ ] NestJS Team API
 
      Wraps the same core library over HTTP for multi-user/hosted
@@ -658,6 +912,7 @@ around.
               company stack — applied honestly at the tier where a
               network hop and a server actually make sense
      Week: 23-24
+
 
 #36 [ ] PostgreSQL Team Backend
 
@@ -672,6 +927,7 @@ around.
      Week: 24-25
      ADR: ADR-003
 
+
 #37 [ ] Access Controls & Multi-Tenant Auth
 
      Team accounts, permissions, and multi-tenant data isolation
@@ -682,6 +938,7 @@ around.
               deliberately deferred out of v1 scope until now
               (trd.md §12)
      Week: 25-26
+
 
 #38 [ ] Optional Hosted/Team Mode
 
@@ -695,10 +952,10 @@ around.
               genuinely separate offering rather than a mode flag
      Week: 26-27
 
+
 PHASE 4 CHECKPOINT
 
 After Phase 4, you can demonstrate:
-
 - The company's exact backend stack (NestJS + PostgreSQL), deployed
   at the tier where it's the honest architectural choice, not a
   local-first contradiction
@@ -717,6 +974,7 @@ Explicit v1 non-goals (prd.md §3.4) or Ring 3 items (prd.md §4).
 Independently valuable, no fixed order, build only if something
 above has already proven its worth.
 
+
 #39 [ ] Embeddings Infrastructure
 
      Generate and store embeddings for all prompts.
@@ -728,6 +986,7 @@ above has already proven its worth.
      dessert, not a pillar" for early tiers — full-text search
      (#04) is enough for a personal library.
 
+
 #40 [ ] Semantic Search
 
      Find prompts by meaning, not just keywords.
@@ -735,6 +994,7 @@ above has already proven its worth.
      Prerequisites: #39
      Teaches: Vector similarity search, ranking, hybrid search
               (keyword + semantic)
+
 
 #41 [ ] Semantic Similarity / Duplicate Detection
 
@@ -746,6 +1006,7 @@ above has already proven its worth.
               suggestions rather than hard blocks
      Priority: P2.
 
+
 #42 [ ] Prompt Chains
 
      Sequences of prompts where one's output feeds the next's
@@ -755,6 +1016,7 @@ above has already proven its worth.
      Teaches: Pipeline orchestration, partial-failure recovery,
               DAG execution
 
+
 #43 [ ] Usage Analytics
 
      Which prompts get used most, which models perform best, team
@@ -763,6 +1025,7 @@ above has already proven its worth.
      Prerequisites: #20, #31, #37 (team usage patterns need team
                     mode to exist)
      Teaches: Analytics aggregation, privacy-respecting metrics
+
 
 #44 [ ] Multi-Turn / Agentic Eval Support
 
@@ -775,6 +1038,7 @@ above has already proven its worth.
      NOTE: Explicit v1 non-goal (prd.md §3.4, trd.md §6.6) —
      deferred in writing on purpose, not an oversight.
 
+
 #45 [ ] Prosumer Hosted Mode
 
      A standalone hosted product for prosumer/no-code operators —
@@ -785,6 +1049,7 @@ above has already proven its worth.
               true and it's actually a different business
      NOTE: prd.md §4 is explicit: this is "a different business —
      only if Ring 2 wins," not a natural next step.
+
 
 #46 [ ] Prompt Linter (schema-only, demoted)
 
@@ -802,6 +1067,7 @@ above has already proven its worth.
      #25's interview story ("I learned where rule-based NLP
      analysis breaks down") isn't silently lost — but expect not
      to build it.
+
 
 ═══════════════════════════════════════════════════════
 RULES
@@ -835,54 +1101,55 @@ RULES
    out of sync the way the old backlog did for a day between
    2026-07-15 and 2026-07-16.
 
+
 ═══════════════════════════════════════════════════════
 DEPENDENCY GRAPH
 ═══════════════════════════════════════════════════════
 
 #01 CRUD
 ├── #02 Favoriting
-│ └── #03 Filtering ──→ #06 Routing ──→ #07 UI
+│    └── #03 Filtering ──→ #06 Routing ──→ #07 UI
 ├── #04 Search (part of #03)
 └── #05 Tags (part of #03)
 
 #01-#07 (stable frontend)
 └── #08 File Format & Parser
-├── #09 Domain Model (messages/vars/params)
-│ ├── #10 Models & Pricing as Data
-│ │ └── #11 SQLite Runs/Logs
-│ │ └── #12 Single-Provider Execution
-│ │ ├── #13 Streaming
-│ │ ├── #14 Cost Preflight
-│ │ └── #15 Multi-Provider Execution
-│ │ ├── #16 MCP Server (read+run)
-│ │ ├── #17 Local Dashboard Security
-│ │ ├── #29 Model Comparison
-│ │ └── #42 Prompt Chains
-│ └── #16 MCP Server (list/get only need #08/#09)
-├── #18 Eval Test Cases & Assertions
-│ ├── #19 LLM-as-Judge
-│ │ └── #20 Suite Runner
-│ │ ├── #21 Cost Controls & Caching
-│ │ │ └── #22 Determinism Handling
-│ │ │ └── #23 Regression View
-│ │ ├── #24 Committable Baselines
-│ │ ├── #26 CLI
-│ │ ├── #28 CI Eval Action (needs #24, #26 too)
-│ │ ├── #31 Quality Ratings
-│ │ └── #43 Usage Analytics
-│ ├── #25 Judge Golden-Set Harness
-│ └── #46 Prompt Linter (schema-only, likely moot)
-└── #27 Export/Import
+     ├── #09 Domain Model (messages/vars/params)
+     │    ├── #10 Models & Pricing as Data
+     │    │    └── #11 SQLite Runs/Logs
+     │    │         └── #12 Single-Provider Execution
+     │    │              ├── #13 Streaming
+     │    │              ├── #14 Cost Preflight
+     │    │              └── #15 Multi-Provider Execution
+     │    │                   ├── #16 MCP Server (read+run)
+     │    │                   ├── #17 Local Dashboard Security
+     │    │                   ├── #29 Model Comparison
+     │    │                   └── #42 Prompt Chains
+     │    └── #16 MCP Server (list/get only need #08/#09)
+     ├── #18 Eval Test Cases & Assertions
+     │    ├── #19 LLM-as-Judge
+     │    │    └── #20 Suite Runner
+     │    │         ├── #21 Cost Controls & Caching
+     │    │         │    └── #22 Determinism Handling
+     │    │         │         └── #23 Regression View
+     │    │         ├── #24 Committable Baselines
+     │    │         ├── #26 CLI
+     │    │         ├── #28 CI Eval Action (needs #24, #26 too)
+     │    │         ├── #31 Quality Ratings
+     │    │         └── #43 Usage Analytics
+     │    ├── #25 Judge Golden-Set Harness
+     │    └── #46 Prompt Linter (schema-only, likely moot)
+     └── #27 Export/Import
 
 #11 + #14 ──→ #30 Cost Dashboard
 #15 + #30 ──→ #34 Non-Technical Dashboard
 #11 + #33 ──→ #35 NestJS Team API ──→ #36 Postgres Team Backend
-└── #37 Access Controls
-└── #38 Hosted/Team Mode
+                                        └── #37 Access Controls
+                                             └── #38 Hosted/Team Mode
 #27 + #28 ──→ #33 Repo-Based Sharing
 #16 + #20 + #26 + #28 ──→ #32 OSS Launch Readiness
 #09 + external embeddings ──→ #39 Embeddings
-├── #40 Semantic Search
-└── #41 Similarity Detection
+                                ├── #40 Semantic Search
+                                └── #41 Similarity Detection
 Phase 2 complete ──→ #44 Multi-Turn/Agentic Evals
 Phase 4 complete ──→ #45 Prosumer Hosted Mode
