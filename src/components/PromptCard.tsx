@@ -54,6 +54,7 @@ export default function PromptCard({
       </CardContent>
       <PromptActions
         promptId={prompt.id}
+        promptTitle={prompt.title}
         content={prompt.content}
         onCopy={onCopy}
         onDelete={onDelete}

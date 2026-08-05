@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { CardFooter } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import DeleteConfirmDialog from '@/components/DeleteConfirmDialog';
 
 interface PromptActionsProps {
   promptId: string;
+  promptTitle: string;
   content: string;
   onCopy: (content: string) => void;
   onDelete: (id: string) => void;
@@ -16,6 +18,7 @@ interface PromptActionsProps {
 
 export default function PromptActions({
   promptId,
+  promptTitle,
   content,
   onCopy,
   onDelete,
@@ -41,14 +44,10 @@ export default function PromptActions({
       <Button type="button" variant="outline" size="sm" onClick={handleCopy}>
         {copied ? 'Copied!' : 'Copy'}
       </Button>
-      <Button
-        type="button"
-        variant="destructive"
-        size="sm"
-        onClick={() => onDelete(promptId)}
-      >
-        Delete
-      </Button>
+      <DeleteConfirmDialog
+        promptTitle={promptTitle}
+        onConfirm={() => onDelete(promptId)}
+      />
     </CardFooter>
   );
 }

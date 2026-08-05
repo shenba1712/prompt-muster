@@ -73,6 +73,7 @@ export default function PromptDetailPage({
         </CardContent>
         <PromptActions
           promptId={prompt.id}
+          promptTitle={prompt.title}
           content={prompt.content}
           onCopy={copyToClipboard}
           onDelete={handleDelete}
