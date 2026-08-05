@@ -36,11 +36,7 @@ export default function ThemeToggle(): JSX.Element {
       size="icon"
       onClick={toggle}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      // Ghost variant sets no text color of its own, and this sits directly
-      // on the header's dark brand gradient (no fill) — needs the same
-      // explicit brand-contrast override Header.module.css gives the h1,
-      // or the icon inherits the dark default foreground and disappears.
-      className="min-h-11 min-w-11 text-[var(--brand-contrast)] hover:text-foreground"
+      className="min-h-11 min-w-11 text-muted-foreground hover:text-foreground"
     >
       {isDark ? (
         <SunIcon className="size-5" />

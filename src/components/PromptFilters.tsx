@@ -1,6 +1,7 @@
 'use client';
 
 import type { JSX } from 'react';
+import { StarIcon } from '@phosphor-icons/react';
 import { FilterState, MODEL_OPTIONS, CATEGORY_OPTIONS } from '@/types/prompt';
 import { isModel, isCategory } from '@/utils/prompt';
 import { Button } from '@/components/ui/button';
@@ -102,7 +103,8 @@ export default function PromptFilters({
           }
           className="flex-1 min-w-[140px]"
         >
-          {filterState.showFavorites ? '★ Favorites' : '☆ Favorites'}
+          <StarIcon weight={filterState.showFavorites ? 'fill' : 'regular'} />
+          Favorites
         </Button>
       </div>
       <Input

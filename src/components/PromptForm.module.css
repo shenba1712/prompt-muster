@@ -16,17 +16,6 @@
   gap: 0.5rem;
 }
 
-.actions button[type='submit'] {
-  background: var(--brand);
-  color: var(--brand-contrast);
-  border: none;
-  font-weight: 600;
-}
-
-.actions button[type='submit']:hover {
-  background: var(--brand-dark);
-}
-
 .row {
   display: flex;
   flex-wrap: wrap;

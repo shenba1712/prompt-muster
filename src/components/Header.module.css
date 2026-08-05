@@ -4,7 +4,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, var(--brand), var(--brand-gradient-end));
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
   padding: 1.5rem 2rem;
 }
 
@@ -15,7 +16,8 @@
 }
 
 .header h1 {
-  font-size: 1.75rem;
-  color: var(--brand-contrast);
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  color: var(--foreground);
   margin: 0;
 }

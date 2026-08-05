@@ -35,7 +35,7 @@ export default function PromptCard({
         <CardTitle>
           <Link
             href={`/prompts/${prompt.id}`}
-            className="after:absolute after:inset-0 hover:underline"
+            className="text-inherit no-underline after:absolute after:inset-0 hover:underline"
           >
             {prompt.title}
           </Link>

@@ -26,7 +26,8 @@
 }
 
 .count {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
   color: var(--muted-foreground);
   margin-left: auto;
 }

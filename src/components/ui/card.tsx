@@ -29,7 +29,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'h3'>) {
   return (
     <h3
       data-slot="card-title"
-      className={cn('min-w-0 text-base font-medium break-words', className)}
+      className={cn('min-w-0 text-md font-medium break-words', className)}
       {...props}
     />
   );

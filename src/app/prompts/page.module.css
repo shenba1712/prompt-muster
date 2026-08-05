@@ -1,14 +1,8 @@
 .page {
-  --brand: #0f6e56;
-  --brand-dark: #085041;
-  --brand-gradient-end: #185fa5;
-  --brand-contrast: #ffffff;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  font-family: var(--font-geist-sans);
   background-color: var(--background);
 }
 
