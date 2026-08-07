@@ -2,7 +2,7 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is([data-theme='dark'] *));
 
 @layer base {
   * {
@@ -78,33 +78,86 @@
 }
 
 :root {
-  --background: hsl(250 20% 99%);
-  --foreground: hsl(252 15% 12%);
-  --card: hsl(250 20% 99%);
-  --card-foreground: hsl(252 15% 12%);
-  --popover: hsl(250 20% 99%);
-  --popover-foreground: hsl(252 15% 12%);
-  --primary: hsl(252 47% 41%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(250 15% 95%);
-  --secondary-foreground: hsl(252 15% 12%);
-  --muted: hsl(250 15% 95%);
-  --muted-foreground: hsl(252 8% 45%);
-  --accent: hsl(250 15% 95%);
-  --accent-foreground: hsl(252 15% 12%);
+  /* Light and dark palettes, each a single source of truth referenced by
+     every layer below (:root default, OS-preference media query, and the
+     explicit [data-theme] override) — design-system.md §5's three-layer
+     strategy, so no color value is ever duplicated across layers. */
+  --light-background: hsl(250 20% 99%);
+  --light-foreground: hsl(252 15% 12%);
+  --light-card: hsl(250 20% 99%);
+  --light-card-foreground: hsl(252 15% 12%);
+  --light-popover: hsl(250 20% 99%);
+  --light-popover-foreground: hsl(252 15% 12%);
+  --light-primary: hsl(252 47% 41%);
+  --light-primary-foreground: hsl(0 0% 100%);
+  --light-secondary: hsl(250 15% 95%);
+  --light-secondary-foreground: hsl(252 15% 12%);
+  --light-muted: hsl(250 15% 95%);
+  --light-muted-foreground: hsl(252 8% 45%);
+  --light-accent: hsl(250 15% 95%);
+  --light-accent-foreground: hsl(252 15% 12%);
+  --light-border: hsl(250 15% 89%);
+  --light-input: hsl(250 15% 89%);
+  --light-ring: hsl(252 47% 41%);
+  --light-openai: hsl(208 65% 51%);
+  --light-anthropic: hsl(340 68% 76%);
+
+  --dark-background: hsl(252 24% 7%);
+  --dark-foreground: hsl(250 20% 96%);
+  --dark-card: hsl(252 20% 12%);
+  --dark-card-foreground: hsl(250 20% 96%);
+  --dark-popover: hsl(252 20% 13%);
+  --dark-popover-foreground: hsl(250 20% 96%);
+  --dark-primary: hsl(248 74% 75%);
+  --dark-primary-foreground: hsl(252 30% 12%);
+  --dark-secondary: hsl(252 16% 17%);
+  --dark-secondary-foreground: hsl(250 20% 96%);
+  --dark-muted: hsl(252 14% 15%);
+  --dark-muted-foreground: hsl(252 10% 68%);
+  --dark-accent: hsl(252 16% 17%);
+  --dark-accent-foreground: hsl(250 20% 96%);
+  --dark-border: hsl(252 14% 24%);
+  --dark-input: hsl(252 14% 24%);
+  --dark-ring: hsl(248 74% 75%);
+  --dark-openai: hsl(213 74% 60%);
+  --dark-anthropic: hsl(340 54% 62%);
+
+  /* Default: light, until the media query or an explicit [data-theme]
+     override below replaces these with the --dark-* values. */
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --card: var(--light-card);
+  --card-foreground: var(--light-card-foreground);
+  --popover: var(--light-popover);
+  --popover-foreground: var(--light-popover-foreground);
+  --primary: var(--light-primary);
+  --primary-foreground: var(--light-primary-foreground);
+  --secondary: var(--light-secondary);
+  --secondary-foreground: var(--light-secondary-foreground);
+  --muted: var(--light-muted);
+  --muted-foreground: var(--light-muted-foreground);
+  --accent: var(--light-accent);
+  --accent-foreground: var(--light-accent-foreground);
+  --border: var(--light-border);
+  --input: var(--light-input);
+  --ring: var(--light-ring);
+  --openai: var(--light-openai);
+  --anthropic: var(--light-anthropic);
+
+  /* Fixed across both modes per design-system.md §2.1 — status meaning
+     must not shift with theme. */
   --destructive: hsl(0 58% 52%);
   --destructive-foreground: hsl(0 0% 100%);
-  --border: hsl(250 15% 89%);
-  --input: hsl(250 15% 89%);
-  --ring: hsl(252 47% 41%);
-  --openai: hsl(208 65% 51%);
-  --anthropic: hsl(340 68% 76%);
+  --radius: 0.375rem;
+
+  /* Unused elsewhere in this app (no charts, no sidebar component) —
+     carried over unchanged rather than folded into the light/dark system
+     above, so as not to add ceremony nothing currently depends on. */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.375rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -115,28 +168,70 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-.dark {
-  --background: hsl(252 24% 7%);
-  --foreground: hsl(250 20% 96%);
-  --card: hsl(252 20% 12%);
-  --card-foreground: hsl(250 20% 96%);
-  --popover: hsl(252 20% 13%);
-  --popover-foreground: hsl(250 20% 96%);
-  --primary: hsl(248 74% 75%);
-  --primary-foreground: hsl(252 30% 12%);
-  --secondary: hsl(252 16% 17%);
-  --secondary-foreground: hsl(250 20% 96%);
-  --muted: hsl(252 14% 15%);
-  --muted-foreground: hsl(252 10% 68%);
-  --accent: hsl(252 16% 17%);
-  --accent-foreground: hsl(250 20% 96%);
-  --destructive: hsl(0 58% 52%);
-  --destructive-foreground: hsl(0 0% 100%);
-  --border: hsl(252 14% 24%);
-  --input: hsl(252 14% 24%);
-  --ring: hsl(248 74% 75%);
-  --openai: hsl(213 74% 60%);
-  --anthropic: hsl(340 54% 62%);
+/* OS-preference layer: applies whenever the visitor's OS prefers dark and
+   nothing more specific below has overridden it yet. Resolved by the
+   browser at paint time — no script, no cookie, no server round-trip. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--dark-background);
+    --foreground: var(--dark-foreground);
+    --card: var(--dark-card);
+    --card-foreground: var(--dark-card-foreground);
+    --popover: var(--dark-popover);
+    --popover-foreground: var(--dark-popover-foreground);
+    --primary: var(--dark-primary);
+    --primary-foreground: var(--dark-primary-foreground);
+    --secondary: var(--dark-secondary);
+    --secondary-foreground: var(--dark-secondary-foreground);
+    --muted: var(--dark-muted);
+    --muted-foreground: var(--dark-muted-foreground);
+    --accent: var(--dark-accent);
+    --accent-foreground: var(--dark-accent-foreground);
+    --border: var(--dark-border);
+    --input: var(--dark-input);
+    --ring: var(--dark-ring);
+    --openai: var(--dark-openai);
+    --anthropic: var(--dark-anthropic);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+  }
+}
+
+/* Explicit-override layer: the theme toggle. Comes after the media query in
+   source order, so for [data-theme="dark"]/[data-theme="light"] — equal
+   selector specificity to the media query's :root, same element — this
+   layer always wins regardless of OS preference, in either direction. */
+[data-theme='dark'] {
+  --background: var(--dark-background);
+  --foreground: var(--dark-foreground);
+  --card: var(--dark-card);
+  --card-foreground: var(--dark-card-foreground);
+  --popover: var(--dark-popover);
+  --popover-foreground: var(--dark-popover-foreground);
+  --primary: var(--dark-primary);
+  --primary-foreground: var(--dark-primary-foreground);
+  --secondary: var(--dark-secondary);
+  --secondary-foreground: var(--dark-secondary-foreground);
+  --muted: var(--dark-muted);
+  --muted-foreground: var(--dark-muted-foreground);
+  --accent: var(--dark-accent);
+  --accent-foreground: var(--dark-accent-foreground);
+  --border: var(--dark-border);
+  --input: var(--dark-input);
+  --ring: var(--dark-ring);
+  --openai: var(--dark-openai);
+  --anthropic: var(--dark-anthropic);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -150,6 +245,28 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+[data-theme='light'] {
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --card: var(--light-card);
+  --card-foreground: var(--light-card-foreground);
+  --popover: var(--light-popover);
+  --popover-foreground: var(--light-popover-foreground);
+  --primary: var(--light-primary);
+  --primary-foreground: var(--light-primary-foreground);
+  --secondary: var(--light-secondary);
+  --secondary-foreground: var(--light-secondary-foreground);
+  --muted: var(--light-muted);
+  --muted-foreground: var(--light-muted-foreground);
+  --accent: var(--light-accent);
+  --accent-foreground: var(--light-accent-foreground);
+  --border: var(--light-border);
+  --input: var(--light-input);
+  --ring: var(--light-ring);
+  --openai: var(--light-openai);
+  --anthropic: var(--light-anthropic);
 }
 
 @layer base {

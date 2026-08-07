@@ -26,50 +26,33 @@ export const metadata: Metadata = {
   description: 'Your Github for Prompts',
 };
 
-// Runs only on a first-ever visit, before the theme cookie exists — the
-// server can't know the OS preference (that's a client-only API), so it
-// renders light and this corrects it once and writes the cookie so every
-// future request, on any route, gets the right class straight from the
-// server via the cookies() read below. No inline script or client effect is
-// involved in the steady state, so there's nothing that can fail to execute
-// on Next's notFound() boundary (which drops <head> scripts) — the class is
-// just a normal server-rendered attribute there, same as `lang="en"`.
-const bootstrapThemeScript = `
-(function () {
-  try {
-    if (document.cookie.indexOf('${THEME_COOKIE_NAME}=') !== -1) return;
-    var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.documentElement.classList.toggle('dark', isDark);
-    document.cookie = '${THEME_COOKIE_NAME}=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=31536000; SameSite=Lax';
-  } catch (e) {}
-})();
-`;
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const isDark = cookieStore.get(THEME_COOKIE_NAME)?.value === 'dark';
+  const cookieTheme = cookieStore.get(THEME_COOKIE_NAME)?.value;
+  // Only an explicit choice (from the toggle) sets this attribute at all.
+  // With no cookie, the attribute is omitted entirely and globals.css's
+  // `@media (prefers-color-scheme: dark)` layer resolves the theme live, in
+  // CSS, on every paint — no script needed to detect or apply it, and
+  // nothing for hydration to reconcile since server and client agree on
+  // "no attribute" from the very first render.
+  const theme =
+    cookieTheme === 'dark' || cookieTheme === 'light' ? cookieTheme : undefined;
 
   return (
     <html
       lang="en"
-      // Only matters for the first-ever-visit bootstrap case above, where
-      // the client script may flip the class after this server render.
-      suppressHydrationWarning
+      data-theme={theme}
       className={cn(
-        isDark && 'dark',
         geistSans.variable,
         geistMono.variable,
         'font-mono',
         jetbrainsMono.variable
       )}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: bootstrapThemeScript }} />
-      </head>
       <body>
         <PromptProvider>{children}</PromptProvider>
       </body>
