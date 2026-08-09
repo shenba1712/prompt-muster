@@ -1,20 +1,12 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
-import {
-  CreatePromptInput,
-  UpdatePromptInput,
-  Prompt,
-  FilterState,
-} from '@/types/prompt';
+import { CreatePromptInput, UpdatePromptInput, Prompt } from '@/types/prompt';
 import { createPrompt } from '@/utils/prompt';
-import { filterPrompts } from '@/utils/filter-prompts';
 
 export interface UsePromptManagerReturn {
   prompts: Prompt[];
-  filteredPrompts: Prompt[];
   promptCount: number;
-  filteredPromptCount: number;
   favoriteCount: number;
   error: string | null;
   addPrompt: (input: CreatePromptInput) => Prompt;
@@ -22,8 +14,6 @@ export interface UsePromptManagerReturn {
   deletePrompt: (id: string) => void;
   copyToClipboard: (content: string) => Promise<void>;
   toggleFavorite: (id: string) => void;
-  filterState: FilterState;
-  setFilter: (updates: Partial<FilterState>) => void;
   seedPrompts: () => void; // test data
 }
 
@@ -48,12 +38,6 @@ export function usePrompts(): UsePromptManagerReturn {
 export default function PromptProvider({ children }: PromptProviderProps) {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [filterState, setFilterState] = useState<FilterState>({
-    model: 'all',
-    category: 'all',
-    search: '',
-    showFavorites: false,
-  });
 
   const addPrompt = (input: CreatePromptInput): Prompt => {
     const newPrompt = createPrompt(input);
@@ -93,14 +77,7 @@ export default function PromptProvider({ children }: PromptProviderProps) {
     );
   };
 
-  const setFilter = (updates: Partial<FilterState>) => {
-    setFilterState((prev) => ({ ...prev, ...updates }));
-  };
-
-  const filteredPrompts = filterPrompts(prompts, filterState);
-
   const promptCount = prompts.length;
-  const filteredPromptCount = filteredPrompts.length;
   const favoriteCount = prompts.filter((p) => p.isFavorite).length;
 
   // test data
@@ -158,9 +135,7 @@ export default function PromptProvider({ children }: PromptProviderProps) {
 
   const value: UsePromptManagerReturn = {
     prompts,
-    filteredPrompts,
     promptCount,
-    filteredPromptCount,
     favoriteCount,
     error,
     addPrompt,
@@ -168,8 +143,6 @@ export default function PromptProvider({ children }: PromptProviderProps) {
     deletePrompt,
     copyToClipboard,
     toggleFavorite,
-    filterState,
-    setFilter,
     seedPrompts,
   };
 

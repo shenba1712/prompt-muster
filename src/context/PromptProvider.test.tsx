@@ -485,206 +485,6 @@ describe('PromptProvider', () => {
     });
   });
 
-  describe('filtering', () => {
-    it('narrows filteredPrompts when model filter is set', () => {
-      const { result } = renderHook(() => usePrompts(), {
-        wrapper: PromptProvider,
-      });
-      const input1: CreatePromptInput = {
-        title: 'A',
-        content: 'a',
-        model: 'gpt-4o',
-        category: 'testing',
-        tags: [],
-      };
-      const input2: CreatePromptInput = {
-        title: 'B',
-        content: 'b',
-        model: 'claude-sonnet',
-        category: 'testing',
-        tags: [],
-      };
-
-      act(() => {
-        result.current.addPrompt(input1);
-        result.current.addPrompt(input2);
-      });
-
-      expect(result.current.filteredPrompts).toHaveLength(2);
-
-      act(() => {
-        result.current.setFilter({ model: 'gpt-4o' });
-      });
-
-      expect(result.current.filteredPrompts).toHaveLength(1);
-      expect(result.current.filteredPrompts[0].model).toBe('gpt-4o');
-    });
-
-    it('narrows filteredPrompts when search filter is set', () => {
-      const { result } = renderHook(() => usePrompts(), {
-        wrapper: PromptProvider,
-      });
-      const input1: CreatePromptInput = {
-        title: 'Code Review',
-        content: 'a',
-        model: 'gpt-4o',
-        category: 'testing',
-        tags: [],
-      };
-      const input2: CreatePromptInput = {
-        title: 'Unit Test',
-        content: 'b',
-        model: 'gpt-4o',
-        category: 'testing',
-        tags: [],
-      };
-
-      act(() => {
-        result.current.addPrompt(input1);
-        result.current.addPrompt(input2);
-      });
-
-      expect(result.current.filteredPrompts).toHaveLength(2);
-
-      act(() => {
-        result.current.setFilter({ search: 'Code' });
-      });
-
-      expect(result.current.filteredPrompts).toHaveLength(1);
-      expect(result.current.filteredPrompts[0].title).toBe('Code Review');
-    });
-
-    it('clears filters and shows all prompts again', () => {
-      const { result } = renderHook(() => usePrompts(), {
-        wrapper: PromptProvider,
-      });
-      const input1: CreatePromptInput = {
-        title: 'A',
-        content: 'a',
-        model: 'gpt-4o',
-        category: 'testing',
-        tags: [],
-      };
-      const input2: CreatePromptInput = {
-        title: 'B',
-        content: 'b',
-        model: 'claude-sonnet',
-        category: 'debugging',
-        tags: [],
-      };
-
-      act(() => {
-        result.current.addPrompt(input1);
-        result.current.addPrompt(input2);
-      });
-
-      act(() => {
-        result.current.setFilter({ model: 'gpt-4o', search: 'A' });
-      });
-
-      expect(result.current.filteredPrompts).toHaveLength(1);
-
-      act(() => {
-        result.current.setFilter({
-          model: 'all',
-          category: 'all',
-          search: '',
-          showFavorites: false,
-        });
-      });
-
-      expect(result.current.filteredPrompts).toHaveLength(2);
-    });
-  });
-
-  describe('filtering', () => {
-    it('partial filter updates preserve existing filter state', () => {
-      const { result } = renderHook(() => usePrompts(), {
-        wrapper: PromptProvider,
-      });
-
-      act(() => {
-        result.current.addPrompt({
-          title: 'A',
-          content: 'a',
-          model: 'gpt-4o',
-          category: 'testing',
-          tags: [],
-        });
-        result.current.addPrompt({
-          title: 'B',
-          content: 'b',
-          model: 'claude-sonnet',
-          category: 'debugging',
-          tags: [],
-        });
-      });
-
-      act(() => {
-        result.current.setFilter({ model: 'gpt-4o' });
-      });
-
-      expect(result.current.filterState.model).toBe('gpt-4o');
-
-      act(() => {
-        result.current.setFilter({ search: 'A' });
-      });
-
-      expect(result.current.filterState.model).toBe('gpt-4o');
-      expect(result.current.filterState.search).toBe('A');
-      expect(result.current.filteredPrompts).toHaveLength(1);
-      expect(result.current.filteredPrompts[0].title).toBe('A');
-    });
-
-    it('combines multiple filters with AND semantics', () => {
-      const { result } = renderHook(() => usePrompts(), {
-        wrapper: PromptProvider,
-      });
-
-      act(() => {
-        result.current.addPrompt({
-          title: 'Code Review',
-          content: 'Review this code',
-          model: 'gpt-4o',
-          category: 'code-review',
-          tags: [],
-        });
-        result.current.addPrompt({
-          title: 'Unit Tests',
-          content: 'Write tests',
-          model: 'gpt-4o',
-          category: 'testing',
-          tags: [],
-        });
-        result.current.addPrompt({
-          title: 'Debug Guide',
-          content: 'Debug code',
-          model: 'claude-sonnet',
-          category: 'debugging',
-          tags: [],
-        });
-      });
-
-      act(() => {
-        result.current.toggleFavorite(
-          result.current.prompts.find((p) => p.title === 'Code Review')!.id
-        );
-      });
-
-      act(() => {
-        result.current.setFilter({
-          model: 'gpt-4o',
-          category: 'code-review',
-          search: 'Code',
-          showFavorites: true,
-        });
-      });
-
-      expect(result.current.filteredPrompts).toHaveLength(1);
-      expect(result.current.filteredPrompts[0].title).toBe('Code Review');
-    });
-  });
-
   describe('seedPrompts', () => {
     it('loads seed data with correct count and structure', () => {
       const { result } = renderHook(() => usePrompts(), {
@@ -757,25 +557,6 @@ describe('PromptProvider', () => {
       expect(result.current.favoriteCount).toBe(favorites.length);
     });
 
-    it('seed data is fully filtered when filter is applied', () => {
-      const { result } = renderHook(() => usePrompts(), {
-        wrapper: PromptProvider,
-      });
-
-      act(() => {
-        result.current.seedPrompts();
-      });
-
-      act(() => {
-        result.current.setFilter({ model: 'claude-sonnet' });
-      });
-
-      const filtered = result.current.filteredPrompts;
-      expect(filtered.length).toBeGreaterThan(0);
-      filtered.forEach((prompt) => {
-        expect(prompt.model).toBe('claude-sonnet');
-      });
-    });
   });
 });
 
@@ -813,20 +594,12 @@ describe('usePrompts context guard', () => {
     expect(result.current.prompts).toEqual([]);
     expect(result.current.error).toBe(null);
     expect(result.current.promptCount).toBe(0);
-    expect(result.current.filteredPromptCount).toBe(0);
     expect(result.current.favoriteCount).toBe(0);
-    expect(result.current.filterState).toEqual({
-      model: 'all',
-      category: 'all',
-      search: '',
-      showFavorites: false,
-    });
     expect(typeof result.current.addPrompt).toBe('function');
     expect(typeof result.current.updatePrompt).toBe('function');
     expect(typeof result.current.deletePrompt).toBe('function');
     expect(typeof result.current.copyToClipboard).toBe('function');
     expect(typeof result.current.toggleFavorite).toBe('function');
-    expect(typeof result.current.setFilter).toBe('function');
     expect(typeof result.current.seedPrompts).toBe('function');
   });
 });
@@ -862,18 +635,6 @@ describe('PromptProvider state sharing', () => {
     expect(result.current.second.promptCount).toBe(1);
   });
 
-  it('shows one consumer a filter set by another', () => {
-    const { result } = renderHook(
-      () => ({ first: usePrompts(), second: usePrompts() }),
-      { wrapper: PromptProvider }
-    );
-
-    act(() => {
-      result.current.first.setFilter({ model: 'claude-sonnet' });
-    });
-
-    expect(result.current.second.filterState.model).toBe('claude-sonnet');
-  });
 
   it('isolates state between two separate providers', () => {
     const first = renderHook(() => usePrompts(), { wrapper: PromptProvider });

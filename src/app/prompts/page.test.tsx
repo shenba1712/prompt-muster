@@ -1,8 +1,20 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PromptsPage from './page';
 import PromptProvider from '@/context/PromptProvider';
+
+let mockSearchParams = new URLSearchParams();
+const replaceMock = vi.fn();
+
+// No `push` on this mock, deliberately — filtering must go through
+// `replace()`. If the page ever called `router.push`, that call would throw
+// "push is not a function" and fail the test, rather than silently passing.
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace: replaceMock }),
+  usePathname: () => '/prompts',
+  useSearchParams: () => mockSearchParams,
+}));
 
 // userEvent.setup() (used below) redefines navigator.clipboard as a
 // getter-only accessor for its own clipboard stub, so a later plain
@@ -20,6 +32,8 @@ function stubClipboard(writeText: () => Promise<void>) {
 
 beforeEach(() => {
   stubClipboard(() => Promise.resolve());
+  mockSearchParams = new URLSearchParams();
+  replaceMock.mockClear();
 });
 
 function renderPage() {
@@ -69,5 +83,51 @@ describe('PromptsPage', () => {
 
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toBe('Clipboard denied');
+  });
+
+  describe('filters as URL state', () => {
+    it('reads the model filter from the URL on load', async () => {
+      mockSearchParams = new URLSearchParams('model=gpt-4o');
+      const user = userEvent.setup();
+      renderPage();
+
+      await user.click(
+        screen.getByRole('button', { name: 'Load Sample Data' })
+      );
+
+      expect(screen.getByText('Showing 1 of 5 prompts.')).not.toBeNull();
+      expect(screen.getByText('Write Unit Tests')).not.toBeNull();
+      expect(screen.queryByText('Code Review')).toBeNull();
+    });
+
+    it('calls router.replace with the new filter, not push', async () => {
+      const user = userEvent.setup();
+      renderPage();
+
+      await user.click(screen.getByRole('button', { name: /Favorites/ }));
+
+      expect(replaceMock).toHaveBeenCalledTimes(1);
+      expect(replaceMock).toHaveBeenCalledWith('/prompts?favorites=true');
+    });
+
+    it('omits the param entirely when a filter returns to its default, instead of storing an empty/false value', async () => {
+      mockSearchParams = new URLSearchParams('favorites=true');
+      const user = userEvent.setup();
+      renderPage();
+
+      await user.click(screen.getByRole('button', { name: /Favorites/ }));
+
+      expect(replaceMock).toHaveBeenCalledWith('/prompts');
+    });
+
+    it('removes every param when "Clear filters" is clicked', async () => {
+      mockSearchParams = new URLSearchParams('model=gpt-4o&search=foo');
+      const user = userEvent.setup();
+      renderPage();
+
+      await user.click(screen.getByRole('button', { name: 'Clear filters' }));
+
+      expect(replaceMock).toHaveBeenCalledWith('/prompts');
+    });
   });
 });

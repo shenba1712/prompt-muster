@@ -1,25 +1,29 @@
 'use client';
 
-import type { JSX } from 'react';
+import { Suspense, type JSX } from 'react';
 import styles from './page.module.css';
 import PromptList from '@/components/PromptList';
 import PromptFilters from '@/components/PromptFilters';
 import { Button } from '@/components/ui/button';
 import { usePrompts } from '@/context/PromptProvider';
+import { useFilterParams } from '@/hooks/useFilterParams';
+import { filterPrompts } from '@/utils/filter-prompts';
 
-export default function PromptsPage(): JSX.Element {
+function PromptsPageContent(): JSX.Element {
   const {
-    filteredPrompts,
+    prompts,
     promptCount,
-    filteredPromptCount,
     error,
     deletePrompt,
     copyToClipboard,
     toggleFavorite,
-    filterState,
-    setFilter,
     seedPrompts,
   } = usePrompts();
+
+  const { filterState, setFilter } = useFilterParams();
+
+  const filteredPrompts = filterPrompts(prompts, filterState);
+  const filteredPromptCount = filteredPrompts.length;
 
   return (
     <>
@@ -53,5 +57,17 @@ export default function PromptsPage(): JSX.Element {
         onToggleFavorite={toggleFavorite}
       />
     </>
+  );
+}
+
+export default function PromptsPage(): JSX.Element {
+  // useFilterParams() calls useSearchParams() internally, which opts this
+  // subtree out of static rendering unless it's wrapped in Suspense —
+  // fallback is null since this page is already fully client-rendered with
+  // no real network wait to cover.
+  return (
+    <Suspense fallback={null}>
+      <PromptsPageContent />
+    </Suspense>
   );
 }
