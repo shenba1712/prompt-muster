@@ -52,10 +52,10 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npx tsc --noEmit
@@ -109,10 +109,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm test
@@ -226,7 +226,7 @@ inputs:
     required: false
     default: '5.00'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
 ```
 
@@ -246,7 +246,7 @@ jobs:
   eval:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: promptmuster/eval-action@v1
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -317,6 +317,12 @@ cause real harm, so it gets one table instead of being scattered across four sec
 
 ## Changelog
 
+- **v0.2 (2026-08-08)** — Corrected stale version pins found in the multi-angle doc audit:
+  `actions/checkout`/`actions/setup-node` bumped `@v4` → `@v7` (current major as of this
+  correction); `node-version: 20` → `22` across Pipelines A/B, matching the corrected
+  Node floor in `CLAUDE.md`/`trd.md` §13 (`better-sqlite3` already requires ≥22); the CI
+  Action's own `runs.using: 'node20'` → `'node24'`, since GitHub is deprecating Node 20
+  Actions runners in fall 2026 and already defaults new runs to Node 24 as of June 2026.
 - **v0.1 (2026-07-15)** — Initial pipelines. Four shipping mechanisms identified and kept
   deliberately separate (repo CI, npm package publish, demo site, the CI Action as a
   product) plus a light Phase 4 sketch; the old IndexedDB-based Vercel demo plan

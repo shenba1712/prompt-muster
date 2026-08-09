@@ -183,13 +183,18 @@ Local dev tools have been burned by exactly this class of bug repeatedly.
 
 **Required mitigations** (Phase 1, before `execute()` is reachable from any route handler):
 1. Bind to `127.0.0.1` only — never `0.0.0.0`.
-2. Validate `Origin`/`Host` headers on **every route handler, not only state-changing
-   ones** (widened 2026-08-04, finding #3 — the original scoping reasoned from the spend
-   angle only, but T3 separately names stored run history, which can contain secrets and
-   proprietary diffs, as "the most sensitive file on disk"; a read-only route serving that
-   history isn't state-changing by the original test, yet DNS rebinding — this section's
-   own named threat — defeats the CORS read/write distinction for GETs just as well).
-   Reject requests whose origin isn't the dashboard itself.
+2. Validate `Origin`/`Host` headers on **every plain Route Handler, not only
+   state-changing ones** (widened 2026-08-04, finding #3 — the original scoping reasoned
+   from the spend angle only, but T3 separately names stored run history, which can contain
+   secrets and proprietary diffs, as "the most sensitive file on disk"; a read-only route
+   serving that history isn't state-changing by the original test, yet DNS rebinding — this
+   section's own named threat — defeats the CORS read/write distinction for GETs just as
+   well). Reject requests whose origin isn't the dashboard itself. **Note (corrected
+   2026-08-08):** this manual check is only load-bearing for plain Route Handlers — Next.js
+   Server Actions already validate `Origin` against `Host`/`X-Forwarded-Host` automatically
+   and reject a mismatch, and are POST-only by construction. Keep the same explicit check on
+   any Server Action too, for defense-in-depth, but it's redundant there, not a gap — don't
+   budget it as new work for anything implemented as a Server Action.
 3. No provider key is ever readable via any route handler — keys stay in
    keychain/env, server-side of the route boundary ([database-schema.md §2.2](database-schema.md)
    already stores only presence).

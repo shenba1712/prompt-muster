@@ -61,11 +61,11 @@ that split exists and why it's deliberate, not a gap.
 The models-as-data table ([ADR-006](adr/ADR-006-models-and-pricing-as-data.md)) —
 edited via Settings → Models ([ia.md](ia.md)), never hardcoded. Every other table
 references a model by its `id` here, which is the exact provider snapshot string
-(`claude-opus-4-8`, `gpt-4o`), not a generic family name.
+(`claude-opus-5`, `gpt-4o`), not a generic family name.
 
 ```sql
 CREATE TABLE models (
-  id                    TEXT PRIMARY KEY,       -- exact snapshot id, e.g. "claude-opus-4-8"
+  id                    TEXT PRIMARY KEY,       -- exact snapshot id, e.g. "claude-opus-5"
   provider              TEXT NOT NULL,          -- 'openai' | 'anthropic' | 'google'
   display_name          TEXT NOT NULL,
   context_window        INTEGER NOT NULL,

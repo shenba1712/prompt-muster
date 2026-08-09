@@ -31,15 +31,19 @@ them in PromptMuster colors would misrepresent what a user actually sees on thos
 
 ## 1. The seven journeys
 
-| #   | Journey                   | Screens                                                    | Notes                                                                                     |
-| --- | ------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| 1   | Create and save a prompt  | Library → Editor → Library                                 | New card highlighted, "committed as v1" toast                                             |
-| 2   | Run once                  | Run (before) → Run (streaming) → Run (complete)            | See [§2](#2-new-patterns-this-exercise-surfaced) for the streaming state                  |
-| 3   | Compare across models     | Run (multi-select) → Comparison                            | Confirms Comparison is a _mode_ of Run, not a separate screen — matches [ia.md §3](ia.md) |
-| 4   | Attach eval, run suite    | Evals editor → Eval run (in progress) → Eval run (results) | Progressive reveal, not batch — see [§2](#2-new-patterns-this-exercise-surfaced)          |
-| 5   | Version history, rollback | History → Diff → History (post-rollback)                   | Rollback needs no confirm dialog — see [§2](#2-new-patterns-this-exercise-surfaced)       |
-| 6   | MCP-driven run from IDE   | IDE panel (confirm-before-spend) → IDE panel (result)      | Confirm gate ties directly to [trd.md §12](trd.md)                                        |
-| 7   | CI eval on a PR           | GitHub PR (check + bot comment)                            | Shows the pass case; regression noted as a caption, not a second frame                    |
+Status legend matches [ia.md §0](ia.md): ✅ built · 🚧 in progress · 📝 designed, not built ·
+🔮 deferred (column added 2026-08-08 — this table previously carried no build-status signal
+at all, unlike its ia.md sibling, and so read as if these journeys were already real).
+
+| #   | Journey                   | Status | Screens                                                    | Notes                                                                                     |
+| --- | ------------------------- | ------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 1   | Create and save a prompt  | 🚧     | Library → Editor → Library                                 | Prompt creation/edit is real; the file-write + auto-commit + "committed as v1" toast drawn here aren't built yet (no persistence — see `CLAUDE.md`) |
+| 2   | Run once                  | 📝     | Run (before) → Run (streaming) → Run (complete)            | See [§2](#2-new-patterns-this-exercise-surfaced) for the streaming state                  |
+| 3   | Compare across models     | 📝     | Run (multi-select) → Comparison                            | Confirms Comparison is a _mode_ of Run, not a separate screen — matches [ia.md §3](ia.md) |
+| 4   | Attach eval, run suite    | 📝     | Evals editor → Eval run (in progress) → Eval run (results) | Progressive reveal, not batch — see [§2](#2-new-patterns-this-exercise-surfaced)          |
+| 5   | Version history, rollback | 📝     | History → Diff → History (post-rollback)                   | Rollback needs no confirm dialog — see [§2](#2-new-patterns-this-exercise-surfaced)       |
+| 6   | MCP-driven run from IDE   | 📝     | IDE panel (confirm-before-spend) → IDE panel (result)      | Confirm gate ties directly to [trd.md §12](trd.md)                                        |
+| 7   | CI eval on a PR           | 📝     | GitHub PR (check + bot comment)                            | Shows the pass case; regression noted as a caption, not a second frame                    |
 
 ---
 

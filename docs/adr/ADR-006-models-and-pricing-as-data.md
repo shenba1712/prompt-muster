@@ -20,9 +20,14 @@ The Week 1 prototype modeled available models as a hardcoded TypeScript union ty
 (`gpt-4o | gpt-4o-mini | claude-sonnet | claude-haiku | gemini-pro | gemini-flash`, per
 [reference/key-desicions.md](https://github.com/shenba1712/engineeros-roadmap/blob/main/reference/key-desicions.md)) — a reasonable choice for
 learning TypeScript early on, but the placeholder identifiers were already stale by the
-time real execution work began (current Anthropic models are `claude-opus-4-8` /
-`claude-sonnet-5` / `claude-haiku-4-5`, not the names in the union), and pricing /
-context-window figures change independently of any code release.
+time real execution work began (Anthropic models at the time were `claude-opus-4-8` /
+`claude-sonnet-5` / `claude-haiku-4-5`, not the names in the union — and even that
+"current" list didn't stay current: `claude-opus-4-8` is itself now legacy, per
+Anthropic's own model-overview docs, checked 2026-08-08. This is the strongest possible
+argument for this ADR's own decision: even a staff-written "current" example goes stale
+before the ink dries, which is exactly why models belong in a data table, not in
+prose or code), and pricing / context-window figures change independently of any code
+release.
 
 ---
 

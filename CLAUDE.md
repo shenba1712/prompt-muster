@@ -12,24 +12,49 @@ survives client-side navigation. Still lost on full refresh — persistence is
 still Week 5, unchanged.
 Seed data function exists for development testing.
 CRUD is complete including the update/edit flow (Week 2).
-Tests: Vitest + React Testing Library; 77 tests across 4 files (added
-`PromptProvider.test.tsx` this week) — all green.
+Tests: Vitest + React Testing Library; 156 tests across 20 files — all green.
 Styling: Tailwind v4 + shadcn/ui (Base UI primitives) installed Week 2;
-migration complete for interactive primitives, but a 2026-08-04 design-review
-audit found the Week 2 migration never touched layout chrome — the gradient
-`Header`, default-anchor-styled prompt titles, a unicode favorite star, and
-"Load Sample Data" sitting in production layout are all still Week 1
-scaffolding. Tracked as ticket `07.6` (`core/tickets.md`); `#07` is reopened
-to `[~]` in `core/backlog.md` until it lands.
+migration now complete including layout chrome — a 2026-08-04 design-review
+audit found the Week 2 pass had missed the gradient `Header`,
+default-anchor-styled prompt titles, a unicode favorite star, and
+"Load Sample Data" sitting in production layout; ticket `07.6` landed the
+same day (gradient removed, titles styled via `CardTitle`, star replaced
+with a phosphor icon, sample-data button gated to dev-only builds via
+`NODE_ENV`), and `core/backlog.md` closed `#07` back to `[~]` pending
+07.7/07.8 only (keyboard-nav audit, feedback/motion policy — still open).
 Routing: App Router structure landed this week — `/prompts` list,
 `/prompts/[id]` detail + `not-found.tsx`, `/prompts/new` +
 `/prompts/[id]/edit` editor routes sharing `PromptForm`. `06.4` (filters/
 search as URL state + a settings page stub) is the one remaining routing
 ticket, not yet started.
-Dark mode: toggle built (`ThemeToggle.tsx` + `src/lib/theme.ts`) using a
+Dark mode: three-way toggle (`ThemeToggle.tsx` + `src/lib/theme.ts`) over a
 server-read cookie (`cookies()` in `layout.tsx`), not `localStorage` — avoids
 the hydration-flash problem more thoroughly than the originally-planned
-approach; see `core/completion-log.md`'s Week 3 section for why.
+approach; see `core/completion-log.md`'s Week 3 section for why. Three states,
+not two: an explicit `light`/`dark` writes the cookie and the server stamps
+`data-theme` on `<html>`; `system` deletes both, and the *absence* of the
+attribute is what lets `globals.css`'s `@media (prefers-color-scheme: dark)`
+layer resolve the OS preference live on every paint. Never store a concrete
+value for `system` — that freezes whatever the OS happened to be at click
+time. Load-bearing details, all verified against a production build on
+2026-08-07 (re-check on any Next upgrade):
+
+- The `[data-theme]` blocks beat the media query by **source order**, not
+  specificity (`:root`, `.dark`, and `[data-theme='dark']` are all 0-1-0).
+  Moving them above the media query silently breaks the override.
+- `@custom-variant dark` in `globals.css` must mirror **both** layers, or
+  `dark:` utilities won't fire for a dark-OS visitor who never toggled — dark
+  variables, light utilities.
+- `notFound()` thrown mid-render emits a bare `<html id="__next_error__">`
+  shell: the layout never renders, no `<head>` scripts survive, and CSS ships
+  only as `rel="preload"` (fetched, *not* applied). `generateViewport()` in
+  `layout.tsx` is the only thing that reaches it, because Next resolves
+  metadata independently of which tree renders — and it gets request context,
+  so it can read the theme cookie. `color-scheme` is a *list of supported
+  schemes*, not a ranking: omitting one is what forces the other, which is how
+  an explicit choice wins over the OS on that shell.
+- Test this in a **production build**. `next dev` injects CSS via JS and
+  gives the wrong answer.
 No data persistence yet (prompt files on disk + SQLite planned for Week 5 —
 supersedes the earlier IndexedDB plan; see project-files/trd.md §4 and
 ADR-002).
@@ -226,7 +251,7 @@ I'll decide whether to add it. Don't modify this file yourself.
 - Next.js 14+ (App Router)
 - React 18+
 - TypeScript 5+ (strict mode)
-- Node.js 18+
+- Node.js 22+ (matches `better-sqlite3`'s and `next@16`'s real floor — "18+" undercounted this)
 - Tailwind CSS v4 + shadcn/ui on Base UI primitives (@base-ui/react; "base-lyra" style, phosphor icons — see components.json). Component source lives in src/components/ui/
 
 ## Project Structure

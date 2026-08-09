@@ -259,9 +259,10 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
 
      Replace the Model union type with a table:
      {provider, snapshotId, contextWindow, inputPrice, outputPrice}.
-     Seed with current snapshots (claude-opus-4-8, claude-sonnet-5,
-     claude-haiku-4-5, etc.) — the repo's existing strings are
-     already stale.
+     Seed with current snapshots (claude-opus-5, claude-sonnet-5,
+     claude-haiku-4-5-20251001, etc. — re-verify against each provider's
+     live model list when this ticket is actually picked up, not from
+     this note) — the repo's existing strings are already stale.
 
      Prerequisites: #09
      Teaches: When a union type should become data instead (model

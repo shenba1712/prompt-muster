@@ -25,7 +25,7 @@ is a conventional client/server API:
 | Surface                                                                 | What crosses it                                   | Is it "an API"?                                               |
 | ----------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------- |
 | **[§1](#1-surface-a--internal-core-library-api) Internal core library** | TypeScript function calls, in-process             | A contract in the "stable interface" sense, not a network one |
-| **[§2](#2-surface-b--mcp-server-api) MCP server**                       | JSON-RPC-ish tool calls, IDE agent ↔ PromptMuster | Yes — the one real process-boundary contract in Phase 1–3     |
+| **[§2](#2-surface-b--mcp-server-api) MCP server**                       | MCP `prompts` (list/get) + one `run_prompt` tool call, IDE agent ↔ PromptMuster | Yes — the one real process-boundary contract in Phase 1–3     |
 | **[§3](#3-surface-c--team-http-api-phase-4-only) Team HTTP API**        | REST, only in Phase 4                             | Yes, but doesn't exist yet                                    |
 
 Each is spec'd below in its own native contract language — TypeScript signatures for the
@@ -42,8 +42,8 @@ functions. This is the surface [trd.md §1](trd.md)'s architecture diagram label
 
 | Module    | Function                                     | Input                                   | Returns                                                         | Throws                 | Used by                                         |
 | --------- | -------------------------------------------- | --------------------------------------- | --------------------------------------------------------------- | ---------------------- | ----------------------------------------------- |
-| Prompt    | `listPrompts(opts)`                          | `{category?, tag?, search?, favorite?}` | `PromptSummary[]`                                               | —                      | Library screen, MCP `list_prompts`, CLI `list`  |
-| Prompt    | `getPrompt(slug)`                            | `slug: string`                          | `Prompt`                                                        | `PromptNotFoundError`  | Prompt Detail, MCP `get_prompt`, CLI            |
+| Prompt    | `listPrompts(opts)`                          | `{category?, tag?, search?, favorite?}` | `PromptSummary[]`                                               | —                      | Library screen, MCP `prompts/list`, CLI `list`  |
+| Prompt    | `getPrompt(slug)`                            | `slug: string`                          | `Prompt`                                                        | `PromptNotFoundError`  | Prompt Detail, MCP `prompts/get`, CLI            |
 | Prompt    | `savePrompt(prompt)`                         | `Prompt`                                | `{slug, commitSha}`                                             | `ValidationError`      | Editor screen                                   |
 | Prompt    | `resolveVariables(prompt, vars)`             | `Prompt, Record<string,string>`         | `ResolvedMessages`                                              | `MissingVariableError` | Run screen, `execute()`                         |
 | Execution | `execute(req)`                               | `ExecutionRequest`                      | `AsyncIterable<Chunk>`                                          | `ProviderError`        | Run, Comparison, MCP `run_prompt`               |
@@ -87,88 +87,71 @@ for how errors are represented consistently across this and the other two surfac
 ## 2. Surface B — MCP server API
 
 The one real external contract in Phase 1–3 ([ia.md §5](ia.md),
-[trd.md §7](trd.md)). Three tools, matching what's already been scoped — no more, no less.
+[trd.md §7](trd.md)). **Two MCP primitives, not three tools** (corrected 2026-08-08 — MCP
+has a purpose-built, user-controlled `prompts` primitive that's the architecturally correct
+fit for read access, distinct from model-invoked `tools`): the library is exposed via the
+protocol's own `prompts/list` and `prompts/get` methods ([§2.1](#21-listing-prompts--the-mcp-promptslist-method)–[§2.2](#22-retrieving-a-prompt--the-mcp-promptsget-method)),
+and `run_prompt` is the one genuine **tool**, since it's the one call with a side effect
+([§2.3](#23-run_prompt)).
 
-### 2.1 `list_prompts`
+### 2.1 Listing prompts — the MCP `prompts/list` method
 
-Read-only, no confirmation required.
-
-```json
-{
-  "name": "list_prompts",
-  "description": "List prompts in the local library, optionally filtered by category, tag, or search text.",
-  "inputSchema": {
-    "type": "object",
-    "properties": {
-      "category": { "type": "string" },
-      "tag": { "type": "string" },
-      "search": { "type": "string" }
-    },
-    "additionalProperties": false
-  }
-}
-```
-
-Result:
+Read-only, and **not a custom tool** — PromptMuster registers every prompt in the user's
+library as an MCP prompt (`server.registerPrompt(slug, {...})` via the MCP TypeScript SDK),
+and the protocol's own `prompts/list` method lists them automatically. There's no bespoke
+`list_prompts` schema to design; the shape is protocol-defined:
 
 ```json
 {
   "prompts": [
     {
-      "slug": "code-review-thorough",
+      "name": "code-review-thorough",
       "title": "code-review-thorough",
-      "category": "code-review",
-      "model": "claude-opus-4-8",
-      "favorite": false
+      "description": "Strict review focused on correctness bugs · category: code-review · model: claude-opus-5",
+      "arguments": [
+        { "name": "language", "description": "typescript | python | go", "required": true },
+        { "name": "diff", "description": "The diff to review", "required": true }
+      ]
     }
   ]
 }
 ```
 
-### 2.2 `get_prompt`
+**Real limitation, stated honestly:** `prompts/list` has no `category`/`tag`/`search` filter
+params in the protocol itself — it always returns the whole list (paginated via `cursor` for
+large libraries). Category/model/favorite are folded into `description` so an agent's own
+fuzzy-match can use them; a real server-side filter isn't available on this primitive. If
+that turns out to matter, the fallback is an actual `search_prompts` **tool** (client asks a
+question, gets a filtered answer back) — not a change to how `prompts/list` itself works.
 
-Read-only, no confirmation required. Returns enough for the calling agent to know what
-variables it needs to fill and what the default model/pricing looks like.
+### 2.2 Retrieving a prompt — the MCP `prompts/get` method
 
-```json
-{
-  "name": "get_prompt",
-  "description": "Retrieve a prompt's full content, variables, output schema, and model configuration.",
-  "inputSchema": {
-    "type": "object",
-    "properties": { "slug": { "type": "string" } },
-    "required": ["slug"],
-    "additionalProperties": false
-  }
-}
-```
-
+Also protocol-defined, also not a custom tool. Request:
+`{"name": "code-review-thorough", "arguments": {"language": "typescript", "diff": "..."}}`.
 Result:
 
 ```json
 {
-  "slug": "code-review-thorough",
-  "commitSha": "a3f9c12",
+  "description": "Strict review focused on correctness bugs",
   "messages": [
-    {
-      "role": "system",
-      "content": "You are a senior engineer. Report only correctness bugs."
-    },
-    { "role": "user", "content": "Review this {{language}} diff:\n{{diff}}" }
-  ],
-  "variables": [
-    { "name": "language", "type": "select" },
-    { "name": "diff", "type": "file" }
-  ],
-  "model": {
-    "id": "claude-opus-4-8",
-    "provider": "anthropic",
-    "inputPricePerMtok": 5.0,
-    "outputPricePerMtok": 25.0
-  },
-  "outputSchema": null
+    { "role": "user", "content": { "type": "text", "text": "Review this typescript diff:\n..." } }
+  ]
 }
 ```
+
+**A real mismatch to design around, not paper over:** MCP's `PromptMessage.role` is only
+`"user"` or `"assistant"` — there is no `"system"` role in the primitive. A prompt file's
+system message (`{{role "system"}}` block, [trd.md §3](trd.md)) doesn't map onto a
+`PromptMessage` directly. The two honest options: fold the system text into `description`
+(loses it from the actual message the model sees), or prepend it into the first `user`
+message's text (keeps it in-context, but relabels it). Neither is free; pick one before
+Phase 1's MCP work starts, not while writing it — flagged, not resolved, here.
+
+Model/pricing metadata (`claude-opus-5`, `$5.00`/`$25.00` per Mtok) isn't part of the
+`prompts/get` response shape at all — the protocol has no field for it. If an agent needs
+pricing ahead of a `run_prompt` call, it stays a `run_prompt(dry_run: true)` call
+([§2.4](#24-the-confirm-before-spend-contract)), not something the prompt-retrieval step can
+return.
 
 ### 2.3 `run_prompt`
 
@@ -210,7 +193,7 @@ Result — `dry_run: true`:
   "estimate": true,
   "estimated_tokens": 1150,
   "estimated_cost_usd": 0.006,
-  "model": "claude-opus-4-8"
+  "model": "claude-opus-5"
 }
 ```
 
@@ -220,7 +203,7 @@ Result — `dry_run: false` (or omitted):
 {
   "output": "1. The optional-chaining fix on line 13 is correct...",
   "run_id": "b7e2...",
-  "model": "claude-opus-4-8",
+  "model": "claude-opus-5",
   "tokens": { "in": 1148, "out": 42 },
   "cost_usd": 0.0057
 }

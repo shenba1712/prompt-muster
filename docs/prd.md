@@ -262,7 +262,10 @@ nice-to-have. Phase mapping in [§9](#9-release-phases).
 - **P0** Prompts stored as files with the schema in [§6.0](#60-foundation--prompts-as-files).
 - **P0** Create / read / update / delete via dashboard and CLI. _(CRUD exists; extend to file-backed, multi-message.)_
 - **P0** Typed template variables with dynamic form generation on the dashboard.
-- **P0** Full-text search + filter by model / category / tag / favorite. _(Done in Week 1.)_
+- **P0** Full-text search + filter by model / category / favorite. _(Search + model/
+  category/favorite filters done in Week 1; **tag filtering is not implemented** — no
+  `tags` field in `FilterState`, no filter UI in `PromptFilters`/`PromptTags` — corrected
+  2026-08-08. Tracked toward `06.4`'s URL-state filter work.)_
 - **P1** Optional declared output schema per prompt.
 - **P1** First-run setup recommends connecting a private git remote — framed as
   **backup/disaster recovery**, not sharing ([disaster-recovery.md §1.2](disaster-recovery.md);

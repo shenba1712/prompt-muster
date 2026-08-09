@@ -72,7 +72,7 @@ Decisions with real trade-offs. Each has become an ADR — see [../adr/](adr/REA
 | A2  | Prompts + eval baselines as **files**; runs/logs in **SQLite**                                  | Version history/diff/sharing = git for free; runs are relational & high-volume | Two storage models to reason about                         |
 | A3  | **SQLite** local, **Postgres** team — behind one repository interface                           | A "runs on your machine" tool can't require a DB server                        | Repository abstraction has a cost; keep it thin            |
 | A4  | Hand-built provider adapters (raw `fetch` first, official SDKs allowed after)                   | Learning goal: see the wire, SSE, retries; then productionize                  | Slower first adapter than reaching for an SDK              |
-| A5  | Adopt/extend an existing prompt-file convention (**OPEN**, [§14](#14-open-technical-questions)) | Interop + credibility; format is a one-way door                                | Less freedom than a bespoke format                         |
+| A5  | Adopt/extend an existing prompt-file convention — ✅ **dotprompt** ([ADR-005](adr/ADR-005-prompt-file-format-adopt-not-invent.md)) | Interop + credibility; format is a one-way door                                | Less freedom than a bespoke format                         |
 | A6  | Models & pricing are **data**, not code (union types)                                           | Model IDs and prices drift monthly; snapshots must be pinnable                 | Migration from Week-1 union types (a planned, good lesson) |
 | A7  | MCP server is **read + run**, ships before the eval runner                                      | Smallest pillar, starts the daily-use flywheel, timing window                  | Eval-in-IDE waits for a later phase                        |
 
@@ -86,48 +86,83 @@ change freely. **Decided: adopt and extend Google's dotprompt**
 the shape below is in that family, with PromptMuster's own additions namespaced under a
 `promptmuster:` frontmatter block.
 
-**Shape:** one file per prompt, YAML frontmatter + a role-tagged body. Example
-`code-review.prompt.md`:
+**Shape:** one file per prompt, YAML frontmatter + a role-tagged Handlebars body. Example
+`code-review.prompt.md` — **corrected 2026-08-08** to match dotprompt's actual spec (verified
+against `google.github.io/dotprompt`; the previous version of this example used `system:`/
+`user:` YAML keys, a flat `variables:` array, and a nested `model.params` object, none of
+which are real dotprompt syntax — a real dotprompt parser would not have parsed it):
 
 ```yaml
 ---
-schemaVersion: 1 # one-way door — present from day one
 name: code-review-thorough
 description: Strict review focused on correctness bugs
-model:
-  provider: anthropic
-  id: claude-opus-4-8 # exact snapshot string, pinned (see §5.4)
-  params: { temperature: 0.2, max_tokens: 2000 }
-variables: # typed template variables (a.k.a. context slots)
-  - { name: language, type: select, options: [typescript, python, go] }
-  - { name: diff, type: file }
-outputSchema: # OPTIONAL — JSON Schema; powers validation + rendering
-  type: object
-  properties: { issues: { type: array, items: { type: string } } }
-  required: [issues]
-  additionalProperties: false
+model: anthropic/claude-opus-5 # flat provider/id string — see §5.4 for the pinning caveat
+config:
+  temperature: 0.2
+  maxOutputTokens: 2000
+input:
+  schema:
+    language(enum): [typescript, python, go]
+    diff: string, The diff to review
+output:
+  schema:
+    issues(array): string
+promptmuster:
+  schemaVersion: 1 # one-way door — present from day one; PromptMuster's own additions live here
+  category: code-review
+  tags: [review, correctness]
+  isFavorite: false
+  variableKinds:
+    language: select # drives the dashboard's form-control choice; dotprompt itself only sees `enum`
+    diff: file
 ---
-system: |
-  You are a senior engineer. Report only correctness bugs.
-user: |
-  Review this {{language}} diff:
-  {{diff}}
+{{role "system"}}
+You are a senior engineer. Report only correctness bugs.
+
+{{role "user"}}
+Review this {{language}} diff:
+{{diff}}
 ```
+
+(Whether a real dotprompt parser tolerates an unrecognized top-level `promptmuster:` key, or
+requires nesting under dotprompt's own `metadata` block instead, still needs confirming
+against the actual parser once Phase 1 building starts — flagged, not assumed. The
+`provider/` prefix itself is now verified, not guessed: Genkit's own plugin docs confirm
+`openai/gpt-4o`-style frontmatter directly, and the `@genkit-ai/anthropic` plugin registers
+itself as `anthropic`, following the identical `pluginName/modelId` convention — see
+`examples/prompts/` for both in use, 2026-08-09.)
 
 **Design rules:**
 
-- **Messages, not a string.** Body is a role-tagged array (`system`/`user`/`assistant`) —
-  corrects the Week-1 `content: string` model. This must land **before** execution is built
-  (cheapest moment; after execution it's a migration).
-- **Templating is minimal `{{var}}` interpolation** for v1 — no conditionals/loops. Keeps
-  the parser tiny and the format portable; escalate to a real templating lib only if a real
-  need appears. _(OPEN-ish; lean minimal.)_
-- **`outputSchema` is JSON Schema**, and it's the connective tissue: it drives structured-
-  output requests, result validation/rendering, the eval "schema" assertion ([§6.2](#62-assertion-types)),
-  and the linter's one mechanical check. Note provider JSON-Schema limits (no recursion, no
-  numeric/length constraints, `additionalProperties:false` required) — validate the rest
-  client-side.
-- **`schemaVersion`** on every file; the parser refuses unknown major versions.
+- **Messages, not a plain string.** The body is one Handlebars string segmented into
+  role-tagged messages via inline `{{role "system"/"user"/"assistant"}}` markers — corrects
+  the Week-1 `content: string` model. This must land **before** execution is built (cheapest
+  moment; after execution it's a migration).
+- **Templating is minimal `{{var}}` interpolation** for v1 — no conditionals/loops, even
+  though dotprompt bodies are technically full Handlebars. Keeps the parser/authoring UI
+  tiny and the format portable; escalate to a real templating lib only if a real need
+  appears. _(OPEN-ish; lean minimal.)_
+- **`output.schema` is Picoschema** (dotprompt's compact YAML type syntax, compiling to JSON
+  Schema), and it's the connective tissue: it drives structured-output requests, result
+  validation/rendering, the eval "schema" assertion ([§6.2](#62-assertion-types)), and the
+  linter's one mechanical check. **Provider JSON-Schema limits are not uniform — corrected
+  2026-08-08, the previous single rule here was Anthropic's limits mislabeled as universal:**
+  - **Anthropic:** no recursion, no numeric/string-length constraints, `additionalProperties:
+    false` required.
+  - **OpenAI:** recursion via `$ref` and numeric constraints (`minimum`/`maximum`/
+    `multipleOf`) *are* supported; `additionalProperties: false` is still required; string
+    `minLength`/`maxLength` are **not** supported; nesting is capped at 10 levels and 5000
+    total object properties.
+  Validate the provider-unsupported rest client-side, and don't reuse an Anthropic-shaped
+  schema linter unmodified against OpenAI.
+- **`schemaVersion`** (now inside the `promptmuster:` block, not top-level) on every file;
+  the parser refuses unknown major versions.
+- **The `promptmuster:` block isn't just `schemaVersion` + variable kinds.** Hand-authoring
+  real prompts (2026-08-09) found it also has to carry `category`, `tags`, and `isFavorite`
+  — any PromptMuster-domain concept dotprompt has no native equivalent for at all. `id`
+  (UUID) and `createdAt` don't need a home here, though: the filename is the identifier, and
+  `git log` already gives provenance for free (ADR-002) — putting `createdAt` in frontmatter
+  would just go stale next to the truth.
 
 **Eval test cases live in a sibling file**, not inline — keeps prompt files clean and lets
 baselines be committed separately (mirrors how test files sit beside source):
@@ -201,8 +236,10 @@ Accurate token counts are **per-provider**, and there is a real footgun:
 
 - **OpenAI** — `tiktoken`, computed **locally** (instant, no network).
 - **Anthropic** — a **token-counting API call** (`messages.count_tokens`); accurate,
-  network. `tiktoken` is **wrong for Claude** — it undercounts by ~15–20% (more on code) —
-  so it must **not** be used as a shortcut for the Claude count.
+  network. `tiktoken` is **wrong for Claude** — it undercounts, more so on code (the often-
+  cited ~15–20% figure traces only to secondary blog posts, not an Anthropic-published
+  number — treat it as a rough community estimate, not a verified constant) — so it must
+  **not** be used as a shortcut for the Claude count.
 - **Google (Gemini)** — a `countTokens` call; accurate, network.
 
 **Design consequence for cost preflight (PRD §6.4):** show an **instant local heuristic
@@ -213,9 +250,16 @@ labels it. Pricing comes from the models-as-data table (A6), keyed by exact snap
 **Model IDs are data (A6).** The Week-1 union (`gpt-4o | claude-sonnet | …` in
 [../reference/key-desicions.md](https://github.com/shenba1712/engineeros-roadmap/blob/main/reference/key-desicions.md)) is stale and must migrate to
 a table with `{provider, snapshotId, contextWindow, inputPrice, outputPrice}`. Current
-examples to seed it: Anthropic `claude-opus-4-8` / `claude-sonnet-5` / `claude-haiku-4-5`
-(the repo's `claude-sonnet`/`claude-haiku` strings are out of date). Store the **exact
-snapshot** on every run, or replay/regression is meaningless.
+examples to seed it (re-check against each provider's model list at Phase-1 build time —
+this table's whole reason to exist is that these strings drift): Anthropic `claude-opus-5` /
+`claude-sonnet-5` / `claude-haiku-4-5-20251001` (the repo's `claude-sonnet`/`claude-haiku`
+strings are out of date, and so — already, as of this correction, 2026-08-08 — is
+`claude-opus-4-8`, which Anthropic now lists as legacy). **Undated aliases aren't
+snapshots:** for pre-4.6-generation models, a bare alias like `claude-haiku-4-5` resolves to
+a dated ID (`claude-haiku-4-5-20251001`) and can move underneath you — use the **dated**
+form as the actual pinned `snapshotId`, not the alias, or "store the exact snapshot on every
+run" isn't actually true. Store the exact snapshot on every run, or replay/regression is
+meaningless.
 
 ---
 
@@ -239,7 +283,7 @@ Pure functions where possible; the judge is the one async/LLM case.
 | contains / regex | substring / `RegExp`                                                 |
 | schema           | validate against the prompt's `outputSchema` (JSON Schema via `ajv`) |
 | property         | length / language / format / must-not-contain                        |
-| **llm-judge**    | cheap model (e.g. `claude-haiku-4-5`) scores against a rubric        |
+| **llm-judge**    | cheap model (e.g. `claude-haiku-4-5-20251001`, pinned — see §5.4) scores against a rubric |
 
 ### 6.3 Determinism handling
 
@@ -281,9 +325,20 @@ tool-calling flows is deferred in writing — it's a research-grade problem and 
 - Built on the **MCP TypeScript SDK**; runs as a local **stdio** server, registered in
   Claude Code / Cursor / Claude Desktop config.
 - Imports core directly → same file index + SQLite as everything else.
-- **Tools (v1):** `list_prompts`, `get_prompt`, `run_prompt`. (`eval_prompt` later.)
-- **Read needs no backend** — `list`/`get` can serve straight from files, so a degraded
-  useful slice ships very early.
+- **Two different MCP primitives, not three tools (corrected 2026-08-08 — MCP has a
+  purpose-built primitive for exactly the read case):** each library prompt is registered as
+  an MCP **prompt** (`server.registerPrompt()`), which gives listing/retrieval for free via
+  the protocol's own `prompts/list` and `prompts/get` methods — no need to hand-roll
+  `list_prompts`/`get_prompt` as custom tools. `run_prompt` stays a genuine **tool**, since
+  it has a side effect (spends money, writes a run row) — tools are model-invoked, prompts
+  are user-controlled and IDE-slash-command-discoverable, which is the better fit for
+  browsing a library anyway. (`eval_prompt` later, also a tool.)
+- **One real gap this creates:** MCP's `PromptMessage.role` is only `"user"` or
+  `"assistant"` — there's no `"system"` role in the primitive. A prompt's system message
+  needs to be folded into the returned `description` or prepended into the first `user`
+  message; decide this before Phase 1's MCP work starts, not while writing it.
+- **Read needs no backend** — the `prompts` primitive serves straight from files, so a
+  degraded useful slice ships very early.
 - **Security:** `run_prompt` spends money and is a prompt-injection surface → confirm before
   executing; prompts sourced from outside the user's own library are flagged/untrusted
   ([§12](#12-security)).
@@ -314,8 +369,12 @@ directly** for local mode — no separate API tier until Phase 4. shadcn/ui + Ta
 variable forms generated from the prompt's `variables` via **React Hook Form + Zod** (the
 Week-2 Thursday spike). Streams results via a route handler `ReadableStream`. Because these route handlers can
 trigger spend, they are a CSRF/DNS-rebinding surface: bind to `127.0.0.1` only and
-validate `Origin`/`Host` on every state-changing handler — a **Phase 1 requirement**, not
-polish ([threat-model.md T4](threat-model.md); NFR-09; added v0.2). In Phase 4 the
+validate `Origin`/`Host` on every state-changing **Route Handler** — a **Phase 1
+requirement**, not polish ([threat-model.md T4](threat-model.md); NFR-09; added v0.2).
+Next.js **Server Actions** already validate `Origin` against `Host` automatically and are
+POST-only, so this manual check is genuinely load-bearing only for plain Route Handlers;
+keep it on Server Actions too as defense-in-depth, but don't count it as closing a gap the
+framework already closes (corrected 2026-08-08, per threat-model.md T4). In Phase 4 the
 dashboard is also the surface non-technical teammates use (PRD Ring 2).
 
 > **Convention conflict to resolve:** [../core/CLAUDE.md](../CLAUDE.md) currently
@@ -334,7 +393,9 @@ same webhook/CI learning, on-thesis, and not a second crowded product.
 
 ## 11. Cross-cutting
 
-- **Config & secrets:** keys via OS keychain (`keytar`-style) or env; config in `.promptmuster/`.
+- **Config & secrets:** keys via OS keychain (e.g. `@napi-rs/keyring` — `keytar` itself was
+  archived by its owner in December 2022, don't adopt it as the reference implementation) or
+  env; config in `.promptmuster/`.
   Repo scaffold ships a `.gitignore` excluding keys, run logs, and eval fixtures by default.
 - **Error model:** typed results over thrown exceptions at provider boundaries (the `Result<T,E>`
   exercise in the idea bank is the natural fit); redact secrets from all logs/errors.
@@ -368,7 +429,7 @@ same webhook/CI learning, on-thesis, and not a second crowded product.
 
 | Layer            | Choice                                                                   | Justification / learning tension                                                                      |
 | ---------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| Language/runtime | TypeScript (strict), Node 18+                                            | Company stack; matches CLAUDE.md conventions                                                          |
+| Language/runtime | TypeScript (strict), Node 22+                                            | Matches the installed toolchain's real floor — `better-sqlite3` ≥13 and `next@16` both already require it; "Node 18+" (corrected 2026-08-08) undercounted this |
 | Core             | Framework-free TS lib                                                    | A1                                                                                                    |
 | Parsing          | `gray-matter` + `yaml`; JSON Schema via `ajv`                            | Standard, small                                                                                       |
 | Templating       | minimal `{{var}}` (build-your-own)                                       | Learning + portability; escalate only if needed                                                       |

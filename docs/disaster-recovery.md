@@ -174,7 +174,11 @@ Forces every subsequent eval run to bypass the cache and create fresh `execution
 **Symptom:** app won't start; a schema migration errored partway through.
 
 **Diagnose:** check which migration failed and whether it left the schema in a partial
-state (SQLite's lack of full transactional DDL in older versions makes this a real risk).
+state. (Corrected 2026-08-08 — the previous version of this line claimed SQLite lacks full
+transactional DDL; that's factually wrong, SQLite has supported atomic DDL since its
+earliest versions. The actual risk is a migration *runner* that doesn't wrap a
+multi-statement migration in one explicit transaction, or that issues a command with an
+implicit commit — not a SQLite limitation.)
 
 **Recovery:** restore from the most recent OS-level backup if the failure is destructive;
 otherwise, a forward-fix migration is the correct response — never a manual schema edit

@@ -26,7 +26,7 @@ _"Complete" means the feature works as an interactive frontend feature per Week 
 | 04  | Full-Text Search              | Complete                                                                                                               |
 | 05  | Category and Tag Organization | Complete                                                                                                               |
 | 06  | Next.js Routing               | In progress ([~]) — 06.1/06.2/06.3 complete (App Router + Context, detail route + not-found, editor routes); 06.4 (filters as URL state + settings stub) not started, carried to Week 4 |
-| 07  | Professional UI (shadcn/ui)   | In progress ([~]) — primitives (07.1-07.3) shipped Week 2; 07.5 (dark mode) shipped Week 3, exceeding spec (server-cookie approach, no hydration flash); 07.4 (delete-confirm), 07.6-07.8 (design-system application pass, keyboard-nav audit, feedback/motion policy — all found by the 2026-08-04 audit) still open |
+| 07  | Professional UI (shadcn/ui)   | In progress ([~]) — primitives (07.1-07.3) shipped Week 2; 07.5 (dark mode) shipped Week 3, exceeding spec; **07.4 (delete-confirm) and 07.6 (design-system application pass) are done** (corrected 2026-08-08 — both were stale here; see `core/tickets.md` and `core/backlog.md`'s 2026-08-04 resolution); 07.7/07.8 (keyboard-nav audit, feedback/motion policy) still open |
 
 ### Week 1 Deliverables
 
@@ -64,7 +64,7 @@ _"Complete" means the feature works as an interactive frontend feature per Week 
 | 2   | `/prompts` list, `/prompts/[id]` detail + not-found, `/prompts/new` + `/prompts/[id]/edit` editor routes | Complete                                                            |
 | 3   | Dark-mode toggle + `prefers-color-scheme` default                         | Complete — exceeded spec: server-read cookie via `cookies()`, no localStorage, no hydration flash                |
 | 4   | Filters/search as URL state + settings page stub (06.4)                   | Not started — carried to Week 4                                                                                  |
-| 5   | Delete-confirmation UX (07.4)                                              | Not started — fourth week carried                                                                                |
+| 5   | Delete-confirmation UX (07.4)                                              | Complete — shadcn `AlertDialog` (`DeleteConfirmDialog.tsx`), wired via `PromptActions` (status corrected 2026-08-08; this row was stale)                                                                                |
 | 6   | `notes/week-03-*.md` daily notes                                          | Not done — second week running without daily notes; this dashboard reconstructed from git history + audit review |
 | 7   | Coding-challenge bonuses (Week 3: context-hook factory, route matcher, notFound boundary, useDarkMode hook) | Not attempted — Week 2's bonuses (`pick`/`omit`, `cn()`) confirmed committed instead |
 | 8   | LinkedIn posting begins (preset §5.3 said "from Week 3")                  | Not done — deferred to Week 4                                                                                    |
@@ -97,11 +97,12 @@ Scale: 1 (unfamiliar) to 5 (confident). **Self-assessed only** — Claude can't 
 - `usePromptManager` still owns CRUD, filtering, and clipboard state in one hook — deliberately not split yet (single consumer).
 - `seedPrompts` test-data generator still lives inside the production hook, self-flagged as temporary, not yet relocated.
 - ~~Dark-mode tokens are now theme-correct...~~ **Closed Week 3** — toggle built, exceeds spec (server cookie, no flash).
-- **Design-system application debt (found 2026-08-04):** the gradient `Header`, default-anchor prompt titles, unicode favorite star, and "Load Sample Data" in production layout all predate design-system.md and were never migrated. Tracked as ticket 07.6.
+- ~~**Design-system application debt (found 2026-08-04):** the gradient `Header`, default-anchor prompt titles, unicode favorite star, and "Load Sample Data" in production layout all predate design-system.md and were never migrated.~~ **Closed same day (2026-08-04)** — ticket 07.6 landed: gradient removed, titles via `CardTitle`, star replaced with a phosphor icon, sample-data button dev-only gated (this bullet was stale until corrected 2026-08-08).
 - **Keyboard navigation** is a stated hard requirement (design-system.md §4) with no ticket ever enforcing it until 07.7 (found 2026-08-04).
 - **Toast/motion policy** — only 2 toasts exist anywhere in the doc set; motion tokens are defined but never wired into a real transition. Tracked as 07.8.
 - `06.4` (filters/search as URL state + settings stub) — not started, carried to Week 4.
-- `07.4` (delete-confirmation UX) — fourth week carried, no decision made yet.
+- ~~`07.4` (delete-confirmation UX) — fourth week carried, no decision made yet.~~ **Closed**
+  — shipped as a shadcn `AlertDialog` (corrected 2026-08-08; this bullet was stale).
 - Two weeks running without daily `notes/week-0N-*.md` files — worth a real decision (keep trying, or simplify the Document step) rather than a third silent lapse.
 
 ## Weekly Reviews

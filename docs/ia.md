@@ -33,16 +33,16 @@ progress · 📝 designed, not built · 🔮 deferred (Future). Phases are the P
 ```
 PromptMuster (Dashboard)
 │
-├── Library                         /                          [🚧 Wk1 SPA → 📝 routed Wk3]
+├── Library                         /                          [✅ Routed Wk3]
 │   │                               Home. List + search + filter prompts.
 │   │
-│   ├── New Prompt                  /prompts/new                [📝 Phase 1]
+│   ├── New Prompt                  /prompts/new                [✅ Phase 0 — shipped Wk3]
 │   │                               Same UI as Editor, no id yet.
 │   │
-│   └── Prompt Detail               /prompts/:id                [📝 Phase 1]
+│   └── Prompt Detail               /prompts/:id                [✅ Phase 0 — shipped Wk3]
 │       │                           Overview: content preview, metadata, tab nav below.
 │       │
-│       ├── Editor                  /prompts/:id/edit           [📝 Phase 1]
+│       ├── Editor                  /prompts/:id/edit           [✅ Phase 0 — shipped Wk3]
 │       │                           Edit messages, variables, model, output schema.
 │       │
 │       ├── Run                     /prompts/:id/run            [📝 Phase 1]
@@ -82,11 +82,12 @@ PromptMuster (Dashboard)
                                      no Evals, no History exposed.
 ```
 
-**What exists today (Week 1–2):** a single unrouted page containing Library-equivalent
-functionality only — `PromptList`, `PromptCard`, `PromptFilters`, `PromptForm` as a modal/
-inline editor (not yet a separate route), per [core/CLAUDE.md](../CLAUDE.md). Routing
-(backlog #06) introduces the tree above starting Week 3; everything past Library is net-new
-screen surface tied to Phase 1–2 features.
+**What exists today (as of Week 3, corrected 2026-08-08 — this note had gone stale):**
+Library, New Prompt, Prompt Detail, and Editor are real routed pages (`PromptList`,
+`PromptCard`, `PromptFilters`, `PromptForm`, per [core/CLAUDE.md](../CLAUDE.md)); Run,
+Executions, History/Diff, Evals, Runs, Cost, and Settings are all still unbuilt. `06.4`
+(filters/search as URL state + a settings stub) is the one remaining routing ticket.
+Everything past Editor is net-new screen surface tied to Phase 1–2 features.
 
 ---
 
@@ -116,8 +117,11 @@ screen surface tied to Phase 1–2 features.
 
 ## 3. Navigation model
 
-**Global nav** (persistent, per [core/CLAUDE.md](../CLAUDE.md)'s `Header.tsx`): Library
-· Runs · Cost · Settings. Prompt count badge stays in the header per the existing spec.
+**Global nav (planned, not yet built — corrected 2026-08-08):** Library · Runs · Cost ·
+Settings, plus a prompt-count badge, persistent in the header. `Header.tsx` today only
+renders the app title, an "Add Prompt" link, and the theme toggle — no nav links or badge
+exist yet; this section describes the target shape once Runs/Cost/Settings ship, not
+something already specified elsewhere.
 
 **Contextual nav:** once inside a Prompt Detail, a tab bar carries Overview / Run / Evals /
 History / Executions — these are siblings, not a hierarchy the user drills through linearly.
@@ -218,13 +222,19 @@ This is the concrete version of "same internal API, different access points"
 CLI and MCP have no screens, but they touch the same entities and are the equivalent
 navigation surface for Ring 0/1 users who never open the dashboard.
 
-### MCP tools ([trd.md §7](trd.md))
+### MCP surface ([trd.md §7](trd.md)) — two primitives, not three tools
 
-| Tool | Touches | Confirm-gated? | Dashboard equivalent |
-|---|---|---|---|
-| `list_prompts` | Prompt (list) | No | Library |
-| `get_prompt` | Prompt | No | Prompt Detail |
-| `run_prompt` | Prompt → Execution Run | **Yes** — spend + untrusted-origin gate | Run |
+| Primitive | Method | Touches | Confirm-gated? | Dashboard equivalent |
+|---|---|---|---|---|
+| `prompts` | `prompts/list` | Prompt (list) | No | Library |
+| `prompts` | `prompts/get` | Prompt | No | Prompt Detail |
+| `tools` | `run_prompt` | Prompt → Execution Run | **Yes** — spend + untrusted-origin gate | Run |
+
+(Corrected 2026-08-08: `list_prompts`/`get_prompt` were originally modeled as custom tools;
+MCP's own `prompts` primitive — user-controlled, IDE-slash-command-discoverable — is the
+architecturally correct fit for read access, and comes free via the SDK once each library
+prompt is registered. `run_prompt` is the one genuine tool, since it's the one call with a
+side effect.)
 
 ### CLI commands ([trd.md §8](trd.md))
 
