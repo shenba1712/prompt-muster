@@ -7,7 +7,11 @@ import styles from '@/components/Header.module.css';
 export default function Header(): JSX.Element {
   return (
     <header className={styles.header}>
-      <h1>PromptMuster</h1>
+      <h1>
+        <Link href="/prompts" className="text-inherit no-underline hover:underline">
+          PromptMuster
+        </Link>
+      </h1>
       <div className="flex items-center gap-2">
         <Link
           href="/settings"

@@ -11,6 +11,14 @@ describe('Header', () => {
     ).not.toBeNull();
   });
 
+  it('links the PromptMuster heading to /prompts', () => {
+    render(<Header />);
+
+    const link = screen.getByRole('link', { name: 'PromptMuster' });
+    expect(link).not.toBeNull();
+    expect(link.getAttribute('href')).toBe('/prompts');
+  });
+
   it('renders an "Add Prompt" link to /prompts/new', () => {
     render(<Header />);
 
