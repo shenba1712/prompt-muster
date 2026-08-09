@@ -19,6 +19,14 @@ describe('Header', () => {
     expect(link.getAttribute('href')).toBe('/prompts/new');
   });
 
+  it('renders a Settings link to /settings', () => {
+    render(<Header />);
+
+    const link = screen.getByRole('link', { name: 'Settings' });
+    expect(link).not.toBeNull();
+    expect(link.getAttribute('href')).toBe('/settings');
+  });
+
   it('renders the theme toggle button', () => {
     render(<Header />);
 

@@ -9,6 +9,12 @@ export default function Header(): JSX.Element {
     <header className={styles.header}>
       <h1>PromptMuster</h1>
       <div className="flex items-center gap-2">
+        <Link
+          href="/settings"
+          className={buttonVariants({ variant: 'ghost', size: 'lg' })}
+        >
+          Settings
+        </Link>
         <ThemeToggle />
         <Link
           href="/prompts/new"

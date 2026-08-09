@@ -1,0 +1,24 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  gap: 1.5rem;
+  background-color: var(--card);
+  padding: 2.5rem 2rem;
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: 1.5rem 1.25rem;
+  }
+}

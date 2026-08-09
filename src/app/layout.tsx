@@ -2,9 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
 import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import styles from './layout.module.css';
 import { cn } from '@/lib/utils';
 import { THEME_COOKIE_NAME } from '@/lib/theme';
 import PromptProvider from '@/context/PromptProvider';
+import Header from '@/components/Header';
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -80,7 +82,12 @@ export default async function RootLayout({
       )}
     >
       <body>
-        <PromptProvider>{children}</PromptProvider>
+        <PromptProvider>
+          <div className={styles.page}>
+            <Header />
+            <main className={styles.main}>{children}</main>
+          </div>
+        </PromptProvider>
       </body>
     </html>
   );

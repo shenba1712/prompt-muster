@@ -1,22 +1,3 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  background-color: var(--background);
-}
-
-.main {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  width: 100%;
-  max-width: 800px;
-  gap: 1.5rem;
-  background-color: var(--card);
-  padding: 2.5rem 2rem;
-}
-
 .error {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -31,10 +12,4 @@
    more saturation to stay visible against the dark card background. */
 :global(.dark) .error {
   background: color-mix(in oklch, var(--destructive) 20%, transparent);
-}
-
-@media (max-width: 600px) {
-  .main {
-    padding: 1.5rem 1.25rem;
-  }
 }
