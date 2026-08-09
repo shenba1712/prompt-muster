@@ -107,14 +107,15 @@ input:
 output:
   schema:
     issues(array): string
-promptmuster:
-  schemaVersion: 1 # one-way door — present from day one; PromptMuster's own additions live here
-  category: code-review
-  tags: [review, correctness]
-  isFavorite: false
-  variableKinds:
-    language: select # drives the dashboard's form-control choice; dotprompt itself only sees `enum`
-    diff: file
+ext:
+  promptmuster:
+    schemaVersion: 1 # one-way door — present from day one; PromptMuster's own additions live here
+    category: code-review
+    tags: [review, correctness]
+    isFavorite: false
+    variableKinds:
+      language: select # drives the dashboard's form-control choice; dotprompt itself only sees `enum`
+      diff: file
 ---
 {{role "system"}}
 You are a senior engineer. Report only correctness bugs.
@@ -124,13 +125,16 @@ Review this {{language}} diff:
 {{diff}}
 ```
 
-(Whether a real dotprompt parser tolerates an unrecognized top-level `promptmuster:` key, or
-requires nesting under dotprompt's own `metadata` block instead, still needs confirming
-against the actual parser once Phase 1 building starts — flagged, not assumed. The
-`provider/` prefix itself is now verified, not guessed: Genkit's own plugin docs confirm
+(Resolved 2026-08-09, against the real parser source, not just the docs: a bare top-level
+`promptmuster:` block — the shape used before this correction — is silently dropped by
+`google/dotprompt`'s actual parser, per `js/src/parse.ts`'s `RESERVED_METADATA_KEYWORDS`
+list and namespace-splitting logic. `ext` is itself reserved and passed through untouched,
+so nesting `promptmuster:` one level deeper under `ext:`, as above, survives a real parse —
+see [prompt-file-format-spike.md §1/§3](prompt-file-format-spike.md) for the exact code. The
+`provider/` prefix is likewise verified, not guessed: Genkit's own plugin docs confirm
 `openai/gpt-4o`-style frontmatter directly, and the `@genkit-ai/anthropic` plugin registers
 itself as `anthropic`, following the identical `pluginName/modelId` convention — see
-`examples/prompts/` for both in use, 2026-08-09.)
+`examples/prompts/` for both in use.)
 
 **Design rules:**
 
@@ -155,9 +159,11 @@ itself as `anthropic`, following the identical `pluginName/modelId` convention �
     total object properties.
   Validate the provider-unsupported rest client-side, and don't reuse an Anthropic-shaped
   schema linter unmodified against OpenAI.
-- **`schemaVersion`** (now inside the `promptmuster:` block, not top-level) on every file;
-  the parser refuses unknown major versions.
-- **The `promptmuster:` block isn't just `schemaVersion` + variable kinds.** Hand-authoring
+- **`schemaVersion`** lives at `ext.promptmuster.schemaVersion` — nested under dotprompt's
+  own reserved `ext` key, not top-level and not a bare `promptmuster:` block either
+  (corrected 2026-08-09 after checking the real parser source — a bare top-level block is
+  silently dropped). The parser refuses unknown major versions.
+- **The `promptmuster` extension isn't just `schemaVersion` + variable kinds.** Hand-authoring
   real prompts (2026-08-09) found it also has to carry `category`, `tags`, and `isFavorite`
   — any PromptMuster-domain concept dotprompt has no native equivalent for at all. `id`
   (UUID) and `createdAt` don't need a home here, though: the filename is the identifier, and
