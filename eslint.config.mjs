@@ -13,6 +13,25 @@ const eslintConfig = defineConfig([
     'build/**',
     'next-env.d.ts',
   ]),
+  {
+    // ADR-001: core/ is framework-free and imports nothing from src/ or
+    // the app's UI dependencies — enforced here, not just by convention.
+    files: ['core/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['react', 'react-dom', 'next', 'next/*', '@/*'],
+              message:
+                'core/ is framework-free (ADR-001) — it must not import React, Next.js, or anything from src/.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;

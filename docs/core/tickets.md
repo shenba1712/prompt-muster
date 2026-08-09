@@ -109,7 +109,7 @@ Tier 1.
 
 | ID | SP | Ticket | Needs | Teaches |
 |---|---|---|---|---|
-| [ ] 08.1 | 2 | Spike: read dotprompt spec, hand-write 3 sample `.prompt` files from existing prompts, pin down the `promptmuster:` extension block + `schemaVersion` placement (short written note) | — | Reading a spec before coding, extension-vs-fork discipline |
+| [x] 08.1 | 2 | Spike: read dotprompt spec, hand-write 3 sample `.prompt` files from existing prompts, pin down the `promptmuster:` extension block + `schemaVersion` placement (short written note) | — | Reading a spec before coding, extension-vs-fork discipline |
 | [ ] 08.2 | 2 | Core package scaffold: framework-free `core/` lib (ADR-001), PromptFile types, typed ParseError | 08.1 | Package boundaries, dependency direction (core imports nothing above it) |
 | [ ] 08.3 | 3 | Parser: `.prompt` → domain object (frontmatter + role-tagged body), refuse unknown major schemaVersion, error messages worth reading | 08.2 | YAML/frontmatter parsing, schema versioning as a contract |
 | [ ] 08.4 | 2 | Serializer: domain → `.prompt` file; round-trip property tests (parse∘serialize = id) | 08.3 | Round-trip testing, canonical formatting |
