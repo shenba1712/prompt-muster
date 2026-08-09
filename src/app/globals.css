@@ -2,7 +2,24 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
-@custom-variant dark (&:is([data-theme='dark'] *));
+/* Mirrors the two dark layers in the palette below, so `dark:` utilities and
+   the CSS variables always agree. Without the media-query rule, a visitor on a
+   dark OS who has never used the toggle gets dark variables (from the
+   `@media (prefers-color-scheme: dark)` block) but light `dark:` utilities,
+   since no [data-theme] attribute exists to match. The
+   :not([data-theme='light']) guard keeps an explicit light choice winning on a
+   dark-OS machine, matching the source-order override further down. */
+@custom-variant dark {
+  &:is([data-theme='dark'] *) {
+    @slot;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:is(:root:not([data-theme='light']) *) {
+      @slot;
+    }
+  }
+}
 
 @layer base {
   * {

@@ -1,18 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Header from './Header';
-
-// Header renders ThemeToggle, which reads matchMedia on mount — jsdom
-// doesn't implement it at all, so any test rendering Header needs this
-// stub regardless of what it's actually asserting.
-beforeEach(() => {
-  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
-    matches: false,
-    media: query,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-  })) as unknown as typeof window.matchMedia;
-});
 
 describe('Header', () => {
   it('renders the PromptMuster heading', () => {
@@ -35,7 +23,7 @@ describe('Header', () => {
     render(<Header />);
 
     expect(
-      screen.getByRole('button', { name: /switch to (dark|light) mode/i })
+      screen.getByRole('button', { name: /^Theme: (system|light|dark)\./ })
     ).not.toBeNull();
   });
 });
