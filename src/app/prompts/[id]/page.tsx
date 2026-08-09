@@ -47,7 +47,7 @@ export default function PromptDetailPage({
     <>
       <Link
         href="/prompts"
-        className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+        className="rounded-none text-sm text-muted-foreground outline-none hover:text-foreground hover:underline focus-visible:ring-1 focus-visible:ring-ring/50"
       >
         ← Back to prompts
       </Link>

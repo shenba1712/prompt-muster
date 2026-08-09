@@ -58,6 +58,33 @@ describe('DeleteConfirmDialog', () => {
     expect(screen.queryByRole('alertdialog')).toBeNull();
   });
 
+  it('traps focus inside the dialog instead of tabbing out to the page behind it', async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">Something before</button>
+        <DeleteConfirmDialog promptTitle="My Prompt" onConfirm={vi.fn()} />
+        <button type="button">Something after</button>
+      </>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    const dialog = await screen.findByRole('alertdialog');
+
+    // Regardless of exactly where initial focus lands inside the dialog,
+    // repeated Tab and Shift+Tab must never move focus onto "Something
+    // before"/"Something after" (or anywhere else outside the dialog) — it
+    // previously fell all the way through to <body> and then into the page.
+    for (let i = 0; i < 6; i += 1) {
+      await user.tab();
+      expect(dialog.contains(document.activeElement)).toBe(true);
+    }
+    for (let i = 0; i < 6; i += 1) {
+      await user.tab({ shift: true });
+      expect(dialog.contains(document.activeElement)).toBe(true);
+    }
+  });
+
   it('closes the dialog without confirming when Escape is pressed', async () => {
     const user = userEvent.setup();
     const onConfirm = vi.fn();

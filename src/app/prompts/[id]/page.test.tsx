@@ -178,6 +178,19 @@ describe('PromptDetailPage', () => {
     expect(backLink.getAttribute('href')).toBe('/prompts');
   });
 
+  it('gives the back link a visible focus-visible ring, not just default styling', async () => {
+    // jsdom doesn't apply real CSS, so this checks the ring utility classes
+    // are present rather than a computed style — the link previously had
+    // none at all (keyboard-nav audit finding), unlike every other
+    // interactive element in the app.
+    await renderPage();
+
+    const backLink = await screen.findByRole('link', {
+      name: '← Back to prompts',
+    });
+    expect(backLink.className).toMatch(/focus-visible:ring-1/);
+  });
+
   it('deletes the prompt and navigates back to the list on confirm', async () => {
     const user = userEvent.setup();
     await renderPage();
