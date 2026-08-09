@@ -84,7 +84,7 @@ Tier 1.
 | [x] 06.1 | 2 | App Router structure: root layout, `/prompts` list page, move SPA content in | — | Layouts vs. pages, server/client component split |
 | [x] 06.2 | 2 | Prompt detail page `/prompts/[id]` + not-found handling | 06.1 | Dynamic routes, param typing, 404 states |
 | [x] 06.3 | 2 | Editor routes: `/prompts/new` + `/prompts/[id]/edit` sharing the form | 06.2, 01.1 | Route-level code sharing, redirect-after-save |
-| [ ] 06.4 | 2 | Filters/search as URL state (searchParams), shareable filtered views + settings page stub | 06.1 | URL as state store, when not to use useState |
+| [x] 06.4 | 2 | Filters/search as URL state (searchParams), shareable filtered views + settings page stub | 06.1 | URL as state store, when not to use useState |
 
 ### Chunk #07 — Professional UI (shadcn/ui)
 

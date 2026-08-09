@@ -144,7 +144,7 @@ and is unaffected by it (prd.md's Phase 0).
      Week: 1
 
 
-#06 [~] Next.js Routing
+#06 [x] Next.js Routing
 
      Separate pages: prompt list, prompt detail, prompt
      editor, settings.
@@ -158,6 +158,21 @@ and is unaffected by it (prd.md's Phase 0).
      routes). 06.4 (filters/search as URL state + settings page
      stub) not started — the one remaining ticket before this
      flips to [x]. Carried into Week 4.
+     RESOLVED (2026-08-09): 06.4 landed. `PromptFilters`' four
+     dimensions (model, category, search, favorites) read/write via
+     a dedicated `useFilterParams` hook (`useSearchParams` +
+     `router.replace` — not `push`, since a filter change isn't a
+     new history entry); an absent param means "no filter," not a
+     stored empty string. `/settings` ships as a real stub route
+     (styled to match the app's `Card` pattern, not bare text),
+     linked from Header, which also picked up a clickable
+     PromptMuster logo → `/prompts` and got hoisted to the root
+     layout so every top-level route shares the same shell.
+     Manually verified: a filtered URL is shareable (copy, paste in
+     a new tab, same filter applies on load) and the back button
+     exits a filtered view in one step rather than one filter at a
+     time — the deliberate `replace` behavior working as designed,
+     not a bug. #06 closed to [x].
 
 
 #07 [x] Professional UI (shadcn/ui)
