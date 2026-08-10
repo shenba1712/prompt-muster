@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ThemeToggle from './ThemeToggle';
 import { THEME_COOKIE_NAME } from '@/lib/theme';
@@ -22,7 +22,7 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />);
 
     expect(
-      screen.getByRole('button', { name: 'Theme: system. Switch to light.' })
+      screen.getByRole('button', { name: 'Theme: system. Open theme menu.' })
     ).not.toBeNull();
   });
 
@@ -32,7 +32,7 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />);
 
     expect(
-      screen.getByRole('button', { name: 'Theme: dark. Switch to system.' })
+      screen.getByRole('button', { name: 'Theme: dark. Open theme menu.' })
     ).not.toBeNull();
   });
 
@@ -42,30 +42,69 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />);
 
     expect(
-      screen.getByRole('button', { name: 'Theme: light. Switch to dark.' })
+      screen.getByRole('button', { name: 'Theme: light. Open theme menu.' })
     ).not.toBeNull();
   });
 
-  it('sets data-theme="light" and writes the cookie when leaving system', async () => {
+  it('opens a menu listing all three themes when clicked, none applied yet', async () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
 
-    await user.click(
-      screen.getByRole('button', { name: 'Theme: system. Switch to light.' })
-    );
+    await user.click(screen.getByRole('button'));
+
+    const menu = await screen.findByRole('menu');
+    expect(
+      within(menu).getByRole('menuitemradio', { name: /light/i })
+    ).not.toBeNull();
+    expect(
+      within(menu).getByRole('menuitemradio', { name: /dark/i })
+    ).not.toBeNull();
+    expect(
+      within(menu).getByRole('menuitemradio', { name: /system/i })
+    ).not.toBeNull();
+    // Opening the menu is just browsing — no theme change until a row is picked.
+    expect(document.documentElement.dataset.theme).toBeUndefined();
+  });
+
+  it('marks the currently active theme as checked in the menu', async () => {
+    document.documentElement.dataset.theme = 'dark';
+    const user = userEvent.setup();
+    render(<ThemeToggle />);
+
+    await user.click(screen.getByRole('button'));
+    const menu = await screen.findByRole('menu');
+
+    expect(
+      within(menu)
+        .getByRole('menuitemradio', { name: /dark/i })
+        .getAttribute('aria-checked')
+    ).toBe('true');
+    expect(
+      within(menu)
+        .getByRole('menuitemradio', { name: /light/i })
+        .getAttribute('aria-checked')
+    ).toBe('false');
+  });
+
+  it('sets data-theme="light" and writes the cookie when picking Light directly', async () => {
+    const user = userEvent.setup();
+    render(<ThemeToggle />);
+
+    await user.click(screen.getByRole('button'));
+    const menu = await screen.findByRole('menu');
+    await user.click(within(menu).getByRole('menuitemradio', { name: /light/i }));
 
     expect(document.documentElement.dataset.theme).toBe('light');
     expect(getCookieValue(THEME_COOKIE_NAME)).toBe('light');
   });
 
-  it('sets data-theme="dark" and writes the cookie on the next click', async () => {
-    document.documentElement.dataset.theme = 'light';
+  it('sets data-theme="dark" and writes the cookie when picking Dark directly from System, in one click', async () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
 
-    await user.click(
-      screen.getByRole('button', { name: 'Theme: light. Switch to dark.' })
-    );
+    await user.click(screen.getByRole('button'));
+    const menu = await screen.findByRole('menu');
+    await user.click(within(menu).getByRole('menuitemradio', { name: /dark/i }));
 
     expect(document.documentElement.dataset.theme).toBe('dark');
     expect(getCookieValue(THEME_COOKIE_NAME)).toBe('dark');
@@ -75,37 +114,60 @@ describe('ThemeToggle', () => {
   // cookie, not store the word "system". Only an absent cookie lets the server
   // omit data-theme, which is what frees globals.css's prefers-color-scheme
   // layer to track the OS live instead of freezing a stale choice.
-  it('removes data-theme and clears the cookie when returning to system', async () => {
+  it('removes data-theme and clears the cookie when picking System', async () => {
     document.documentElement.dataset.theme = 'dark';
     document.cookie = `${THEME_COOKIE_NAME}=dark; path=/`;
     const user = userEvent.setup();
     render(<ThemeToggle />);
 
+    await user.click(screen.getByRole('button'));
+    const menu = await screen.findByRole('menu');
     await user.click(
-      screen.getByRole('button', { name: 'Theme: dark. Switch to system.' })
+      within(menu).getByRole('menuitemradio', { name: /system/i })
     );
 
     expect(document.documentElement.dataset.theme).toBeUndefined();
     expect(getCookieValue(THEME_COOKIE_NAME)).toBeUndefined();
     expect(
-      screen.getByRole('button', { name: 'Theme: system. Switch to light.' })
+      screen.getByRole('button', { name: 'Theme: system. Open theme menu.' })
     ).not.toBeNull();
   });
 
-  it('cycles system -> light -> dark -> system', async () => {
+  it('closes the menu after picking a theme', async () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
 
-    const button = screen.getByRole('button');
+    await user.click(screen.getByRole('button'));
+    const menu = await screen.findByRole('menu');
+    await user.click(within(menu).getByRole('menuitemradio', { name: /dark/i }));
 
-    await user.click(button);
-    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(screen.queryByRole('menu')).toBeNull();
+  });
 
-    await user.click(button);
-    expect(document.documentElement.dataset.theme).toBe('dark');
+  it('closes without changing the theme when Escape is pressed', async () => {
+    const user = userEvent.setup();
+    render(<ThemeToggle />);
 
-    await user.click(button);
+    await user.click(screen.getByRole('button'));
+    await screen.findByRole('menu');
+
+    await user.keyboard('{Escape}');
+
+    expect(screen.queryByRole('menu')).toBeNull();
     expect(document.documentElement.dataset.theme).toBeUndefined();
-    expect(getCookieValue(THEME_COOKIE_NAME)).toBeUndefined();
+  });
+
+  it('can jump directly from system to dark in a single click, not two', async () => {
+    // The whole point of replacing the old cycle-through-states button: no
+    // more clicking twice (system -> light -> dark) to reach a state that
+    // isn't adjacent in the old cycle order.
+    const user = userEvent.setup();
+    render(<ThemeToggle />);
+
+    await user.click(screen.getByRole('button'));
+    const menu = await screen.findByRole('menu');
+    await user.click(within(menu).getByRole('menuitemradio', { name: /dark/i }));
+
+    expect(document.documentElement.dataset.theme).toBe('dark');
   });
 });

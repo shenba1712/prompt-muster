@@ -34,6 +34,24 @@ describe('PromptCard', () => {
     expect(link.getAttribute('href')).toBe(`/prompts/${prompt.id}`);
   });
 
+  it('gives the card a visible focus-visible ring on its stretched-link click target', () => {
+    // jsdom doesn't apply real CSS, so this checks the ring utility classes
+    // are present rather than a computed style — previously there were none
+    // at all, unlike every other interactive element in the app.
+    const prompt = buildPrompt();
+    render(
+      <PromptCard
+        prompt={prompt}
+        onDelete={vi.fn()}
+        onCopy={vi.fn()}
+        onToggleFavorite={vi.fn()}
+      />
+    );
+
+    const link = screen.getByRole('link', { name: prompt.title });
+    expect(link.className).toMatch(/focus-visible:after:ring-1/);
+  });
+
   it('renders the model badge, category badge, and tags', () => {
     const prompt = buildPrompt({ tags: ['review', 'quality'] });
     render(

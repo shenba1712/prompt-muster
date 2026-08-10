@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import type { JSX } from 'react';
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 
 import { cn } from '@/lib/utils';
@@ -8,7 +9,13 @@ import { CaretDownIcon, CheckIcon, CaretUpIcon } from '@phosphor-icons/react';
 
 const Select = SelectPrimitive.Root;
 
-function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
+type SelectGroupProps = SelectPrimitive.Group.Props;
+type SelectValueProps = SelectPrimitive.Value.Props;
+type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
+  size?: 'sm' | 'default';
+};
+
+function SelectGroup({ className, ...props }: SelectGroupProps): JSX.Element {
   return (
     <SelectPrimitive.Group
       data-slot="select-group"
@@ -18,7 +25,7 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   );
 }
 
-function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+function SelectValue({ className, ...props }: SelectValueProps): JSX.Element {
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
@@ -33,9 +40,7 @@ function SelectTrigger({
   size = 'default',
   children,
   ...props
-}: SelectPrimitive.Trigger.Props & {
-  size?: 'sm' | 'default';
-}) {
+}: SelectTriggerProps): JSX.Element {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
@@ -56,6 +61,12 @@ function SelectTrigger({
   );
 }
 
+type SelectContentProps = SelectPrimitive.Popup.Props &
+  Pick<
+    SelectPrimitive.Positioner.Props,
+    'align' | 'alignOffset' | 'side' | 'sideOffset' | 'alignItemWithTrigger'
+  >;
+
 function SelectContent({
   className,
   children,
@@ -65,11 +76,7 @@ function SelectContent({
   alignOffset = 0,
   alignItemWithTrigger = true,
   ...props
-}: SelectPrimitive.Popup.Props &
-  Pick<
-    SelectPrimitive.Positioner.Props,
-    'align' | 'alignOffset' | 'side' | 'sideOffset' | 'alignItemWithTrigger'
-  >) {
+}: SelectContentProps): JSX.Element {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Positioner
@@ -84,7 +91,8 @@ function SelectContent({
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
           className={cn(
-            'relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-none bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+            // design-system.md §2.6: dropdowns/popovers open at --duration-fast.
+            'relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-none bg-popover text-popover-foreground shadow-sm ring-1 ring-foreground/10 duration-fast ease-standard data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
             className
           )}
           {...props}
@@ -98,10 +106,20 @@ function SelectContent({
   );
 }
 
+type SelectLabelProps = SelectPrimitive.GroupLabel.Props;
+type SelectItemProps = SelectPrimitive.Item.Props;
+type SelectSeparatorProps = SelectPrimitive.Separator.Props;
+type SelectScrollUpButtonProps = React.ComponentProps<
+  typeof SelectPrimitive.ScrollUpArrow
+>;
+type SelectScrollDownButtonProps = React.ComponentProps<
+  typeof SelectPrimitive.ScrollDownArrow
+>;
+
 function SelectLabel({
   className,
   ...props
-}: SelectPrimitive.GroupLabel.Props) {
+}: SelectLabelProps): JSX.Element {
   return (
     <SelectPrimitive.GroupLabel
       data-slot="select-label"
@@ -115,7 +133,7 @@ function SelectItem({
   className,
   children,
   ...props
-}: SelectPrimitive.Item.Props) {
+}: SelectItemProps): JSX.Element {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
@@ -142,7 +160,7 @@ function SelectItem({
 function SelectSeparator({
   className,
   ...props
-}: SelectPrimitive.Separator.Props) {
+}: SelectSeparatorProps): JSX.Element {
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
@@ -155,7 +173,7 @@ function SelectSeparator({
 function SelectScrollUpButton({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpArrow>) {
+}: SelectScrollUpButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollUpArrow
       data-slot="select-scroll-up-button"
@@ -173,7 +191,7 @@ function SelectScrollUpButton({
 function SelectScrollDownButton({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollDownArrow>) {
+}: SelectScrollDownButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollDownArrow
       data-slot="select-scroll-down-button"

@@ -2,7 +2,7 @@ import type { JSX } from 'react';
 import { Badge } from '@/components/ui/badge';
 
 interface PromptTagsProps {
-  tags: string[];
+  readonly tags: string[];
 }
 
 export default function PromptTags({

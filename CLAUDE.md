@@ -5,32 +5,46 @@ on AI prompts. Built with Next.js, React, and TypeScript.
 
 ## Current State
 
-Week 3 in progress (routing) — frontend only, no backend, no database.
-All data is in-memory, now lifted into a `PromptProvider` React Context
-(`src/context/PromptProvider.tsx`) instead of page-level `useState`, so it
-survives client-side navigation. Still lost on full refresh — persistence is
-still Week 5, unchanged.
+Tier 1 (frontend foundation, backlog #01-#07) is complete. Phase 1 ("Useful
+to me" — file format, domain rewrite, execution) is underway: ticket 08.1
+(dotprompt spike) and 08.2 (framework-free `core/` package scaffold —
+`core/prompt-file.ts`, `core/parse-error.ts`, boundary enforced by
+`eslint.config.mjs`'s `no-restricted-imports` on `core/**/*.ts`) are done;
+08.3 (the actual `.prompt` file parser) is next. `core/` at the repo root is
+the new framework-free library per ADR-001 — do not confuse it with this
+file's own `docs/core/` shorthand below, which predates it and refers to
+`docs/core/backlog.md` / `docs/core/tickets.md`.
+Frontend only still, no backend, no database. All data is in-memory, lifted
+into a `PromptProvider` React Context (`src/context/PromptProvider.tsx`)
+instead of page-level `useState`, so it survives client-side navigation.
+Still lost on full refresh — persistence is Week 5 (ADR-002/003), unchanged.
 Seed data function exists for development testing.
 CRUD is complete including the update/edit flow (Week 2).
-Tests: Vitest + React Testing Library; 156 tests across 20 files — all green.
+Tests: Vitest + React Testing Library; 22 files, 170+ tests — all green (run
+`npm test` for the current exact count rather than trusting this number,
+since it drifts every session).
 Styling: Tailwind v4 + shadcn/ui (Base UI primitives) installed Week 2;
-migration now complete including layout chrome — a 2026-08-04 design-review
+migration complete including layout chrome — a 2026-08-04 design-review
 audit found the Week 2 pass had missed the gradient `Header`,
 default-anchor-styled prompt titles, a unicode favorite star, and
 "Load Sample Data" sitting in production layout; ticket `07.6` landed the
 same day (gradient removed, titles styled via `CardTitle`, star replaced
 with a phosphor icon, sample-data button gated to dev-only builds via
-`NODE_ENV`), and `core/backlog.md` closed `#07` back to `[~]` pending
-07.7/07.8 only (keyboard-nav audit, feedback/motion policy — still open).
-Routing: App Router structure landed this week — `/prompts` list,
-`/prompts/[id]` detail + `not-found.tsx`, `/prompts/new` +
-`/prompts/[id]/edit` editor routes sharing `PromptForm`. `06.4` (filters/
-search as URL state + a settings page stub) is the one remaining routing
-ticket, not yet started.
+`NODE_ENV`). Two follow-on tickets from that same audit: `07.7` (keyboard-nav
+audit) is `[~]` in progress — only the `AlertDialog` focus-trap-escape bug
+and the Prompt Detail back-link's missing focus ring have been found and
+fixed so far, not the full flow-by-flow walkthrough the ticket scopes; `07.8`
+(toast/inline/silence policy + wiring design-system.md §2.6's motion tokens
+into real transitions) is `[x]` done — see `docs/core/completion-log.md`.
+Routing: App Router structure complete — `/prompts` list (filters/search as
+URL state via `useFilterParams`, shareable/bookmarkable), `/prompts/[id]`
+detail + `not-found.tsx`, `/prompts/new` + `/prompts/[id]/edit` editor routes
+sharing `PromptForm`, and a real `/settings` stub route. `Header` is hoisted
+to the root layout so every route shares it, and its logo links home.
 Dark mode: three-way toggle (`ThemeToggle.tsx` + `src/lib/theme.ts`) over a
 server-read cookie (`cookies()` in `layout.tsx`), not `localStorage` — avoids
 the hydration-flash problem more thoroughly than the originally-planned
-approach; see `core/completion-log.md`'s Week 3 section for why. Three states,
+approach; see `docs/core/completion-log.md`'s Week 3 section for why. Three states,
 not two: an explicit `light`/`dark` writes the cookie and the server stamps
 `data-theme` on `<html>`; `system` deletes both, and the *absence* of the
 attribute is what lets `globals.css`'s `@media (prefers-color-scheme: dark)`
@@ -60,13 +74,19 @@ supersedes the earlier IndexedDB plan; see project-files/trd.md §4 and
 ADR-002).
 
 Components: Header, PromptForm, PromptList, PromptCard, PromptFilters,
-EmptyState, FavoriteButton, ThemeToggle (9 files + CSS modules, some now also
-composed from extracted PromptActions/tags/badges pieces from the editor-
-routes refactor)
-Context: PromptProvider (wraps usePromptManager, exposed via usePrompts())
-Hooks: usePromptManager (CRUD, filtering, derived state)
-Types: prompt.ts
-Utils: prompt.ts, theme.ts
+PromptActions, PromptBadges, PromptTags, ModelBadge, EmptyState,
+FavoriteButton, DeleteConfirmDialog, ThemeToggle (13 files + CSS modules for
+the pre-shadcn ones), plus the Tailwind-based shadcn primitives in
+`src/components/ui/`.
+Context: PromptProvider — owns CRUD, favoriting, clipboard, and seed-data
+state directly (there is no separate `usePromptManager` hook), exposed via
+`usePrompts()`.
+Hooks: useFilterParams (URL-state derivation + `setFilter` for
+`/prompts`'s filter bar).
+Types: prompt.ts (`Prompt`, `CreatePromptInput`, `UpdatePromptInput`,
+`FilterState`, `Model`/`Category` unions).
+Utils: prompt.ts, filter-prompts.ts.
+Lib: theme.ts (theme cookie name/type), utils.ts (`cn()` class-merge helper).
 
 ## Scheduled Direction Changes (planned — do not apply early)
 
@@ -245,6 +265,10 @@ I'll decide whether to add it. Don't modify this file yourself.
 - npm run build — Production build
 - npm run lint — Run ESLint
 - npx tsc --noEmit — Type-check without emitting files
+- npm run typecheck:core — Type-check core/ in isolation against
+  core/tsconfig.json (no `dom` lib) — catches a stray browser global
+  (`window`, `document`, `localStorage`) in the framework-free library that
+  the root tsc command's DOM-inclusive `lib` would silently let through
 
 ## Tech Stack
 
@@ -258,9 +282,16 @@ I'll decide whether to add it. Don't modify this file yourself.
 
 - src/app/ — Next.js App Router pages and layouts
 - src/components/ — React components (one per file)
+- src/context/ — React Context providers (PromptProvider)
 - src/hooks/ — Custom React hooks
 - src/types/ — TypeScript type definitions
 - src/utils/ — Pure utility functions
+- src/lib/ — Small framework-adjacent helpers (theme cookie, `cn()`)
+- core/ — Framework-free TypeScript library (ADR-001; NOT the same as this
+  file's own `docs/core/` shorthand below). Imports nothing from `src/`,
+  `react`, or `next` — enforced by `eslint.config.mjs`. Home for the
+  eventual `.prompt` file parser/serializer; currently just the `PromptFile`
+  and `ParseError` types (ticket 08.2).
 
 ## Domain
 
@@ -274,6 +305,7 @@ A Prompt represents a reusable AI prompt template:
 - tags: string[]
 - isFavorite: boolean
 - createdAt: Date
+- updatedAt: Date
 
 ## TypeScript Conventions
 

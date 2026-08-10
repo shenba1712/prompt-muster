@@ -4,8 +4,8 @@ import ModelBadge from '@/components/ModelBadge';
 import { Badge } from '@/components/ui/badge';
 
 interface PromptBadgesProps {
-  model: Model;
-  category: Category;
+  readonly model: Model;
+  readonly category: Category;
 }
 
 export default function PromptBadges({

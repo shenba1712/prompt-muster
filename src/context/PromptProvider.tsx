@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from 'react';
 import { CreatePromptInput, UpdatePromptInput, Prompt } from '@/types/prompt';
 import { createPrompt } from '@/utils/prompt';
 
-export interface UsePromptManagerReturn {
+export interface UsePromptsReturn {
   prompts: Prompt[];
   promptCount: number;
   favoriteCount: number;
@@ -21,11 +21,11 @@ interface PromptProviderProps {
   readonly children: React.ReactNode;
 }
 
-const PromptContext = createContext<UsePromptManagerReturn | undefined>(
+const PromptContext = createContext<UsePromptsReturn | undefined>(
   undefined
 );
 
-export function usePrompts(): UsePromptManagerReturn {
+export function usePrompts(): UsePromptsReturn {
   const context = useContext(PromptContext);
 
   if (context === undefined) {
@@ -54,11 +54,11 @@ export default function PromptProvider({ children }: PromptProviderProps) {
     );
   };
 
-  const deletePrompt = (id: string) => {
+  const deletePrompt = (id: string): void => {
     setPrompts((prev) => prev.filter((p) => p.id !== id));
   };
 
-  const copyToClipboard = async (content: string) => {
+  const copyToClipboard = async (content: string): Promise<void> => {
     try {
       await navigator.clipboard.writeText(content);
       setError(null);
@@ -71,17 +71,14 @@ export default function PromptProvider({ children }: PromptProviderProps) {
     }
   };
 
-  const toggleFavorite = (id: string) => {
+  const toggleFavorite = (id: string): void => {
     setPrompts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, isFavorite: !p.isFavorite } : p))
     );
   };
 
-  const promptCount = prompts.length;
-  const favoriteCount = prompts.filter((p) => p.isFavorite).length;
-
   // test data
-  const seedPrompts = () => {
+  const seedPrompts = (): void => {
     const seeds: Prompt[] = [
       {
         ...createPrompt({
@@ -133,7 +130,10 @@ export default function PromptProvider({ children }: PromptProviderProps) {
     setPrompts(seeds);
   };
 
-  const value: UsePromptManagerReturn = {
+  const promptCount = prompts.length;
+  const favoriteCount = prompts.filter((p) => p.isFavorite).length;
+
+  const value: UsePromptsReturn = {
     prompts,
     promptCount,
     favoriteCount,

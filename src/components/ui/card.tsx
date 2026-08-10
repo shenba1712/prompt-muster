@@ -1,13 +1,24 @@
 import * as React from 'react';
+import type { JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
-function Card({ className, ...props }: React.ComponentProps<'div'>) {
+type CardProps = React.ComponentProps<'div'>;
+type CardHeaderProps = React.ComponentProps<'div'>;
+type CardTitleProps = React.ComponentProps<'h3'>;
+type CardContentProps = React.ComponentProps<'div'>;
+type CardFooterProps = React.ComponentProps<'div'>;
+
+function Card({ className, ...props }: CardProps): JSX.Element {
   return (
     <div
       data-slot="card"
       className={cn(
-        'flex flex-col gap-3 rounded-none border border-border bg-card p-4 text-card-foreground transition-all duration-[120ms] ease-[cubic-bezier(0.2,0,0,1)] hover:z-10 hover:-translate-y-0.5 hover:scale-[1.01] hover:border-foreground/20 hover:shadow-[0_1px_2px_hsl(252_15%_12%/0.06)] motion-reduce:duration-[1ms] motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100',
+        // design-system.md §2.6: hover affordance uses the shared motion
+        // tokens, not magic numbers. No hover shadow — principle 3 reserves
+        // shadow for genuinely transient surfaces (dropdowns, modals), not
+        // resting cards, and hover doesn't change that classification.
+        'flex flex-col gap-3 rounded-none border border-border bg-card p-4 text-card-foreground transition-all duration-fast ease-standard hover:z-10 hover:-translate-y-0.5 hover:scale-[1.01] hover:border-foreground/20 motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100',
         className
       )}
       {...props}
@@ -15,7 +26,7 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
+function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
   return (
     <div
       data-slot="card-header"
@@ -25,7 +36,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<'h3'>) {
+function CardTitle({ className, ...props }: CardTitleProps): JSX.Element {
   return (
     <h3
       data-slot="card-title"
@@ -35,7 +46,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'h3'>) {
   );
 }
 
-function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
+function CardContent({ className, ...props }: CardContentProps): JSX.Element {
   return (
     <div
       data-slot="card-content"
@@ -45,7 +56,7 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
+function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
   return (
     <div
       data-slot="card-footer"

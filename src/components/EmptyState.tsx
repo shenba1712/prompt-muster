@@ -2,7 +2,7 @@ import type { JSX } from 'react';
 import styles from './EmptyState.module.css';
 
 interface EmptyStateProps {
-  message?: string;
+  readonly message?: string;
 }
 
 export default function EmptyState({

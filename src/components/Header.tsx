@@ -2,13 +2,16 @@ import type { JSX } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
-import styles from '@/components/Header.module.css';
+import styles from './Header.module.css';
 
 export default function Header(): JSX.Element {
   return (
     <header className={styles.header}>
       <h1>
-        <Link href="/prompts" className="text-inherit no-underline hover:underline">
+        <Link
+          href="/prompts"
+          className="rounded-none text-inherit no-underline outline-none focus-visible:ring-1 focus-visible:ring-ring/50"
+        >
           PromptMuster
         </Link>
       </h1>

@@ -25,7 +25,7 @@ describe('useFilterParams', () => {
         model: 'all',
         category: 'all',
         search: '',
-        showFavorites: false,
+        isFavoritesOnly: false,
       });
     });
 
@@ -64,18 +64,18 @@ describe('useFilterParams', () => {
       expect(result.current.filterState.search).toBe('code review');
     });
 
-    it('treats favorites=true as showFavorites: true', () => {
+    it('treats favorites=true as isFavoritesOnly: true', () => {
       mockSearchParams = new URLSearchParams('favorites=true');
       const { result } = renderHook(() => useFilterParams());
 
-      expect(result.current.filterState.showFavorites).toBe(true);
+      expect(result.current.filterState.isFavoritesOnly).toBe(true);
     });
 
-    it('treats any other favorites value as showFavorites: false', () => {
+    it('treats any other favorites value as isFavoritesOnly: false', () => {
       mockSearchParams = new URLSearchParams('favorites=1');
       const { result } = renderHook(() => useFilterParams());
 
-      expect(result.current.filterState.showFavorites).toBe(false);
+      expect(result.current.filterState.isFavoritesOnly).toBe(false);
     });
   });
 
@@ -111,7 +111,7 @@ describe('useFilterParams', () => {
     it('calls router.replace, not push', () => {
       const { result } = renderHook(() => useFilterParams());
 
-      result.current.setFilter({ showFavorites: true });
+      result.current.setFilter({ isFavoritesOnly: true });
 
       // The mock only defines `replace` — a `router.push` call here would
       // throw "push is not a function" and fail this test.

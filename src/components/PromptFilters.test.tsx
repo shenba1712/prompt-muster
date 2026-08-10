@@ -9,7 +9,7 @@ const defaultFilterState: FilterState = {
   model: 'all',
   category: 'all',
   search: '',
-  showFavorites: false,
+  isFavoritesOnly: false,
 };
 
 // PromptFilters is a controlled component: it renders filterState.search
@@ -59,7 +59,7 @@ describe('PromptFilters', () => {
   });
 
   describe('favorites toggle', () => {
-    it('calls onFilterChange with showFavorites: true when starting false', async () => {
+    it('calls onFilterChange with isFavoritesOnly: true when starting false', async () => {
       const user = userEvent.setup();
       const onFilterChange = vi.fn();
       render(
@@ -74,15 +74,15 @@ describe('PromptFilters', () => {
       await user.click(screen.getByRole('button', { name: /Favorites/ }));
 
       expect(onFilterChange).toHaveBeenCalledTimes(1);
-      expect(onFilterChange).toHaveBeenCalledWith({ showFavorites: true });
+      expect(onFilterChange).toHaveBeenCalledWith({ isFavoritesOnly: true });
     });
 
-    it('calls onFilterChange with showFavorites: false when starting true', async () => {
+    it('calls onFilterChange with isFavoritesOnly: false when starting true', async () => {
       const user = userEvent.setup();
       const onFilterChange = vi.fn();
       render(
         <PromptFilters
-          filterState={{ ...defaultFilterState, showFavorites: true }}
+          filterState={{ ...defaultFilterState, isFavoritesOnly: true }}
           onFilterChange={onFilterChange}
           totalCount={10}
           filteredCount={2}
@@ -92,7 +92,7 @@ describe('PromptFilters', () => {
       await user.click(screen.getByRole('button', { name: /Favorites/ }));
 
       expect(onFilterChange).toHaveBeenCalledTimes(1);
-      expect(onFilterChange).toHaveBeenCalledWith({ showFavorites: false });
+      expect(onFilterChange).toHaveBeenCalledWith({ isFavoritesOnly: false });
     });
   });
 
@@ -149,10 +149,10 @@ describe('PromptFilters', () => {
       ).not.toBeNull();
     });
 
-    it('renders "Clear filters" when showFavorites is active', () => {
+    it('renders "Clear filters" when isFavoritesOnly is active', () => {
       render(
         <PromptFilters
-          filterState={{ ...defaultFilterState, showFavorites: true }}
+          filterState={{ ...defaultFilterState, isFavoritesOnly: true }}
           onFilterChange={vi.fn()}
           totalCount={10}
           filteredCount={1}
@@ -188,7 +188,7 @@ describe('PromptFilters', () => {
             model: 'gpt-4o',
             category: 'testing',
             search: 'foo',
-            showFavorites: true,
+            isFavoritesOnly: true,
           }}
           onFilterChange={onFilterChange}
           totalCount={10}
@@ -203,7 +203,7 @@ describe('PromptFilters', () => {
         model: 'all',
         category: 'all',
         search: '',
-        showFavorites: false,
+        isFavoritesOnly: false,
       });
     });
   });

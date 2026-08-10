@@ -1,5 +1,3 @@
-'use client';
-
 import type { JSX } from 'react';
 import Link from 'next/link';
 import { Prompt } from '@/types/prompt';
@@ -10,10 +8,10 @@ import PromptActions from '@/components/PromptActions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface PromptCardProps {
-  prompt: Prompt;
-  onDelete: (id: string) => void;
-  onCopy: (content: string) => void;
-  onToggleFavorite: (id: string) => void;
+  readonly prompt: Prompt;
+  readonly onDelete: (id: string) => void;
+  readonly onCopy: (content: string) => void;
+  readonly onToggleFavorite: (id: string) => void;
 }
 
 const CONTENT_PREVIEW_LIMIT = 120;
@@ -35,7 +33,7 @@ export default function PromptCard({
         <CardTitle>
           <Link
             href={`/prompts/${prompt.id}`}
-            className="text-inherit no-underline after:absolute after:inset-0 hover:underline"
+            className="text-inherit no-underline outline-none after:absolute after:inset-0 hover:underline focus-visible:after:ring-1 focus-visible:after:ring-ring/50 focus-visible:after:ring-inset"
           >
             {prompt.title}
           </Link>

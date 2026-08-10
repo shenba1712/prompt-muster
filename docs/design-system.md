@@ -167,15 +167,17 @@ method's own answer, not a shortcut around it.
 
 ### 2.2 Typography
 
-Two roles, chosen for what this product actually displays — not a third "display" face,
-which would be over-designing a reference tool.
+One role, applied app-wide: `"JetBrains Mono", "Cascadia Code", "SF Mono", Consolas,
+"Roboto Mono", Menlo, monospace` — UI chrome and prompt/code content alike. A two-role
+split (native sans for UI, mono reserved for content) was tried in practice
+(2026-08-10) and reverted: the all-mono look is the product's actual visual identity,
+not an unfinished migration — it reads as a distinct dev-tool, not a generic webapp,
+and splitting fonts read as inconsistent rather than as a refinement. Prompt bodies,
+diffs, JSON schemas, and template variables (`{{var}}`) also happen to be literally
+monospace content — whitespace and alignment are load-bearing there, not stylistic —
+so the single-role choice costs nothing on that front either.
 
-| Role | Stack | Why |
-|---|---|---|
-| **UI** | `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` | Native per OS — reads as a tool installed on your machine, not a webapp; avoids the generic-default "Inter for everything" |
-| **Content / code** | `"JetBrains Mono", "Cascadia Code", "SF Mono", Consolas, "Roboto Mono", Menlo, monospace` | Prompt bodies, diffs, JSON schemas, and template variables (`{{var}}`) are literally monospace content — whitespace and alignment are load-bearing, not stylistic |
-
-`prompts.write` will be the *most-read* text in the product, so the mono stack leads with
+`prompts.write` will be the *most-read* text in the product, so the stack leads with
 real coding fonts (JetBrains Mono ships with JetBrains IDEs; Cascadia Code ships with
 Windows Terminal) rather than falling straight to generic `monospace`.
 

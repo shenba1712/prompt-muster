@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import type { JSX } from 'react';
 import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog';
 import type { BaseUIEvent } from '@base-ui/react/types';
 
@@ -13,14 +14,16 @@ const AlertDialogClose = AlertDialogPrimitive.Close;
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+interface AlertDialogContentProps extends AlertDialogPrimitive.Popup.Props {
+  initialFocus?: React.RefObject<HTMLElement | null>;
+}
+
 function AlertDialogContent({
   className,
   initialFocus,
   onKeyDown,
   ...props
-}: AlertDialogPrimitive.Popup.Props & {
-  initialFocus?: React.RefObject<HTMLElement | null>;
-}) {
+}: AlertDialogContentProps): JSX.Element {
   const popupRef = React.useRef<HTMLDivElement>(null);
 
   // Base UI's own focus trap renders guard sentinels, but Tab from the last
@@ -69,7 +72,7 @@ function AlertDialogContent({
         onKeyDown={handleKeyDown}
         className={cn(
           // design-system.md §2.6: dialog/modal open maps to --duration-slow.
-          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-none border border-border bg-popover p-6 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-slow ease-standard data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-none border border-border bg-popover p-6 text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-slow ease-standard data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
           className
         )}
         {...props}
@@ -78,10 +81,14 @@ function AlertDialogContent({
   );
 }
 
+type AlertDialogTitleProps = AlertDialogPrimitive.Title.Props;
+type AlertDialogDescriptionProps = AlertDialogPrimitive.Description.Props;
+type AlertDialogFooterProps = React.ComponentProps<'div'>;
+
 function AlertDialogTitle({
   className,
   ...props
-}: AlertDialogPrimitive.Title.Props) {
+}: AlertDialogTitleProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Title
       data-slot="alert-dialog-title"
@@ -94,7 +101,7 @@ function AlertDialogTitle({
 function AlertDialogDescription({
   className,
   ...props
-}: AlertDialogPrimitive.Description.Props) {
+}: AlertDialogDescriptionProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
@@ -107,7 +114,7 @@ function AlertDialogDescription({
 function AlertDialogFooter({
   className,
   ...props
-}: React.ComponentProps<'div'>) {
+}: AlertDialogFooterProps): JSX.Element {
   return (
     <div
       data-slot="alert-dialog-footer"

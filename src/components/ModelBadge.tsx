@@ -4,7 +4,7 @@ import { getModelProvider } from '@/utils/prompt';
 import { Badge } from '@/components/ui/badge';
 
 interface ModelBadgeProps {
-  model: Model;
+  readonly model: Model;
 }
 
 // Provider decides the badge treatment, not the model string: only

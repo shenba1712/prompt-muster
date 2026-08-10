@@ -16,10 +16,10 @@ import {
 import styles from './PromptFilters.module.css';
 
 interface PromptFiltersProps {
-  filterState: FilterState;
-  onFilterChange: (updates: Partial<FilterState>) => void;
-  totalCount: number;
-  filteredCount: number;
+  readonly filterState: FilterState;
+  readonly onFilterChange: (updates: Partial<FilterState>) => void;
+  readonly totalCount: number;
+  readonly filteredCount: number;
 }
 
 export default function PromptFilters({
@@ -32,14 +32,14 @@ export default function PromptFilters({
     filterState.model !== 'all' ||
     filterState.category !== 'all' ||
     filterState.search.trim() !== '' ||
-    filterState.showFavorites;
+    filterState.isFavoritesOnly;
 
   const clearFilters = () => {
     onFilterChange({
       model: 'all',
       category: 'all',
       search: '',
-      showFavorites: false,
+      isFavoritesOnly: false,
     });
   };
 
@@ -96,14 +96,14 @@ export default function PromptFilters({
         </Select>
         <Button
           type="button"
-          variant={filterState.showFavorites ? 'default' : 'outline'}
-          aria-pressed={filterState.showFavorites}
+          variant={filterState.isFavoritesOnly ? 'default' : 'outline'}
+          aria-pressed={filterState.isFavoritesOnly}
           onClick={() =>
-            onFilterChange({ showFavorites: !filterState.showFavorites })
+            onFilterChange({ isFavoritesOnly: !filterState.isFavoritesOnly })
           }
           className="flex-1 min-w-[140px]"
         >
-          <StarIcon weight={filterState.showFavorites ? 'fill' : 'regular'} />
+          <StarIcon weight={filterState.isFavoritesOnly ? 'fill' : 'regular'} />
           Favorites
         </Button>
       </div>

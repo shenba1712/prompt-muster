@@ -13,7 +13,7 @@ describe('FavoriteButton', () => {
       screen.getByRole('button', { name: 'Add to favorites' })
     ).not.toBeNull();
     expect(
-      container.querySelector('svg')?.classList.contains('text-amber-500')
+      container.querySelector('svg')?.classList.contains('text-favorite')
     ).toBe(false);
   });
 
@@ -26,7 +26,7 @@ describe('FavoriteButton', () => {
       screen.getByRole('button', { name: 'Remove from favorites' })
     ).not.toBeNull();
     expect(
-      container.querySelector('svg')?.classList.contains('text-amber-500')
+      container.querySelector('svg')?.classList.contains('text-favorite')
     ).toBe(true);
   });
 

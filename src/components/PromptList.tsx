@@ -5,11 +5,11 @@ import EmptyState from './EmptyState';
 import styles from './PromptList.module.css';
 
 interface PromptListProps {
-  prompts: Prompt[];
-  totalCount: number;
-  onDelete: (id: string) => void;
-  onCopy: (content: string) => void;
-  onToggleFavorite: (id: string) => void;
+  readonly prompts: Prompt[];
+  readonly totalCount: number;
+  readonly onDelete: (id: string) => void;
+  readonly onCopy: (content: string) => void;
+  readonly onToggleFavorite: (id: string) => void;
 }
 
 export default function PromptList({

@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface FavoriteButtonProps {
-  isFavorite: boolean;
-  onToggle: () => void;
+  readonly isFavorite: boolean;
+  readonly onToggle: () => void;
 }
 
 export default function FavoriteButton({
@@ -25,7 +25,7 @@ export default function FavoriteButton({
     >
       <StarIcon
         weight={isFavorite ? 'fill' : 'regular'}
-        className={cn('size-5', isFavorite && 'text-amber-500')}
+        className={cn('size-5', isFavorite && 'text-favorite')}
       />
     </Button>
   );

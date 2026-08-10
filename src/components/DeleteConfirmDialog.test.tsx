@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
 
@@ -19,6 +19,26 @@ describe('DeleteConfirmDialog', () => {
 
     const dialog = await screen.findByRole('alertdialog');
     expect(within(dialog).getByText('Delete "My Prompt"?')).not.toBeNull();
+  });
+
+  it('defaults keyboard focus to Cancel, not the destructive Delete button', async () => {
+    // A reflexive second Enter after opening the dialog (habit from opening
+    // it) must land on Cancel, not silently confirm an irreversible delete.
+    const user = userEvent.setup();
+    render(<DeleteConfirmDialog promptTitle="My Prompt" onConfirm={vi.fn()} />);
+
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    const dialog = await screen.findByRole('alertdialog');
+
+    // Base UI moves initial focus in on a microtask/rAF after the popup
+    // appears, not synchronously with it — findByRole resolving doesn't
+    // guarantee that has flushed yet, so this must poll rather than assert
+    // once (confirmed via an isolated scratch test before relying on this).
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        within(dialog).getByRole('button', { name: 'Cancel' })
+      );
+    });
   });
 
   it('closes the dialog without confirming when Cancel is clicked', async () => {

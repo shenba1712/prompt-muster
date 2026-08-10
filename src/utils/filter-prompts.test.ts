@@ -7,7 +7,7 @@ const baseFilterState: FilterState = {
   model: 'all',
   category: 'all',
   search: '',
-  showFavorites: false,
+  isFavoritesOnly: false,
 };
 
 const codeReview: Prompt = {
@@ -77,10 +77,10 @@ describe('filterPrompts', () => {
     expect(result).toEqual([debugError]);
   });
 
-  it('filters by showFavorites', () => {
+  it('filters by isFavoritesOnly', () => {
     const result = filterPrompts(prompts, {
       ...baseFilterState,
-      showFavorites: true,
+      isFavoritesOnly: true,
     });
     expect(result).toEqual([codeReview]);
   });
@@ -121,14 +121,14 @@ describe('filterPrompts', () => {
     const result = filterPrompts(prompts, {
       ...baseFilterState,
       category: 'code-review',
-      showFavorites: true,
+      isFavoritesOnly: true,
     });
     expect(result).toEqual([codeReview]);
 
     const noMatch = filterPrompts(prompts, {
       ...baseFilterState,
       category: 'testing',
-      showFavorites: true,
+      isFavoritesOnly: true,
     });
     expect(noMatch).toEqual([]);
   });

@@ -50,5 +50,5 @@ export interface FilterState {
   model: Model | 'all';
   category: Category | 'all';
   search: string;
-  showFavorites: boolean;
+  isFavoritesOnly: boolean;
 }

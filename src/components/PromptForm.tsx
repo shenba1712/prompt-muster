@@ -23,9 +23,9 @@ import {
 import styles from './PromptForm.module.css';
 
 interface PromptFormProps {
-  prompt?: Prompt;
-  onSave: (input: CreatePromptInput) => void;
-  onCancel: () => void;
+  readonly prompt?: Prompt;
+  readonly onSave: (input: CreatePromptInput) => void;
+  readonly onCancel: () => void;
 }
 
 export default function PromptForm({
@@ -44,6 +44,10 @@ export default function PromptForm({
   const titleInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [invalidFields, setInvalidFields] = useState({
+    title: false,
+    content: false,
+  });
 
   // On open, bring the form into view and focus the title so it's obvious the
   // form opened — the Edit button can be far below the form's position.
@@ -57,10 +61,14 @@ export default function PromptForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (title.trim() === '' || content.trim() === '') {
+    const titleInvalid = title.trim() === '';
+    const contentInvalid = content.trim() === '';
+    if (titleInvalid || contentInvalid) {
+      setInvalidFields({ title: titleInvalid, content: contentInvalid });
       setError('Title and content are required.');
       return;
     }
+    setInvalidFields({ title: false, content: false });
     setError(null);
     const seenTags = new Set<string>();
     const uniqueTags = tags
@@ -103,6 +111,8 @@ export default function PromptForm({
         }
         placeholder="Prompt title"
         aria-label="Prompt title"
+        aria-invalid={invalidFields.title}
+        aria-describedby={invalidFields.title ? 'prompt-form-error' : undefined}
       />
       <Textarea
         value={content}
@@ -111,6 +121,10 @@ export default function PromptForm({
         }
         placeholder="Prompt content"
         aria-label="Prompt content"
+        aria-invalid={invalidFields.content}
+        aria-describedby={
+          invalidFields.content ? 'prompt-form-error' : undefined
+        }
       />
       <div className={styles.row}>
         <Select
@@ -159,7 +173,7 @@ export default function PromptForm({
       />
       <div>
         {error && (
-          <p role="alert" className={styles.error}>
+          <p role="alert" id="prompt-form-error" className={styles.error}>
             {error}
           </p>
         )}

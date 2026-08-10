@@ -54,7 +54,7 @@ _"Complete" means the feature works as an interactive frontend feature per Week 
 | 6   | Vitest installed with real tests (`utils/prompt.ts`, `filterPrompts`, `usePromptManager`, minimum 12 cases across 3 files) | Complete — exceeded the minimum (69 tests across 3 files)                                                     |
 | 7   | `coding-challenges` repo: Two Sum + LeetCode 3 solution + complexity notes | Unverified from this repo — lives in a separate repo, not checkable from here                                             |
 | 8   | `notes/week-02-*.md` for every day worked                                 | Not done — no daily notes found; only the closing `notes/week-02-review.md` exists                                       |
-| 9   | Updated `core/completion-log.md`, `core/backlog.md`, `core/claude.md` Current State, `docs/dashboard.md` | Partial — `backlog.md` updated; `CLAUDE.md` Current State and `completion-log.md` still pending             |
+| 9   | Updated `docs/core/completion-log.md`, `docs/core/backlog.md`, root `CLAUDE.md` Current State, `docs/dashboard.md` | Complete as of 2026-08-10 — `backlog.md` was updated in Week 2; `CLAUDE.md`'s Current State and `completion-log.md` itself sat pending for several weeks (this row tracked that gap) until a full-app documentation audit closed both |
 
 ### Week 3 Deliverables
 

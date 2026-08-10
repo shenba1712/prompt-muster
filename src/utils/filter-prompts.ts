@@ -20,7 +20,7 @@ export function filterPrompts(
   );
   add(
     filters,
-    (prompt, filterState) => !filterState.showFavorites || prompt.isFavorite
+    (prompt, filterState) => !filterState.isFavoritesOnly || prompt.isFavorite
   );
   add(
     filters,

@@ -12,7 +12,7 @@ import { usePrompts } from '@/context/PromptProvider';
 
 interface PromptDetailPageProps {
   // Next 16: route params arrive as a Promise, unwrapped with React's use().
-  params: Promise<{ id: string }>;
+  readonly params: Promise<{ id: string }>;
 }
 
 export default function PromptDetailPage({

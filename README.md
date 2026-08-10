@@ -44,18 +44,27 @@ PromptMuster plays.
 
 ## Status
 
-🚧 **Week 2 of ~40** — pre-release, built solo at ~75 min/day.
+🚧 **Tier 1 (frontend foundation) complete; Phase 1 (file format & parser)
+underway** — pre-release, built solo at ~75 min/day. (Sequencing is
+phase-based, not week-based — see [backlog.md](./docs/core/backlog.md) — so
+this avoids restating a week number that goes stale every session.)
 
-### Working now (Phase 0 — prototype)
+### Working now (Tier 1 — frontend prototype)
 
 - [x] Create, read, update, delete prompts
 - [x] Favorite prompts
-- [x] Filter by model, category, tags, favorites
-- [x] Full-text search across titles and content
-- [x] Category and tag organization
+- [x] Filter by model, category, favorites, and full-text search across
+      titles and content
+- [x] Category and tag organization (tags are attached to prompts and
+      shown, not yet a filter dimension)
 - [x] Test suite (Vitest + React Testing Library)
-- [ ] Professional UI (shadcn/ui) — in progress
-- [ ] Next.js routing (list / detail / editor pages)
+- [x] Professional UI (shadcn/ui on Base UI primitives)
+- [x] Next.js routing (list / detail / editor / settings pages), filters as
+      shareable URL state, three-way dark-mode toggle
+- [x] Framework-free `core/` package scaffold (ADR-001) — `PromptFile`
+      types and a typed `ParseError`, boundary enforced by lint + a
+      standalone tsconfig
+- [ ] `.prompt` file parser (the actual file format landing) — next up
 
 ### Roadmap (phase-based, not a flat feature list)
 
@@ -104,7 +113,7 @@ same library in-process on your machine.
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22+ (matches `better-sqlite3`'s and `next@16`'s real floor)
 - npm
 
 ### Setup
@@ -145,6 +154,9 @@ src/                Application code
   hooks/            Custom React hooks
   types/            TypeScript type definitions
   utils/            Pure utility functions
+  lib/              Small framework-adjacent helpers (theme cookie, cn())
+core/               Framework-free @promptmuster/core library (ADR-001) —
+                    imports nothing from src/, react, or next
 public/             Static assets
 ```
 

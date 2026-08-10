@@ -1,10 +1,13 @@
 'use client';
 
 import * as React from 'react';
+import type { JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
-function Label({ className, ...props }: React.ComponentProps<'label'>) {
+type LabelProps = React.ComponentProps<'label'>;
+
+function Label({ className, ...props }: LabelProps): JSX.Element {
   return (
     <label
       data-slot="label"

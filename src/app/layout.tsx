@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
 import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google';
@@ -54,11 +55,13 @@ export async function generateViewport(): Promise<Viewport> {
   };
 }
 
+interface RootLayoutProps {
+  readonly children: React.ReactNode;
+}
+
 export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: RootLayoutProps): Promise<JSX.Element> {
   const cookieStore = await cookies();
   const cookieTheme = cookieStore.get(THEME_COOKIE_NAME)?.value;
   // Only an explicit choice (from the toggle) sets this attribute at all.
@@ -74,12 +77,7 @@ export default async function RootLayout({
     <html
       lang="en"
       data-theme={theme}
-      className={cn(
-        geistSans.variable,
-        geistMono.variable,
-        'font-mono',
-        jetbrainsMono.variable
-      )}
+      className={cn(geistSans.variable, geistMono.variable, jetbrainsMono.variable)}
     >
       <body>
         <PromptProvider>

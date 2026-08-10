@@ -13,9 +13,9 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface DeleteConfirmDialogProps {
-  promptTitle: string;
-  onConfirm: () => void;
-  className?: string;
+  readonly promptTitle: string;
+  readonly onConfirm: () => void;
+  readonly className?: string;
 }
 
 export default function DeleteConfirmDialog({
@@ -23,7 +23,7 @@ export default function DeleteConfirmDialog({
   onConfirm,
   className,
 }: DeleteConfirmDialogProps): JSX.Element {
-  const deleteButtonRef = useRef<HTMLButtonElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
   return (
     <AlertDialog>
@@ -39,7 +39,7 @@ export default function DeleteConfirmDialog({
           </Button>
         }
       />
-      <AlertDialogContent initialFocus={deleteButtonRef}>
+      <AlertDialogContent initialFocus={cancelButtonRef}>
         <AlertDialogTitle>Delete &quot;{promptTitle}&quot;?</AlertDialogTitle>
         <AlertDialogDescription>
           This can&apos;t be undone.
@@ -47,19 +47,14 @@ export default function DeleteConfirmDialog({
         <AlertDialogFooter>
           <AlertDialogClose
             render={
-              <Button type="button" variant="outline">
+              <Button ref={cancelButtonRef} type="button" variant="outline">
                 Cancel
               </Button>
             }
           />
           <AlertDialogClose
             render={
-              <Button
-                ref={deleteButtonRef}
-                type="button"
-                variant="destructive"
-                onClick={onConfirm}
-              >
+              <Button type="button" variant="destructive" onClick={onConfirm}>
                 Delete
               </Button>
             }

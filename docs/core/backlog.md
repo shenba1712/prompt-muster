@@ -116,12 +116,18 @@ and is unaffected by it (prd.md's Phase 0).
 
 #03 [x] Multi-Dimensional Filtering
 
-     Filter by model, category, tags, favorites, search.
+     Filter by model, category, favorites, search.
 
      Prerequisites: #01, #02
      Teaches: Derived state, higher-order functions,
               computed values, avoiding stored derived state
      Week: 1
+     CORRECTED (2026-08-10): this line originally also claimed tag
+     filtering. It was never built — `PromptFilters`/`filter-prompts.ts`
+     only ever implemented model, category, search, and favorites (06.4's
+     own later note in this file already said "four dimensions," tacitly
+     confirming this). Scope description fixed to match; #01-#02's
+     prerequisites and the feature's completeness are otherwise unaffected.
 
 
 #04 [x] Full-Text Search

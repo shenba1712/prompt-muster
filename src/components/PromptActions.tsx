@@ -8,12 +8,12 @@ import { cn } from '@/lib/utils';
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog';
 
 interface PromptActionsProps {
-  promptId: string;
-  promptTitle: string;
-  content: string;
-  onCopy: (content: string) => void;
-  onDelete: (id: string) => void;
-  className?: string;
+  readonly promptId: string;
+  readonly promptTitle: string;
+  readonly content: string;
+  readonly onCopy: (content: string) => void;
+  readonly onDelete: (id: string) => void;
+  readonly className?: string;
 }
 
 export default function PromptActions({
@@ -41,7 +41,13 @@ export default function PromptActions({
       >
         Edit
       </Link>
-      <Button type="button" variant="outline" size="sm" onClick={handleCopy}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={handleCopy}
+        aria-live="polite"
+      >
         {copied ? 'Copied!' : 'Copy'}
       </Button>
       <DeleteConfirmDialog
