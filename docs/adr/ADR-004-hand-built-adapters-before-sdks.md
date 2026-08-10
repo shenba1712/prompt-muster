@@ -146,7 +146,7 @@ migrated to the SDK), revisit whether the ongoing maintenance cost is worth it.
 [trd.md §5.1, §5.3](../trd.md)
 [core/spec-essential.md](../core/spec-essential.md) (engineering philosophy: build over
 consume)
-[reference/idea-bank.md](https://github.com/shenba1712/engineeros-roadmap/blob/main/reference/idea-bank.md) (retry-with-backoff exercise, now
+[reference/idea-bank.md](../reference/idea-bank.md) (retry-with-backoff exercise, now
 load-bearing rather than optional)
 
 ---
@@ -162,7 +162,7 @@ Could I clearly explain this decision to another engineer?
 Did I choose the simplest solution that satisfies today's requirements?
 
 ☐ Yes　☑ Maybe　☐ No — the simplest path to a working feature is the SDK; the simplest
-path to the intended _learning outcome_ is the raw API first. This ADR deliberately
+path to the intended *learning outcome* is the raw API first. This ADR deliberately
 optimizes for the latter.
 
 ---

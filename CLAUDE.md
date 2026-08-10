@@ -11,9 +11,9 @@ to me" — file format, domain rewrite, execution) is underway: ticket 08.1
 `core/prompt-file.ts`, `core/parse-error.ts`, boundary enforced by
 `eslint.config.mjs`'s `no-restricted-imports` on `core/**/*.ts`) are done;
 08.3 (the actual `.prompt` file parser) is next. `core/` at the repo root is
-the new framework-free library per ADR-001 — do not confuse it with this
-file's own `docs/core/` shorthand below, which predates it and refers to
-`docs/core/backlog.md` / `docs/core/tickets.md`.
+the new framework-free library per ADR-001 — distinct from `docs/core/` in
+the mirrored product-repo docs tree, which is unrelated (a copy of this
+roadmap repo's own `core/`, not the ADR-001 library).
 Frontend only still, no backend, no database. All data is in-memory, lifted
 into a `PromptProvider` React Context (`src/context/PromptProvider.tsx`)
 instead of page-level `useState`, so it survives client-side navigation.
@@ -31,11 +31,14 @@ default-anchor-styled prompt titles, a unicode favorite star, and
 same day (gradient removed, titles styled via `CardTitle`, star replaced
 with a phosphor icon, sample-data button gated to dev-only builds via
 `NODE_ENV`). Two follow-on tickets from that same audit: `07.7` (keyboard-nav
-audit) is `[~]` in progress — only the `AlertDialog` focus-trap-escape bug
-and the Prompt Detail back-link's missing focus ring have been found and
-fixed so far, not the full flow-by-flow walkthrough the ticket scopes; `07.8`
-(toast/inline/silence policy + wiring design-system.md §2.6's motion tokens
-into real transitions) is `[x]` done — see `docs/core/completion-log.md`.
+audit) is `[~]` in progress — the `AlertDialog` focus-trap-escape bug, the
+Prompt Detail back-link's missing focus ring, `DeleteConfirmDialog`
+defaulting focus to the destructive button instead of Cancel, and
+`PromptCard`'s stretched-link card having no focus ring have all been found
+and fixed, but not the full ia.md §4 flow-by-flow walkthrough the ticket
+actually scopes; `07.8` (toast/inline/silence policy + wiring
+design-system.md §2.6's motion tokens into real transitions) is `[x]` done
+— see `core/completion-log.md`.
 Routing: App Router structure complete — `/prompts` list (filters/search as
 URL state via `useFilterParams`, shareable/bookmarkable), `/prompts/[id]`
 detail + `not-found.tsx`, `/prompts/new` + `/prompts/[id]/edit` editor routes
@@ -44,7 +47,7 @@ to the root layout so every route shares it, and its logo links home.
 Dark mode: three-way toggle (`ThemeToggle.tsx` + `src/lib/theme.ts`) over a
 server-read cookie (`cookies()` in `layout.tsx`), not `localStorage` — avoids
 the hydration-flash problem more thoroughly than the originally-planned
-approach; see `docs/core/completion-log.md`'s Week 3 section for why. Three states,
+approach; see `core/completion-log.md`'s Week 3 section for why. Three states,
 not two: an explicit `light`/`dark` writes the cookie and the server stamps
 `data-theme` on `<html>`; `system` deletes both, and the *absence* of the
 attribute is what lets `globals.css`'s `@media (prefers-color-scheme: dark)`
@@ -69,6 +72,7 @@ time. Load-bearing details, all verified against a production build on
   an explicit choice wins over the OS on that shell.
 - Test this in a **production build**. `next dev` injects CSS via JS and
   gives the wrong answer.
+
 No data persistence yet (prompt files on disk + SQLite planned for Week 5 —
 supersedes the earlier IndexedDB plan; see project-files/trd.md §4 and
 ADR-002).
@@ -143,19 +147,6 @@ For multi-step tasks, maintain a checklist:
 Update the checklist as you work. If I ask "where are we?", show
 the current checklist state.
 
-### Update the Completion Log
-
-When a feature, ticket, or other non-trivial piece of work finishes, add a
-dated entry to `docs/core/completion-log.md` (newest entries first) — what
-shipped, why, and anything a future session would need to know that isn't
-obvious from the code or a commit message. Keep it to real decisions and
-learnings, not a changelog of every file touched — git history already
-covers that.
-
-This applies to any finished work, not just backlog-numbered tickets; for
-those specifically, it's also required by `docs/core/backlog.md`'s own
-RULES #7.
-
 ### Justify Changes
 
 For every file you modify, briefly explain:
@@ -228,6 +219,18 @@ to handle this consistently?"
 
 I'll decide whether to add it. Don't modify this file yourself.
 
+### Update the Completion Log
+
+When a feature, ticket, or other non-trivial piece of work finishes, add a
+dated entry to `core/completion-log.md` (newest entries first) — what
+shipped, why, and anything a future session would need to know that isn't
+obvious from the code or a commit message. Keep it to real decisions and
+learnings, not a changelog of every file touched — git history already
+covers that.
+
+This applies to any finished work, not just backlog-numbered tickets; for
+those specifically, it's also required by `core/backlog.md`'s own RULES #7.
+
 ## Sessions
 
 ### Quick Task (single file, small change)
@@ -288,21 +291,22 @@ I'll decide whether to add it. Don't modify this file yourself.
 - Next.js 14+ (App Router)
 - React 18+
 - TypeScript 5+ (strict mode)
-- Node.js 22+ (matches `better-sqlite3`'s and `next@16`'s real floor — "18+" undercounted this)
+- Node.js 22+ (matches `better-sqlite3`'s and `next@16`'s real floor —
+  "18+" undercounted this)
 - Tailwind CSS v4 + shadcn/ui on Base UI primitives (@base-ui/react; "base-lyra" style, phosphor icons — see components.json). Component source lives in src/components/ui/
 
 ## Project Structure
 
 - src/app/ — Next.js App Router pages and layouts
 - src/components/ — React components (one per file)
-- src/context/ — React Context providers (PromptProvider)
 - src/hooks/ — Custom React hooks
 - src/types/ — TypeScript type definitions
 - src/utils/ — Pure utility functions
+- src/context/ — React Context providers (PromptProvider)
 - src/lib/ — Small framework-adjacent helpers (theme cookie, `cn()`)
-- core/ — Framework-free TypeScript library (ADR-001; NOT the same as this
-  file's own `docs/core/` shorthand below). Imports nothing from `src/`,
-  `react`, or `next` — enforced by `eslint.config.mjs`. Home for the
+- core/ — Framework-free TypeScript library (ADR-001; not the same as the
+  mirrored product-repo docs tree's own `docs/core/`). Imports nothing from
+  `src/`, `react`, or `next` — enforced by `eslint.config.mjs`. Home for the
   eventual `.prompt` file parser/serializer; currently just the `PromptFile`
   and `ParseError` types (ticket 08.2).
 

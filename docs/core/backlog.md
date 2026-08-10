@@ -125,9 +125,12 @@ and is unaffected by it (prd.md's Phase 0).
      CORRECTED (2026-08-10): this line originally also claimed tag
      filtering. It was never built — `PromptFilters`/`filter-prompts.ts`
      only ever implemented model, category, search, and favorites (06.4's
-     own later note in this file already said "four dimensions," tacitly
-     confirming this). Scope description fixed to match; #01-#02's
-     prerequisites and the feature's completeness are otherwise unaffected.
+     own later note already said "four dimensions," tacitly confirming
+     this). Scope description fixed to match; #01-#02's prerequisites and
+     the feature's completeness are otherwise unaffected. Caught by a
+     documentation audit in the product repo, not by re-reading this file
+     — a reminder that a wrong scope line can sit unnoticed indefinitely
+     once a feature is marked `[x]`.
 
 
 #04 [x] Full-Text Search
@@ -170,15 +173,14 @@ and is unaffected by it (prd.md's Phase 0).
      `router.replace` — not `push`, since a filter change isn't a
      new history entry); an absent param means "no filter," not a
      stored empty string. `/settings` ships as a real stub route
-     (styled to match the app's `Card` pattern, not bare text),
-     linked from Header, which also picked up a clickable
-     PromptMuster logo → `/prompts` and got hoisted to the root
-     layout so every top-level route shares the same shell.
-     Manually verified: a filtered URL is shareable (copy, paste in
-     a new tab, same filter applies on load) and the back button
-     exits a filtered view in one step rather than one filter at a
-     time — the deliberate `replace` behavior working as designed,
-     not a bug. #06 closed to [x].
+     (styled to match the app's `Card` pattern), linked from Header,
+     which also picked up a clickable PromptMuster logo → `/prompts`
+     and got hoisted to the root layout so every top-level route
+     shares the same shell. Manually verified: a filtered URL is
+     shareable (copy, paste in a new tab, same filter applies) and
+     the back button exits a filtered view in one step — the
+     deliberate `replace` behavior working as designed, not a bug.
+     #06 closed to `[x]`.
 
 
 #07 [x] Professional UI (shadcn/ui)
@@ -200,13 +202,15 @@ and is unaffected by it (prd.md's Phase 0).
      primitives migration, which only covered Button/Input/Select/
      Textarea/Badge/Card — not layout chrome. Ticket 07.6 (tickets.md)
      closes this gap. Complete #07 again only once 07.6 lands.
-     RESOLVED (2026-08-04): 07.6 landed same day — gradient Header
-     removed, prompt titles styled as real headings, unicode favorite
-     star replaced with a designed icon, design-system.md's type scale/
-     spacing rhythm applied app-wide, "Load Sample Data" gated to
-     dev-only builds. #07 closed to [x] again. 07.7 (keyboard-nav audit)
-     and 07.8 (motion/toast policy) are separate follow-on tickets from
-     the same audit — neither gates #07.
+     RESOLVED (2026-08-04, same day): 07.6 landed — gradient Header
+     removed, prompt titles styled as real headings via `CardTitle`,
+     unicode favorite star replaced with a designed phosphor icon,
+     design-system.md's type scale/spacing applied app-wide as real CSS
+     custom properties, "Load Sample Data" gated to non-production builds.
+     #07 closed to `[x]` again. `07.7` (keyboard-nav audit) and `07.8`
+     (toast/motion policy) were split out as separate follow-on tickets
+     from the same audit — neither gates `#07` itself. `07.8` is now also
+     done (2026-08-09/10); `07.7` remains `[~]` partial (see tickets.md).
 
 
 TIER 1 CHECKPOINT
@@ -280,10 +284,9 @@ Ring: 0 (you, daily, inside Claude Code / Cursor).
 
      Replace the Model union type with a table:
      {provider, snapshotId, contextWindow, inputPrice, outputPrice}.
-     Seed with current snapshots (claude-opus-5, claude-sonnet-5,
-     claude-haiku-4-5-20251001, etc. — re-verify against each provider's
-     live model list when this ticket is actually picked up, not from
-     this note) — the repo's existing strings are already stale.
+     Seed with current snapshots (claude-opus-4-8, claude-sonnet-5,
+     claude-haiku-4-5, etc.) — the repo's existing strings are
+     already stale.
 
      Prerequisites: #09
      Teaches: When a union type should become data instead (model

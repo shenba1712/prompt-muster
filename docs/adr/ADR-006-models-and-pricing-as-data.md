@@ -18,16 +18,11 @@ PromptMuster
 
 The Week 1 prototype modeled available models as a hardcoded TypeScript union type
 (`gpt-4o | gpt-4o-mini | claude-sonnet | claude-haiku | gemini-pro | gemini-flash`, per
-[reference/key-desicions.md](https://github.com/shenba1712/engineeros-roadmap/blob/main/reference/key-desicions.md)) — a reasonable choice for
+[reference/key-desicions.md](../reference/key-desicions.md)) — a reasonable choice for
 learning TypeScript early on, but the placeholder identifiers were already stale by the
-time real execution work began (Anthropic models at the time were `claude-opus-4-8` /
-`claude-sonnet-5` / `claude-haiku-4-5`, not the names in the union — and even that
-"current" list didn't stay current: `claude-opus-4-8` is itself now legacy, per
-Anthropic's own model-overview docs, checked 2026-08-08. This is the strongest possible
-argument for this ADR's own decision: even a staff-written "current" example goes stale
-before the ink dries, which is exactly why models belong in a data table, not in
-prose or code), and pricing / context-window figures change independently of any code
-release.
+time real execution work began (current Anthropic models are `claude-opus-4-8` /
+`claude-sonnet-5` / `claude-haiku-4-5`, not the names in the union), and pricing /
+context-window figures change independently of any code release.
 
 ---
 
@@ -45,7 +40,7 @@ Model identifiers and pricing are external facts that change on a schedule outsi
 project's control. Encoding them in source code means every provider price change or model
 deprecation requires a code change and redeploy; as data, the same information updates
 without touching application logic. This is also the exact refactor the Week 1 plan itself
-anticipated — [reference/key-desicions.md](https://github.com/shenba1712/engineeros-roadmap/blob/main/reference/key-desicions.md) notes: "the
+anticipated — [reference/key-desicions.md](../reference/key-desicions.md) notes: "the
 refactoring from union type to data model is itself a good engineering lesson."
 
 ---
@@ -150,7 +145,7 @@ sync from it automatically rather than being manually maintained.
 # Related Documents
 
 [trd.md §5.4, §13](../trd.md) (decision A6)
-[reference/key-desicions.md](https://github.com/shenba1712/engineeros-roadmap/blob/main/reference/key-desicions.md) (original union type, now
+[reference/key-desicions.md](../reference/key-desicions.md) (original union type, now
 superseded)
 [core/backlog.md](../core/backlog.md) (original Tier 1 model union, likewise superseded)
 

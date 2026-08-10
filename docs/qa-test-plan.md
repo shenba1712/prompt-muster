@@ -286,10 +286,8 @@ priority column) must be at 100% pass before a phase is considered complete.
 ## 6. Open questions
 
 1. **E2E tool choice.** No prior doc picked one. **Recommending Playwright** — solid SSE/
-   streaming support (this app streams constantly), cross-browser, and one of the handful
-   of E2E runners Next.js's own testing docs list as compatible (Cypress is the other named
-   option — corrected 2026-08-08; this isn't a sole Next.js endorsement as previously
-   stated). Open to reconsideration, not yet exercised by real test-writing.
+   streaming support (this app streams constantly), the Next.js-recommended option,
+   cross-browser. Open to reconsideration, not yet exercised by real test-writing.
 2. **The five undetailed E2E flows** ([§3.5](#35-e2e-ui-flow-tests)) — TC-E2E-003 through
    007 are allocated ID slots, not yet written in step-by-step form. Writing them is
    mechanical once TC-E2E-001/002 establish the harness; not done here to avoid repetitive

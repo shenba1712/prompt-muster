@@ -30,19 +30,10 @@ slash-command and skill files are already markdown prompt files living in a git 
 
 **Accepted: adopt and extend [dotprompt](https://github.com/google/dotprompt).** YAML
 frontmatter plus a Handlebars body with `{{role "system"}}` markers, matching the shape
-[trd.md §3](../trd.md) sketched independently. PromptMuster's own additions — `schemaVersion`,
-typed UI variable kinds, and **any PromptMuster-domain metadata dotprompt has no concept of
-at all** (`category`, `tags`, `isFavorite`) — live in a namespaced `promptmuster:` frontmatter
+[trd.md §3](../trd.md) sketched independently. PromptMuster's own additions
+(`schemaVersion`, typed UI variable kinds) live in a namespaced `promptmuster:` frontmatter
 block that other dotprompt tooling can just ignore — the "extend" half of "adopt and
-extend," not a fork of the base format. **(Widened 2026-08-09** — hand-authoring three real
-seed prompts as `.prompt.md` files surfaced that the namespace carries more than the two
-fields originally named here; see the corrected Pros entry below.) **(Also corrected
-2026-08-09, verified against `google/dotprompt`'s actual parser source, not assumed from the
-docs:** the block must nest under dotprompt's own reserved `ext:` key —
-`ext: { promptmuster: {...} }` — not sit as a bare top-level `promptmuster:` block. The
-parser silently drops any bare, undotted, unreserved top-level key; `ext` is reserved and
-passed through untouched. See [prompt-file-format-spike.md §1/§3](../prompt-file-format-spike.md)
-for the exact parser code checked.)
+extend," not a fork of the base format.
 
 ---
 
@@ -126,18 +117,12 @@ Pros
 
 - Format shape (YAML frontmatter + Handlebars body) already matches what trd.md §3
   sketched independently — least design friction of the three
-- Ecosystem depth: core libraries in JS/TS/Python/Go/Rust/Java, VS Code _and_ JetBrains
+- Ecosystem depth: core libraries in JS/TS/Python/Go/Rust/Java, VS Code *and* JetBrains
   plugins, a tree-sitter grammar, Monaco/CodeMirror editor modes — the dashboard's own
   prompt editor gets syntax highlighting close to free
 - Apache-2.0, stable (not alpha)
-- PromptMuster's deltas from it fit in one namespaced frontmatter block, not enough to
-  justify owning a bespoke spec forever. **(Corrected 2026-08-09** — originally described as
-  "two namespaced frontmatter keys" [`schemaVersion`, typed variable kinds]; hand-authoring
-  three real prompts found the block also has to carry `category`, `tags`, and `isFavorite`
-  — anything PromptMuster-domain that dotprompt has no native concept of at all, not just
-  the two fields first named. Still one block, still ignorable by other dotprompt tooling —
-  the "extend, don't fork" argument is unaffected — but the surface area is wider than
-  first scoped.)
+- PromptMuster's deltas from it are two namespaced frontmatter keys, not enough to justify
+  owning a bespoke spec forever
 
 Cons
 
