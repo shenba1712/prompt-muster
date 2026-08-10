@@ -60,7 +60,7 @@ function AlertDialogContent({
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Backdrop
         data-slot="alert-dialog-backdrop"
-        className="fixed inset-0 z-50 bg-foreground/50 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
+        className="fixed inset-0 z-50 bg-foreground/50 duration-slow ease-standard data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
       />
       <AlertDialogPrimitive.Popup
         data-slot="alert-dialog-content"
@@ -68,7 +68,8 @@ function AlertDialogContent({
         initialFocus={initialFocus}
         onKeyDown={handleKeyDown}
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-none border border-border bg-popover p-6 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          // design-system.md §2.6: dialog/modal open maps to --duration-slow.
+          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-none border border-border bg-popover p-6 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-slow ease-standard data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
           className
         )}
         {...props}

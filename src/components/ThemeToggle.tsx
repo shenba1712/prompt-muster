@@ -61,12 +61,16 @@ export default function ThemeToggle(): JSX.Element {
       aria-label={`Theme: ${theme}. Switch to ${NEXT_THEME[theme]}.`}
       className="min-h-11 min-w-11 text-muted-foreground hover:text-foreground"
     >
+      {/* design-system.md §2.6: each icon is a distinct mounted element (not
+          a shared one with a swapped prop), so @starting-style's `starting:`
+          variant fires on every swap — a real fade/scale-in on the newly
+          mounted icon, not an instant pop. */}
       {theme === 'system' ? (
-        <MonitorIcon className="size-5" />
+        <MonitorIcon className="size-5 transition-[opacity,transform] duration-base ease-standard starting:scale-90 starting:opacity-0" />
       ) : theme === 'dark' ? (
-        <MoonIcon className="size-5" />
+        <MoonIcon className="size-5 transition-[opacity,transform] duration-base ease-standard starting:scale-90 starting:opacity-0" />
       ) : (
-        <SunIcon className="size-5" />
+        <SunIcon className="size-5 transition-[opacity,transform] duration-base ease-standard starting:scale-90 starting:opacity-0" />
       )}
     </Button>
   );
