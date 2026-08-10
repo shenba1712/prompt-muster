@@ -143,6 +143,19 @@ For multi-step tasks, maintain a checklist:
 Update the checklist as you work. If I ask "where are we?", show
 the current checklist state.
 
+### Update the Completion Log
+
+When a feature, ticket, or other non-trivial piece of work finishes, add a
+dated entry to `docs/core/completion-log.md` (newest entries first) — what
+shipped, why, and anything a future session would need to know that isn't
+obvious from the code or a commit message. Keep it to real decisions and
+learnings, not a changelog of every file touched — git history already
+covers that.
+
+This applies to any finished work, not just backlog-numbered tickets; for
+those specifically, it's also required by `docs/core/backlog.md`'s own
+RULES #7.
+
 ### Justify Changes
 
 For every file you modify, briefly explain:
