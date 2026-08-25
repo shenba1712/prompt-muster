@@ -19,7 +19,7 @@ PromptMuster
 PromptMuster's execution engine must call three different LLM providers (OpenAI, Anthropic,
 Google) with meaningfully different request/response/streaming shapes, normalized behind
 one internal interface. The project's own learning mandate
-([core/spec-essential.md](../core/spec-essential.md)) explicitly favors building
+(`core/spec-essential.md`) explicitly favors building
 understanding over consuming pre-built abstractions where the underlying mechanics are
 themselves the lesson.
 
@@ -144,9 +144,9 @@ migrated to the SDK), revisit whether the ongoing maintenance cost is worth it.
 # Related Documents
 
 [trd.md §5.1, §5.3](../trd.md)
-[core/spec-essential.md](../core/spec-essential.md) (engineering philosophy: build over
+`core/spec-essential.md` (engineering philosophy: build over
 consume)
-[reference/idea-bank.md](../reference/idea-bank.md) (retry-with-backoff exercise, now
+`reference/idea-bank.md` (retry-with-backoff exercise, now
 load-bearing rather than optional)
 
 ---

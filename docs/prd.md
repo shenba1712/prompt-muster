@@ -449,11 +449,19 @@ Owner reviewed the batch 2026-07-16. All six now decided:
    is now Accepted — compliance-matrix.md D1 is unblocked.
 3. **License — ✅ DECIDED 2026-07-16: Apache-2.0** (patent grant, open-core-friendly).
    LICENSE file added to the `prompt-muster` repo, in the same pass as the rename (#1).
-4. **Employer IP — ✅ STRATEGY DECIDED 2026-07-16: the repo stays private** through the
-   build phase, which defers public exposure. The written employer OK is still required
-   **before the repo goes public** (now a Phase-3 launch gate, paired with #6). Private
-   work reduces but doesn't legally erase IP-assignment exposure — keep it on personal
-   time and equipment.
+4. **Employer IP — ⚠️ REVISED 2026-08-25: the repo is public.** ~~STRATEGY DECIDED
+   2026-07-16: the repo stays private through the build phase, which defers public
+   exposure.~~ The stay-private strategy was **not** followed: `prompt-muster` has been
+   public since 2026-07-07 (confirmed via the GitHub API on 2026-08-25 — `"private":
+   false`), i.e. it was already public when that strategy was written. Reaffirmed as
+   intentional on 2026-08-25; the deferral is dropped rather than reinstated.
+
+   **The IP requirement itself is unchanged.** The written employer OK is still required
+   (ticket `14a.1`, still `[ ]`) and remains a Phase-3 launch gate paired with #6.
+   Visibility and clearance are separate things: going public does not create the
+   IP-assignment exposure, it just makes the work visible while the question is open —
+   which argues for sending the ask sooner, not later. Keep it on personal time and
+   equipment.
 5. **Phase ordering — ✅ DECIDED** (settled earlier): MCP-first —
    [ADR-007](adr/ADR-007-mcp-before-eval-engine.md).
 6. **Build-in-public timing — ✅ DECIDED 2026-07-16: private until there's real progress

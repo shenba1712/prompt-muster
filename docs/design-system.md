@@ -156,7 +156,7 @@ never the sole identifier (mandatory regardless of CVD status, per WCAG 1.4.1).
 
 PromptMuster has **11 fixed prompt categories** (code-generation, debugging, code-review,
 documentation, refactoring, testing, architecture, data-modeling, devops, learning,
-communication — [key-decisions.md](../reference/key-desicions.md)). The categorical method
+communication — `key-decisions.md`). The categorical method
 caps at **8 safely distinguishable hues**; a 9th+ "folds into Other" rather than getting a
 generated color. With 11 fixed categories already over that ceiling on day one, hue-per-
 category was never viable — so **category badges are neutral, text-only** (`--secondary`
