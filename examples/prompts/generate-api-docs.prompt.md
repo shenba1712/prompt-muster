@@ -10,9 +10,9 @@ input:
 output:
   schema:
     summary: string, One-sentence description of what the endpoint does
-    parameters(array): string, Name and description of each request parameter
-    responses(array): string, Example response shapes, one per relevant status code
-    errorCodes(array): string, Error codes this endpoint can return and what each means
+    parameters(array, Name and description of each request parameter): string
+    responses(array, Example response shapes, one per relevant status code): string
+    errorCodes(array, Error codes this endpoint can return and what each means): string
 ext:
   promptmuster:
     schemaVersion: 1

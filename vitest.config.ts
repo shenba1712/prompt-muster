@@ -11,7 +11,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    include: ['src/**/*.test.{ts,tsx}'], // finds colocated tests
+    include: ['src/**/*.test.{ts,tsx}', 'core/**/*.test.ts'], // finds colocated tests
     setupFiles: ['./vitest.setup.ts'],
   },
 });

@@ -14,6 +14,131 @@ Newest entries first.
 
 ---
 
+## 2026-08-10 — Self-audit of `core/parse-prompt-file.ts` for ambiguity-#1-shaped silent failures
+
+Prompted by a direct question: given ambiguity #1 (08.1) was only caught by
+reading the real parser source rather than the docs, what's the equivalent
+risk in the parser I wrote myself — input that wouldn't error, wouldn't
+throw, and would just silently produce a wrong-but-plausible result?
+Found and fixed three, all in `core/parse-prompt-file.ts`:
+
+1. **Malformed `{{role ...}}` markers silently became literal message
+   content.** `ROLE_MARKER` only matched the exact double-quoted, lowercase
+   form. But this parser never renders the body through Handlebars (08.3's
+   own scope keeps content a raw string) — so a single-quoted
+   `{{role 'system'}}`, a wrong-case `{{role "System"}}`, or a
+   no-argument `{{role}}` would all silently fall through as ordinary text
+   inside whichever message was currently accumulating, with
+   `result.success: true` and a perfectly well-formed-looking
+   `PromptMessage[]` that's just quietly missing a message boundary. Fixed
+   with `ROLE_MARKER_LOOSE`, a broader pattern that catches anything
+   shaped like an attempted role marker, cross-checked against the strict
+   pattern — a mismatch is now a named `INVALID_BODY` error instead of
+   silent absorption.
+2. **Every "must be an object" check accepted arrays too** — plain JS
+   semantics (`typeof [] === 'object'`), not a guess. `input: {schema: [a,
+   b]}` would pass validation, then `Object.keys(['a','b'])` downstream
+   silently produced variable names `"0"`, `"1"`. `config: [0.3]` would
+   pass, then every field lookup came back `undefined`, silently producing
+   an *empty* config object instead of an error. Fixed with a shared
+   `isPlainObject()` helper (`typeof === 'object' && !== null &&
+   !Array.isArray`), replacing every ad hoc `typeof x !== 'object' || x
+   === null` check in the file.
+3. **`variableKinds` cross-validation didn't strip Picoschema's own key
+   modifiers.** `parseVariableKinds` compared against `input.schema`'s raw
+   keys — but a Picoschema key can be `topic(array, ...)` or `topic?`.
+   A `variableKinds` entry for a variable declared either way would be
+   *wrongly rejected* as undeclared (the opposite direction — a false
+   rejection, not a silent bad-pass, found by re-reading `picoschema.ts`'s
+   own key-splitting logic already fetched for the ambiguity-#3 work).
+   Fixed with `bareVariableName()`, stripping the `(...)` suffix and
+   trailing `?` before comparing.
+
+None of the 3 real example files triggered any of these — all three were
+latent, not currently broken in practice — but all three are real and
+fixable, so fixed rather than just logged. 8 new regression tests added;
+full suite (23 files, 201 tests), `tsc`, `typecheck:core`, and lint all
+green.
+
+---
+
+## 2026-08-10 — Picoschema `(array)` grammar ambiguity resolved (spike note §3, item 3)
+
+Verified against `google/dotprompt`'s real Picoschema compiler source
+(`js/src/picoschema.ts`) and its own test suite (`picoschema.test.ts`),
+fetched live — not inferred by analogy, which is how the spike note (08.1)
+had originally left this. For a parenthesized key `field(array,
+description)`, the description *inside the parens* describes the
+array/object/enum field itself; the value after the colon is recursively
+parsed as the item type in the same `type, description` form. Confirmed
+against a real test case: `{ 'items(array, list of items)': 'string' }` →
+`{ type: 'array', items: { type: 'string' }, description: 'list of
+items' }`.
+
+**This surfaced that `examples/prompts/generate-api-docs.prompt.md` was
+itself written wrong**: `parameters(array): string, Name and description of
+each request parameter` had empty parens (no array-level description) and
+put the description on the item type instead. Flagged first, then fixed
+once asked to: all three `(array)` fields in that file (`parameters`,
+`responses`, `errorCodes`) now carry their original wording as the
+array-level description in the parens, with a bare `string` item type —
+verified by hand-simulating the real compiler's `extractDescription` regex
+against the corrected YAML before committing to it, not just re-reading it
+and hoping. Documented in full in `core/prompt-file.ts`'s
+`PicoschemaDefinition` comment and in the spike note itself (§3, item 3,
+now RESOLVED). `docs/dashboard.md` and `tickets.md`'s 08.1 notes updated to
+stop saying "two ambiguities open" now that one of the two is resolved
+(one — `additionalProperties: false`'s default — remains genuinely open).
+
+## 2026-08-10 — `.prompt` file parser (08.3)
+
+`core/parse-prompt-file.ts`: `parsePromptFile(source, slug)` returns a
+`{success, file} | {success, error}` result (never throws), splitting a raw
+`.prompt` file into frontmatter (validated into `PromptFile`'s typed fields)
+and a role-tagged `PromptMessage[]` body — per the ticket's explicit scope,
+message *content* stays a raw string; no Handlebars variable interpolation
+and no Picoschema compilation happen here (`input`/`output.schema` remain
+the raw passthrough `PicoschemaDefinition` shape the type already
+documented; Picoschema compilation and variable interpolation are 09.x's
+job).
+
+Two decisions made explicitly, not defaulted silently:
+
+- **A fully-missing `ext.promptmuster` block rejects** with
+  `MISSING_REQUIRED_FIELD`, matching `PromptMusterExtension`'s fields exactly
+  as already typed (all required, no defaults synthesized). Adopting a bare
+  dotprompt file authored outside PromptMuster isn't supported yet — that's
+  deliberately deferred to whenever there's a real driving use case (import,
+  or the MCP "adopt a library wholesale" scenario), not designed for
+  speculatively. This doesn't block future format growth: that's what
+  `schemaVersion` is for. The parser dispatches extension-parsing on
+  `schemaVersion` (`parseExtensionV1` today; a v2 branch would be additive,
+  not a rewrite) — most "add a field/relax a constraint" changes (e.g., an
+  optional field defaulted by the parser) don't even need a version bump;
+  only changes to a field's fundamental shape (e.g., single category →
+  multiple) do, and that's the case a version bump is supposed to gate.
+- **Body-splitting on `{{role "..."}}` markers was verified against
+  google/dotprompt's real `js/src/parse.ts` `toMessages` source** (fetched
+  live, not assumed) rather than guessed: content before the first marker
+  (or the whole body, if there are no markers at all) defaults to role
+  `user`; a marker seen before any content has accumulated relabels the
+  still-empty current message rather than inserting an empty leading one —
+  which is why a body that opens with `{{role "system"}}` produces a clean
+  2-message array, not 3 with a stray empty one. My first guess here
+  (erroring on leading content) was wrong; checked before implementing it,
+  not after.
+
+Also: added `gray-matter` + `yaml` as real dependencies (the stack `trd.md`
+already specified, just not installed until this ticket needed it) —
+`gray-matter`'s own bundled `yaml` engine is overridden to use the `yaml`
+package explicitly, not its default `js-yaml`. `vitest.config.ts`'s
+`include` only matched `src/**/*.test.{ts,tsx}`; widened to also run
+`core/**/*.test.ts`, or the new test file would have silently never run.
+Confirmed via `npm audit` that gray-matter's own transitive `js-yaml@3.15.1`
+isn't in the vulnerable range flagged elsewhere in the tree (that's a
+separate, pre-existing `js-yaml@4.3.0` from `eslint`/`shadcn`, unrelated to
+this change) — not something to silently wave past.
+
 ## 2026-08-09/10 — Keyboard-nav fixes (07.7, partial) + toast/motion policy (07.8, complete)
 
 **07.8 — done.** Audited every current interaction (save, delete, favorite

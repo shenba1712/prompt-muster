@@ -85,8 +85,10 @@ keys.** ADR-005 and trd.md §3 have been corrected to say this.
 ## 3. Open ambiguities, and how they were resolved (or weren't)
 
 Reading the spec closely enough to write 3 real files surfaced four real ambiguities.
-Two are now resolved (one after a second pass, prompted by a direct question about whether
-it was worth chasing down); two are flagged as genuinely open, not papered over:
+Three are now resolved (one after a second pass, prompted by a direct question about
+whether it was worth chasing down; a third during 08.3, prompted by a direct instruction
+not to build on an inferred-by-analogy grammar without checking it first); one is flagged
+as genuinely open, not papered over:
 
 1. **Unrecognized top-level frontmatter key — RESOLVED 2026-08-09, verified against the real
    parser source, not the docs.** Fetched `google/dotprompt`'s actual TypeScript source
@@ -122,13 +124,26 @@ it was worth chasing down); two are flagged as genuinely open, not papered over:
    one confirmed directly in dotprompt's own docs (it's a Google project). All three are in
    live use in `examples/prompts/`.
 
-3. **Picoschema's `(array)` + trailing description grammar — OPEN, low-stakes.** The scalar
-   form (`diff: string, The diff to review`) is directly confirmed. The compound form used
-   in `generate-api-docs.prompt.md` (`parameters(array): string, Name and description of
-   each request parameter`) was inferred by analogy, not found as a live example in either
-   spec page fetched. 08.3's parser should verify this exact grammar against the real
-   Picoschema compiler's own test suite before relying on it — if wrong, it's a narrow,
-   mechanical fix (this is punctuation-level, not structural, unlike ambiguity #1).
+3. **Picoschema's `(array)` + trailing description grammar — RESOLVED 2026-08-10 during
+   08.3, verified against the real compiler source and its own test suite
+   (`google/dotprompt`, `js/src/picoschema.ts` + `picoschema.test.ts`), not the analogy this
+   note originally guessed from.** The scalar form (`diff: string, The diff to review`) was
+   already correct. The compound form was not: for a parenthesized key
+   `field(array, description)`, the comma-separated description **inside the parens**
+   describes the array/object/enum field itself; the value after the colon is recursively
+   parsed as the item type, in the same `type, description` form. Confirmed against a real
+   test case — `{ 'items(array, list of items)': 'string' }` compiles to `{ type: 'array',
+   items: { type: 'string' }, description: 'list of items' }` — description on the array,
+   bare type on the item.
+   **This meant `generate-api-docs.prompt.md`'s original line —
+   `parameters(array): string, Name and description of each request parameter` — was written
+   wrong**: empty parens (no array-level description at all), with that description landing
+   on the item type instead (each string element, not the `parameters` field). Not what was
+   intended when the file was hand-authored — **corrected 2026-08-10** to
+   `parameters(array, Name and description of each request parameter): string`, moving the
+   original wording into the parens where it belongs; `responses(array)` and
+   `errorCodes(array)` in the same file got the identical fix. Full derivation documented in
+   `core/prompt-file.ts`'s `PicoschemaDefinition` comment, not just here.
 
 4. **Does Picoschema default to `additionalProperties: false`? — OPEN, matters for the
    Anthropic structured-outputs constraint.** Neither spec page fetched states whether a
@@ -157,4 +172,6 @@ the above — read them alongside this note, not instead of it:
   extension (shows the minimal case).
 - `debug-error.prompt.md` — OpenAI, single variable, `textarea` variable kind.
 - `generate-api-docs.prompt.md` — Google, has `output.schema` with a Picoschema array field
-  (shows ambiguity #3 and #4 in context).
+  (shows ambiguity #4 in context; its `(array)` fields were also the ones that surfaced
+  ambiguity #3's real grammar the hard way — see §3, item 3 — and were corrected once that
+  was resolved).
