@@ -73,7 +73,7 @@ Cons
 - At a 75-minutes-a-day solo pace, splitting focus risks finishing neither well within a
   reasonable timeframe
 - Contradicts the project's own "depth over breadth" curriculum principle
-  ([core/spec-essential.md](../core/spec-essential.md))
+  (`core/spec-essential.md`)
 
 ---
 

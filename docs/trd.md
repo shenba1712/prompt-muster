@@ -190,7 +190,7 @@ token-by-token; normalize their event shapes into one internal `Chunk`.
 ### 5.3 Reliability
 Retry transient errors (429, 503) with **jittered exponential backoff**; fail fast on
 400/401. (This is exactly the `retry`/backoff exercise already parked in
-[../reference/idea-bank.md](../reference/idea-bank.md) — now load-bearing.)
+`../reference/idea-bank.md` — now load-bearing.)
 
 ### 5.4 Token counting & cost *(corrects an earlier imprecision)*
 
@@ -208,7 +208,7 @@ before run** via each provider's native method. Never present a heuristic as exa
 labels it. Pricing comes from the models-as-data table (A6), keyed by exact snapshot.
 
 **Model IDs are data (A6).** The Week-1 union (`gpt-4o | claude-sonnet | …` in
-[../reference/key-desicions.md](../reference/key-desicions.md)) is stale and must migrate to
+`../reference/key-desicions.md`) is stale and must migrate to
 a table with `{provider, snapshotId, contextWindow, inputPrice, outputPrice}`. Current
 examples to seed it: Anthropic `claude-opus-4-8` / `claude-sonnet-5` / `claude-haiku-4-5`
 (the repo's `claude-sonnet`/`claude-haiku` strings are out of date). Store the **exact

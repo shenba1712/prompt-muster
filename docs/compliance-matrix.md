@@ -183,7 +183,7 @@ here so they don't get lost between the PRD's risk list and the TRD's security s
 
 | Area | Obligation | Where handled | Status |
 |---|---|---|---|
-| **Employer IP** | Written OK required **before the repo goes public** — strategy decided 2026-07-16: repo stays private through the build phase, moving this gate to the Phase-3 launch (keep work on personal time/equipment meanwhile) | PRD §11.2 #4 | ⏳ deferred by design; Phase-3 gate |
+| **Employer IP** | Written OK required (ticket `14a.1`, still `[ ]`) — remains a Phase-3 launch gate. ~~Strategy 2026-07-16: repo stays private through the build phase~~ **superseded 2026-08-25: the repo is public** (and had been since 2026-07-07, before that strategy was written); reaffirmed as intentional. Visibility ≠ clearance — the open IP question is now visible work, which argues for sending the ask sooner. Keep work on personal time/equipment | PRD §11.2 #4 | ⚠️ **no longer deferred by privacy**; ask not yet sent |
 | **License** | ✅ **Apache-2.0** (decided 2026-07-16); add LICENSE at product-repo creation | PRD §11.2 #3 | ✅ decided |
 | **Naming/trademark** | ✅ **PromptMuster** (decided 2026-07-16; npm package `promptmuster`). Built Weeks 1–2 under the earlier name PromptLab; GitHub repo renamed `promptlab` → `prompt-muster` (LICENSE added same pass), retiring the PromptLab ↔ IBM watsonx "Prompt Lab" collision | PRD §0/§11.2 #1 | ✅ decided |
 | **Privacy / data handling** | Local-first by default; keys never in repo; fixtures/results may hold PII → gitignored | TRD §4, §12; NFR-01/03 | 📝 |
