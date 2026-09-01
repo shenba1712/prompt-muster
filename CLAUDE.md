@@ -222,14 +222,28 @@ I'll decide whether to add it. Don't modify this file yourself.
 ### Update the Completion Log
 
 When a feature, ticket, or other non-trivial piece of work finishes, add a
-dated entry to `core/completion-log.md` (newest entries first) — what
+dated entry to `docs/core/completion-log.md` (newest entries first) — what
 shipped, why, and anything a future session would need to know that isn't
 obvious from the code or a commit message. Keep it to real decisions and
 learnings, not a changelog of every file touched — git history already
 covers that.
 
 This applies to any finished work, not just backlog-numbered tickets; for
-those specifically, it's also required by `core/backlog.md`'s own RULES #7.
+those specifically, it's also required by `docs/core/backlog.md`'s own
+RULES #7.
+
+### Keep the Expert Walkthrough Current
+
+`docs/EXPERT-WALKTHROUGH.md` is a plain-language, whole-project explainer —
+unlike the completion log above (an append-only dated journal), this one
+has no history in it; it should always read as an accurate description of
+the project *right now*. After finishing a non-trivial piece of work, check
+whether it changed anything the walkthrough currently claims — a feature
+moving from planned to built, a route being added, a design decision being
+reversed, a new gap being found — and if so, edit the relevant section(s)
+directly (don't just append a note at the end). Keep it in the same plain,
+jargon-explained style as the rest of the document, not a compressed
+reference table.
 
 ## Sessions
 
