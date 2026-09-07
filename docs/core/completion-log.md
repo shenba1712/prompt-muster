@@ -14,6 +14,166 @@ Newest entries first.
 
 ---
 
+## 2026-08-10 — Reversed the previous entry's `config` decision, plus 3 more gotchas found the same way
+
+Asked "do we know some common keywords to add to the allowlist" for the
+previous entry's reject-unrecognized-`config`-keys behavior. Before
+answering, checked dotprompt's real type first (the session's established
+rule: verify against source, don't answer from memory) — and found the
+allowlist-and-reject design itself was wrong, not just incomplete.
+dotprompt's own `ModelConfig` type is `Record<string, any>`, documented
+"not all models support all options" — deliberately open, not a fixed
+field set. Rejecting anything outside 5 named fields would make this
+parser reject valid provider-specific config (`frequency_penalty`, `seed`,
+anthropic-specific fields, etc.) that dotprompt itself allows, directly
+against ADR-005's tool-interoperability goal. Told the user directly
+rather than quietly fixing it, since it meant undoing a decision from the
+immediately-preceding entry; user confirmed, then asked for a broader
+sweep for the same class of mistake.
+
+That sweep found 3 more real gaps, all from the same root cause — modeling
+what seemed reasonable instead of checking dotprompt's actual
+`PromptMetadata` type:
+
+- `input.default` (default values for template variables) and
+  `output.format` (`'json' | 'text'`, independent of `output.schema`) were
+  both real dotprompt fields this parser didn't model at all — either
+  would have been silently dropped if present. `PromptFile.input` /
+  `.output` are now `{ schema?, default? }` / `{ format?, schema? }`
+  matching dotprompt's real shape, parsed by two new functions
+  (`parseInput`/`parseOutput`, replacing the old single
+  `parseSchemaField`) instead of one.
+- Several dotprompt-reserved top-level keys aren't modeled at all yet and
+  weren't going to be (`tools`, `toolDefs`, `variant`, `version`,
+  `metadata`) — function-calling and prompt-variant concerns for a later,
+  execution-focused ticket. dotprompt's own answer for "the typed shape
+  doesn't cover everything, and it can't predict what a consuming
+  implementation needs" is a `raw?: Record<string, any>` passthrough
+  field holding the untouched frontmatter object. Added the same field
+  here as `raw` (always populated, unlike dotprompt's optional version),
+  set from the already-parsed `matter()` frontmatter object.
+- Checked whether `PromptFile.name`/`.model` being required (dotprompt's
+  real type has both `?: string`) was an oversight or a real decision —
+  it's the latter (a prompt-library UI needs both to list/run prompts
+  meaningfully) but hadn't been written down as a deliberate divergence
+  anywhere. Documented inline in `core/prompt-file.ts` so it doesn't read
+  as a future "fix" candidate.
+
+`config`'s fix: removed `KNOWN_CONFIG_KEYS` and the rejection branch from
+`parseConfig`; it still validates the type of the 5 known fields when
+present, then returns the object as-is (`PromptFileConfig` gained a
+`readonly [key: string]: unknown` index signature to make the passthrough
+typed rather than an `as any` escape hatch). The rejected-key regression
+test from the previous entry was replaced with two tests: unrecognized
+keys survive parsing, and type-checking still applies to the keys this
+parser does understand.
+
+Also checked two more candidate gaps before writing code, both ruled out:
+`Schema` (Picoschema's own type) is already `Record<string, any>` in
+dotprompt's real types, so `PicoschemaDefinition` needed no change; and
+`HasMetadata.metadata?` is automatically covered by the new `raw` field
+with no separate handling needed.
+
+`core/parse-prompt-file.test.ts` grew to 32 tests (2 replacing the old
+rejection test, 2 new for `input.default`/`output.format`, 1 new
+confirming `raw` preserves fields like `variant`/`tools` that nothing else
+models, plus the existing systematic round-trip test strengthened with
+`expect(file.raw).toEqual(rawFrontmatter)`). Full suite: 23 files, 209
+tests; `tsc`, `typecheck:core`, lint all green.
+
+## 2026-08-10 — `config` now rejects unrecognized keys instead of silently dropping them
+
+Closed the gap the round-trip-readiness check (previous entry) surfaced
+and flagged but didn't fix. `parseConfig` now checks every key present
+against a fixed allowlist (`temperature`, `maxOutputTokens`, `topK`,
+`topP`, `stopSequences` — the exact fields `PromptFileConfig` types) and
+rejects with `INVALID_FRONTMATTER` naming the offending key if anything
+else shows up, instead of silently discarding it.
+
+Chose reject-with-error over the two alternatives (preserve unknown keys
+as opaque passthrough data, or leave the allowlist-and-drop behavior as
+is): it matches this parser's own already-established pattern of failing
+loudly rather than guessing (malformed role markers, arrays where objects
+are expected, and a missing `ext.promptmuster` block are all rejected the
+same way, not silently absorbed or defaulted); it catches a more likely
+real bug for free — a config-key typo like `temperatur` previously vanished
+with zero signal, now it's a clear error naming exactly which key; and
+growing `config`'s shape later is meant to be a deliberate, tracked change
+to both the type and this allowlist together, the same relationship
+`schemaVersion` already has to `parseExtensionV1`. Passthrough was
+rejected because it would give a supposedly fully-typed `PromptFileConfig`
+an untyped escape hatch that doesn't actually solve anything downstream —
+real execution code still would only know how to use the five typed
+fields either way.
+
+Confirmed none of the 3 real example files are affected (each only uses
+`temperature`) by re-running the round-trip-readiness tests specifically,
+not just trusting the full suite. Added one new regression test. Full
+suite: 23 files, 206 tests; `tsc`, `typecheck:core`, lint all green.
+
+## 2026-08-10 — Round-trip readiness check for 08.3's parser (ahead of 08.4)
+
+08.4 (the serializer, not built yet) needs `parse(serialize(parse(file)))`
+to be a no-op. Didn't build that — there's no serializer to test against
+yet — but checked the half that's actually 08.3's job: does the parser's
+output still hold everything a future serializer would need, for each of
+the 3 real worked examples? Two of the three (`debug-error.prompt.md`,
+`generate-api-docs.prompt.md`) previously only had partial checks (a model
+string, a message count) — exactly the kind of narrower test that stays
+green even if something got silently dropped. Brought both up to the same
+exhaustiveness `code-review.prompt.md`'s test already had: full
+`ext.promptmuster` shape, exact message text, model provider prefix.
+
+Also added a systematic check, not just hand-picked spot checks: for each
+of the 3 files, parse the raw frontmatter independently (via `gray-matter`
+directly) and confirm every top-level key actually written in the file
+maps to a populated field on the resulting `PromptFile` — nothing
+silently missing. All pass; nothing observably lossy today.
+
+**One latent gap surfaced, flagged not fixed:** `parseConfig` only
+recognizes `temperature`/`maxOutputTokens`/`topK`/`topP`/`stopSequences` —
+any other key under `config:` is silently dropped, not preserved and not
+an error. None of the 3 real files use any other config key today, so
+this doesn't show up in the round-trip check above, but it's a real
+"making 08.4's job impossible" risk for a future file that does use one.
+Left as-is pending a decision on whether to preserve unrecognized config
+keys, reject them, or leave the allowlist as documentation of what's
+actually supported. `core/parse-prompt-file.test.ts` now has 29 tests;
+full suite 23 files / 205 tests, all green (`tsc`, `typecheck:core`, lint
+too). No production code changed — test-only pass.
+
+## 2026-08-10 — Ambiguity #4 resolved: Picoschema does default to `additionalProperties: false`
+
+The spike (08.1) left this open and flagged it as concretely mattering:
+Anthropic's structured-outputs API requires `additionalProperties: false`,
+so if Picoschema's compiler didn't default to it, a prompt targeting
+Anthropic with an `output.schema` would compile to a schema that looks
+correct and fails at the provider — a real failure mode once execution
+(09.x+) exists, not a hypothetical one.
+
+Resolved the same way 08.1 resolved ambiguity #1 and 08.3 resolved
+ambiguity #3: checked the real compiler source and its own test suite
+(`google/dotprompt`, `js/src/picoschema.ts` + `picoschema.test.ts`), not
+the reference docs. Verified twice over — the source (the object
+initializer inside `parsePico()`, the one function both the top-level
+schema and any nested `(object, ...)` field go through, hardcodes
+`additionalProperties: false`) and 7 real test cases, including one
+asserting it holds for a parent object and its nested object at once. The
+only override is an explicit `(*)` wildcard-property key, unused anywhere
+in this project's format.
+
+**Answer: yes, unconditionally.** Per the ticket's own branching
+instruction, that means there's nothing to build — neither 08.3's parser
+nor the eventual Picoschema compiler needs to inject
+`additionalProperties: false` itself, defensively or otherwise, since
+Picoschema already produces exactly that shape by default. Documented in
+full in `core/prompt-file.ts`'s `PicoschemaDefinition` comment and in the
+spike note itself (§3, item 4, now RESOLVED — all four of the spike's
+original ambiguities are resolved as of this entry). No code changes; this
+was a pure documentation/verification pass.
+
+---
+
 ## 2026-08-10 — Test-first check: schemaVersion 2 is rejected, not silently coerced
 
 Added a dedicated regression test for `08.1`'s schemaVersion contract, using
@@ -105,8 +265,9 @@ against the corrected YAML before committing to it, not just re-reading it
 and hoping. Documented in full in `core/prompt-file.ts`'s
 `PicoschemaDefinition` comment and in the spike note itself (§3, item 3,
 now RESOLVED). `docs/dashboard.md` and `tickets.md`'s 08.1 notes updated to
-stop saying "two ambiguities open" now that one of the two is resolved
-(one — `additionalProperties: false`'s default — remains genuinely open).
+stop saying "two ambiguities open" now that one of the two is resolved.
+(The other, ambiguity #4 — `additionalProperties: false`'s default — was
+resolved the same day in a separate pass; see the entry above this one.)
 
 ## 2026-08-10 — `.prompt` file parser (08.3)
 

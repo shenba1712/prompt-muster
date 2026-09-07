@@ -86,13 +86,13 @@ export function parsePromptFile(source: string, slug: string): ParseResult {
   const model = requireString(fm, 'model', slug);
   if (!model.success) return model;
 
-  const input = parseSchemaField(fm.input, slug, 'input');
+  const input = parseInput(fm.input, slug);
   if (!input.success) return input;
 
-  const output = parseSchemaField(fm.output, slug, 'output');
+  const output = parseOutput(fm.output, slug);
   if (!output.success) return output;
 
-  const inputVariableNames = input.value
+  const inputVariableNames = input.value?.schema
     ? Object.keys(input.value.schema).map(bareVariableName)
     : [];
 
@@ -118,6 +118,10 @@ export function parsePromptFile(source: string, slug: string): ParseResult {
     ...(output.value !== undefined ? { output: output.value } : {}),
     ext: { promptmuster: extension.value },
     messages: messages.value,
+    // Mirrors dotprompt's own `raw` field — see prompt-file.ts's comment on
+    // it. `fm` is already the complete, unfiltered parsed frontmatter
+    // object; nothing extra to compute here.
+    raw: fm,
   };
 
   return { success: true, file };
@@ -186,23 +190,72 @@ function invalidField<T>(
   };
 }
 
-function parseSchemaField(
+type InputField = NonNullable<PromptFile['input']>;
+type OutputField = NonNullable<PromptFile['output']>;
+
+// input.schema and input.default are each independently optional in the
+// real dotprompt type — verified against types.ts, not assumed (see
+// docs/core/completion-log.md). Neither being required means e.g. a prompt
+// that only declares default values with no formal schema is still valid.
+function parseInput(
   raw: unknown,
-  slug: string,
-  field: 'input' | 'output'
-): FieldResult<{ readonly schema: PicoschemaDefinition } | undefined> {
+  slug: string
+): FieldResult<InputField | undefined> {
   if (raw === undefined) return { success: true, value: undefined };
   if (!isPlainObject(raw)) {
-    return invalidField(slug, field, 'an object');
+    return invalidField(slug, 'input', 'an object');
   }
-  const schema = raw.schema;
-  if (!isPlainObject(schema)) {
-    return invalidField(slug, `${field}.schema`, 'an object');
+  if (raw.schema !== undefined && !isPlainObject(raw.schema)) {
+    return invalidField(slug, 'input.schema', 'an object');
+  }
+  if (raw.default !== undefined && !isPlainObject(raw.default)) {
+    return invalidField(slug, 'input.default', 'an object');
   }
   // Picoschema itself is not compiled/validated here — see prompt-file.ts's
   // own comment on PicoschemaDefinition; this stays the raw parsed shape
-  // until the compiler exists (grammar ambiguities #3/#4 in the spike note).
-  return { success: true, value: { schema: schema as PicoschemaDefinition } };
+  // until the compiler exists (grammar ambiguities #3/#4 in the spike note,
+  // both resolved but the compiler itself is still deferred).
+  return {
+    success: true,
+    value: {
+      ...(raw.schema !== undefined
+        ? { schema: raw.schema as PicoschemaDefinition }
+        : {}),
+      ...(raw.default !== undefined
+        ? { default: raw.default as Record<string, unknown> }
+        : {}),
+    },
+  };
+}
+
+// output.schema and output.format are each independently optional too —
+// same verified-not-assumed basis as parseInput above. format is a bare
+// string in the real type (`string | 'json' | 'text'` — a TS idiom for
+// "these two are the well-known values, but any string is accepted"), so
+// it's only type-checked as a string here, not restricted to json/text.
+function parseOutput(
+  raw: unknown,
+  slug: string
+): FieldResult<OutputField | undefined> {
+  if (raw === undefined) return { success: true, value: undefined };
+  if (!isPlainObject(raw)) {
+    return invalidField(slug, 'output', 'an object');
+  }
+  if (raw.schema !== undefined && !isPlainObject(raw.schema)) {
+    return invalidField(slug, 'output.schema', 'an object');
+  }
+  if (raw.format !== undefined && typeof raw.format !== 'string') {
+    return invalidField(slug, 'output.format', 'a string');
+  }
+  return {
+    success: true,
+    value: {
+      ...(raw.format !== undefined ? { format: raw.format as string } : {}),
+      ...(raw.schema !== undefined
+        ? { schema: raw.schema as PicoschemaDefinition }
+        : {}),
+    },
+  };
 }
 
 function parseConfig(
@@ -238,22 +291,16 @@ function parseConfig(
     return invalidField(slug, 'config.stopSequences', 'an array of strings');
   }
 
-  return {
-    success: true,
-    value: {
-      ...(c.temperature !== undefined
-        ? { temperature: c.temperature as number }
-        : {}),
-      ...(c.maxOutputTokens !== undefined
-        ? { maxOutputTokens: c.maxOutputTokens as number }
-        : {}),
-      ...(c.topK !== undefined ? { topK: c.topK as number } : {}),
-      ...(c.topP !== undefined ? { topP: c.topP as number } : {}),
-      ...(c.stopSequences !== undefined
-        ? { stopSequences: c.stopSequences as readonly string[] }
-        : {}),
-    },
-  };
+  // The five fields above are validated because PromptMuster's own code
+  // understands their types; everything else in `c` passes through as-is.
+  // dotprompt's own `config` is Record<string, any> — "not all models
+  // support all options" — deliberately open, not a fixed field set
+  // (verified against the real type, not assumed). Rejecting a
+  // provider-specific field like `frequency_penalty` or `seed` here would
+  // make this parser reject files a real dotprompt tool accepts, which is
+  // exactly what ADR-005's "readable by at least one other tool in the same
+  // convention family" is meant to rule out.
+  return { success: true, value: c as PromptFileConfig };
 }
 
 // --- ext.promptmuster ---

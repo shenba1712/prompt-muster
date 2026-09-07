@@ -84,11 +84,10 @@ keys.** ADR-005 and trd.md §3 have been corrected to say this.
 
 ## 3. Open ambiguities, and how they were resolved (or weren't)
 
-Reading the spec closely enough to write 3 real files surfaced four real ambiguities.
-Three are now resolved (one after a second pass, prompted by a direct question about
-whether it was worth chasing down; a third during 08.3, prompted by a direct instruction
-not to build on an inferred-by-analogy grammar without checking it first); one is flagged
-as genuinely open, not papered over:
+Reading the spec closely enough to write 3 real files surfaced four real ambiguities. All
+four are now resolved (one after a second pass, prompted by a direct question about
+whether it was worth chasing down; two more during 08.3, each prompted by a direct
+instruction not to build on an inferred-by-analogy assumption without checking it first):
 
 1. **Unrecognized top-level frontmatter key — RESOLVED 2026-08-09, verified against the real
    parser source, not the docs.** Fetched `google/dotprompt`'s actual TypeScript source
@@ -145,13 +144,22 @@ as genuinely open, not papered over:
    `errorCodes(array)` in the same file got the identical fix. Full derivation documented in
    `core/prompt-file.ts`'s `PicoschemaDefinition` comment, not just here.
 
-4. **Does Picoschema default to `additionalProperties: false`? — OPEN, matters for the
-   Anthropic structured-outputs constraint.** Neither spec page fetched states whether a
-   Picoschema `output.schema` compiles with `additionalProperties: false` by default or
-   needs it stated some other way. This matters concretely: Anthropic's structured-outputs
-   API *requires* `additionalProperties: false`, so if Picoschema doesn't default to it,
-   08.3's linter needs to inject it for any prompt targeting an Anthropic model — silently
-   getting this wrong would produce a schema that looks right and fails at the provider.
+4. **Does Picoschema default to `additionalProperties: false`? — RESOLVED 2026-08-10
+   during 08.3, verified against the real compiler source and its own test suite
+   (`google/dotprompt`, `js/src/picoschema.ts` + `picoschema.test.ts`), not left as a
+   documentation gap.** Yes, unconditionally — every object schema Picoschema compiles,
+   top-level or nested, defaults to `additionalProperties: false`. It's hardcoded in the
+   object initializer inside `parsePico()` (the one function both the top-level schema
+   and any nested `(object, ...)` field go through), not something that has to be opted
+   into: `{ type: 'object', properties: {}, required: [], additionalProperties: false }`.
+   The only override is an explicit `(*)` wildcard-property key, which nothing in this
+   project's format uses. Confirmed against 7 real test cases in `picoschema.test.ts`,
+   including one asserting it holds for a parent object *and* its nested object at once.
+   **This means the concern this item originally raised is a non-issue**: Anthropic's
+   structured-outputs API requires `additionalProperties: false`, and Picoschema already
+   produces exactly that shape by default — neither 08.3's parser nor the eventual
+   Picoschema compiler needs to inject anything for it. Full derivation in
+   `core/prompt-file.ts`'s `PicoschemaDefinition` comment.
 
 ## 4. Body / role-tagged messages — no separate ambiguity, but worth stating plainly
 
