@@ -14,6 +14,24 @@ Newest entries first.
 
 ---
 
+## 2026-08-10 — Test-first check: schemaVersion 2 is rejected, not silently coerced
+
+Added a dedicated regression test for `08.1`'s schemaVersion contract, using
+`schemaVersion: 2` specifically — the realistic "next version bump" case —
+rather than only the existing arbitrary-far-future-version test
+(`schemaVersion: 99`). Confirms three things explicitly, matching the
+"error messages worth reading" requirement literally: `parsePromptFile`
+never throws for this input; the result is a failure, not a `PromptFile`
+silently treated as v1; and the error's `message` string actually names
+the file, the version found, and the version(s) supported — not a generic
+"invalid schema" string. Wrote the test first, ran it, and confirmed it
+passes against the existing implementation with no code changes needed —
+`core/parse-prompt-file.ts`'s `parseExtension` already had this contract
+correct from when 08.3 first landed; this closes the gap between "the
+behavior exists" and "the behavior is actually pinned down by a test that
+would catch a regression." `core/parse-prompt-file.test.ts` now has 25
+tests; full suite 23 files / 202 tests, all green.
+
 ## 2026-08-10 — Self-audit of `core/parse-prompt-file.ts` for ambiguity-#1-shaped silent failures
 
 Prompted by a direct question: given ambiguity #1 (08.1) was only caught by

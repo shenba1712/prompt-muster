@@ -352,6 +352,36 @@ describe('parsePromptFile', () => {
       });
     });
 
+    it('rejects schemaVersion 2 — the realistic next-version case, not just an arbitrary far-future one — without throwing or silently treating it as v1', () => {
+      const source = minimalSource({
+        frontmatter: `name: future-prompt\nmodel: anthropic/claude-sonnet-5\next:\n  promptmuster:\n    schemaVersion: 2\n    category: x\n    tags: []\n    isFavorite: false\n`,
+      });
+
+      // Contract per 08.1's spike: refuse to load, don't throw.
+      expect(() => parsePromptFile(source, 'future-prompt')).not.toThrow();
+
+      const result = parsePromptFile(source, 'future-prompt');
+
+      // Not silently coerced to v1, not passed through as if it were valid —
+      // this must be a failure result, not a PromptFile.
+      expect(result.success).toBe(false);
+      if (result.success) return;
+
+      expect(result.error.code).toBe('UNRECOGNIZED_SCHEMA_VERSION');
+      if (result.error.code !== 'UNRECOGNIZED_SCHEMA_VERSION') return;
+
+      expect(result.error.found).toBe(2);
+      expect(result.error.supported).toEqual([1]);
+
+      // "Error messages worth reading" per the ticket's own wording: the
+      // message has to actually name the file, the version found, and the
+      // version(s) expected — not a generic "invalid schema" string that
+      // makes you go read the code to find out what actually went wrong.
+      expect(result.error.message).toContain('future-prompt');
+      expect(result.error.message).toContain('2');
+      expect(result.error.message).toContain('1');
+    });
+
     it('rejects variableKinds referencing a variable not declared in input.schema', () => {
       const result = parsePromptFile(
         minimalSource({
